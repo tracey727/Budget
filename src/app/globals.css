@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gm-bg: #f7f9fb;
+  --gm-surface: #ffffff;
+  --gm-border: #e3e9f0;
+  --gm-text: #1c2230;
+  --gm-muted: #576e90;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gm-bg: #12161f;
+    --gm-surface: #1a202c;
+    --gm-border: #2b3546;
+    --gm-text: #eef2f7;
+    --gm-muted: #a7b6ca;
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--gm-bg);
+  color: var(--gm-text);
+  min-height: 100dvh;
+}
+
+@layer components {
+  .gm-card {
+    @apply rounded-xl border p-5;
+    background: var(--gm-surface);
+    border-color: var(--gm-border);
+  }
+
+  .gm-input {
+    @apply w-full rounded-lg border px-3 py-2 text-sm outline-none transition;
+    background: var(--gm-surface);
+    border-color: var(--gm-border);
+    color: var(--gm-text);
+  }
+
+  .gm-input:focus {
+    @apply ring-2 ring-brand-500/40;
+    border-color: theme("colors.brand.500");
+  }
+
+  .gm-label {
+    @apply mb-1.5 block text-sm font-medium;
+    color: var(--gm-text);
+  }
+
+  .gm-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5
+           text-sm font-semibold transition focus:outline-none
+           focus-visible:ring-2 focus-visible:ring-brand-500/50
+           disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .gm-btn-primary {
+    @apply gm-btn bg-brand-600 text-white hover:bg-brand-700;
+  }
+
+  .gm-btn-secondary {
+    @apply gm-btn border;
+    background: var(--gm-surface);
+    border-color: var(--gm-border);
+    color: var(--gm-text);
+  }
+
+  .gm-btn-secondary:hover {
+    border-color: theme("colors.brand.400");
+  }
+
+  .gm-muted {
+    color: var(--gm-muted);
+  }
+
+  .gm-table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .gm-table th {
+    @apply px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide;
+    color: var(--gm-muted);
+  }
+
+  .gm-table td {
+    @apply border-t px-3 py-2.5;
+    border-color: var(--gm-border);
+  }
+}
+
+/* Wide content scrolls inside its own container rather than the page body. */
+.gm-scroll-x {
+  @apply overflow-x-auto;
+}

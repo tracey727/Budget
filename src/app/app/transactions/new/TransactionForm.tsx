@@ -7,14 +7,10 @@ import { SubmitButton } from "@/components/SubmitButton";
 export function TransactionForm({
   accounts,
   categories,
-  trips,
-  defaultTripId,
   businessTools,
 }: {
   accounts: Array<{ id: string; name: string }>;
   categories: Array<{ id: string; name: string; kind: string }>;
-  trips: Array<{ id: string; name: string }>;
-  defaultTripId?: string;
   businessTools: boolean;
 }) {
   const [state, formAction] = useActionState<FormState, FormData>(
@@ -129,20 +125,6 @@ export function TransactionForm({
           </select>
         </div>
       </div>
-
-      {trips.length > 0 && (
-        <div>
-          <label className="gm-label" htmlFor="tripId">
-            Trip <span className="gm-muted font-normal">(optional)</span>
-          </label>
-          <select id="tripId" name="tripId" className="gm-input" defaultValue={defaultTripId ?? ""}>
-            <option value="">Not part of a trip</option>
-            {trips.map((t) => (
-              <option key={t.id} value={t.id}>{t.name}</option>
-            ))}
-          </select>
-        </div>
-      )}
 
       <div>
         <label className="gm-label" htmlFor="merchant">

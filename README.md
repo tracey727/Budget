@@ -1,9 +1,8 @@
 # GEN MONEY
 
-**The travellers budget.** Know what the trip is costing while you are still on
-it — fuel, parks, food and the bills back home, all in Australian dollars.
-Built to run at scale on Cloudflare Workers with a Neon Postgres database and
-Stripe subscriptions.
+**Take Control of Every Dollar** — the Genevieve App budget app, built for
+professionals and everyday people alike. Runs at scale on Cloudflare Workers
+with a Neon Postgres database and Stripe subscriptions.
 
 - **Frontend/backend:** Next.js 15 (App Router, React 19, Server Actions)
 - **Hosting:** Cloudflare Workers via `@opennextjs/cloudflare`
@@ -17,9 +16,6 @@ Stripe subscriptions.
 ## What's in the box
 
 ### For everyone (Starter, free)
-- **One live trip budget** with dates, planned kilometres and spend tracking
-- Travel categories ready to go — diesel, caravan parks, park permits, tolls,
-  dump points — alongside the home costs that keep running while you are away
 - Multi-account tracking with live balances and net position
 - Transactions with categories, merchants and notes
 - Monthly budgets with progress bars and over-budget warnings
@@ -27,8 +23,6 @@ Stripe subscriptions.
 - Dashboard: money in/out, net, spending breakdown, upcoming bills
 
 ### Personal Premium ($9.99/mo · $99/yr)
-- **Unlimited trips**, each with its own budget, plus how much is left per day
-  for the rest of the journey
 - Unlimited accounts, transactions, budgets and goals
 - **CSV bank statement import** with automatic column detection and duplicate
   suppression — tested against CommBank, NAB, Westpac, ANZ and Bendigo formats
@@ -321,7 +315,6 @@ src/
     privacy/  contact/
     app/                      Authenticated application
       page.tsx                Dashboard
-      trips/                  Trip budgets
       transactions/           List, create, CSV import
       accounts/  budgets/  goals/  bills/  reports/  billing/
     api/

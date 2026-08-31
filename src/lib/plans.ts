@@ -34,8 +34,6 @@ export type Plan = {
 };
 
 export type PlanLimits = {
-  /** Concurrent, non-archived trips. */
-  trips: number;
   accounts: number;
   /** Rolling 12-month transaction ceiling. */
   transactions: number;
@@ -58,15 +56,14 @@ export const PLANS: Record<PlanKey, Plan> = {
     monthly: { lookupKey: "starter_monthly", label: "FREE", amountCents: 0, interval: "month" },
     annual: { lookupKey: "starter_annual", label: "FREE", amountCents: 0, interval: "year" },
     features: [
-      "1 trip budget at a time",
       "Up to 2 accounts",
       "500 transactions a year",
       "5 monthly budgets",
       "1 savings goal",
-      "Travel categories ready to go — fuel, parks, permits",
+      "Spending dashboard",
+      "AUD, Australian financial year",
     ],
     limits: {
-      trips: 1,
       accounts: 2,
       transactions: 500,
       budgets: 5,
@@ -81,7 +78,7 @@ export const PLANS: Record<PlanKey, Plan> = {
   personal: {
     key: "personal",
     name: "Personal Premium",
-    tagline: "Every trip, every dollar, all in one place.",
+    tagline: "Every dollar, every account, all in one place.",
     purpose: "Main consumer product",
     highlight: true,
     monthly: {
@@ -106,17 +103,15 @@ export const PLANS: Record<PlanKey, Plan> = {
       note: "Launch promotion — first year only, then $99/year",
     },
     features: [
-      "Unlimited trips, each with its own budget",
-      "Daily spend remaining while you travel",
-      "Unlimited accounts and transactions",
+      "Unlimited accounts",
+      "Unlimited transactions",
       "Unlimited budgets and goals",
       "CSV bank statement import with duplicate detection",
       "Full reports: cash flow, category trends, net worth",
-      "Rego, insurance and roadside cover tracked by due date",
+      "Recurring bill tracking and due-date alerts",
       "Export to CSV any time",
     ],
     limits: {
-      trips: Number.POSITIVE_INFINITY,
       accounts: Number.POSITIVE_INFINITY,
       transactions: Number.POSITIVE_INFINITY,
       budgets: Number.POSITIVE_INFINITY,
@@ -131,7 +126,7 @@ export const PLANS: Record<PlanKey, Plan> = {
   professional: {
     key: "professional",
     name: "Professional",
-    tagline: "Built for sole traders working as they travel.",
+    tagline: "Built for sole traders and professionals.",
     purpose: "Sole traders/professionals",
     monthly: {
       lookupKey: "professional_monthly",
@@ -156,7 +151,7 @@ export const PLANS: Record<PlanKey, Plan> = {
     },
     features: [
       "Everything in Personal Premium",
-      "Separate business and personal ledgers while you travel",
+      "Separate business and personal ledgers",
       "GST tracking and BAS-ready quarterly summaries",
       "Deductible expense tagging",
       "Australian financial year reporting (1 Jul – 30 Jun)",
@@ -164,7 +159,6 @@ export const PLANS: Record<PlanKey, Plan> = {
       "Priority support",
     ],
     limits: {
-      trips: Number.POSITIVE_INFINITY,
       accounts: Number.POSITIVE_INFINITY,
       transactions: Number.POSITIVE_INFINITY,
       budgets: Number.POSITIVE_INFINITY,

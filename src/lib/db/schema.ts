@@ -136,38 +136,6 @@ export const categories = pgTable(
 );
 
 /* -------------------------------------------------------------------------- */
-/*                                   Trips                                    */
-/* -------------------------------------------------------------------------- */
-
-/**
- * A named journey with its own budget and date range.
- *
- * A trip is entirely user-entered — no location is captured or derived. The
- * destination field is a free-text label ("Cape York", "Big Lap") purely for
- * the user's own reference.
- */
-export const trips = pgTable(
-  "trips",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    name: text("name").notNull(),
-    destination: text("destination"),
-    startsOn: date("starts_on"),
-    endsOn: date("ends_on"),
-    budgetAmount: numeric("budget_amount", { precision: 14, scale: 2 }),
-    /** Planned kilometres, used for the fuel-per-km estimate. */
-    plannedKm: integer("planned_km"),
-    notes: text("notes"),
-    archived: boolean("archived").notNull().default(false),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [index("trips_user_idx").on(t.userId), index("trips_dates_idx").on(t.userId, t.startsOn)],
-);
-
-/* -------------------------------------------------------------------------- */
 /*                                Transactions                                */
 /* -------------------------------------------------------------------------- */
 
@@ -184,8 +152,6 @@ export const transactions = pgTable(
     categoryId: uuid("category_id").references(() => categories.id, {
       onDelete: "set null",
     }),
-    // Optional: which journey this spend belongs to.
-    tripId: uuid("trip_id").references(() => trips.id, { onDelete: "set null" }),
     // Positive = money in, negative = money out. Always AUD minor-unit safe.
     amount: numeric("amount", { precision: 14, scale: 2 }).notNull(),
     description: text("description").notNull(),
@@ -207,7 +173,6 @@ export const transactions = pgTable(
     index("transactions_account_idx").on(t.accountId),
     index("transactions_category_idx").on(t.categoryId),
     index("transactions_batch_idx").on(t.importBatchId),
-    index("transactions_trip_idx").on(t.tripId),
     uniqueIndex("transactions_dedupe_unique").on(t.userId, t.dedupeHash),
   ],
 );
@@ -338,7 +303,6 @@ export const stripeEvents = pgTable("stripe_events", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
-  trips: many(trips),
   categories: many(categories),
   transactions: many(transactions),
   budgets: many(budgets),
@@ -358,14 +322,8 @@ export const categoriesRelations = relations(categories, ({ one, many }) => ({
   budgets: many(budgets),
 }));
 
-export const tripsRelations = relations(trips, ({ one, many }) => ({
-  user: one(users, { fields: [trips.userId], references: [users.id] }),
-  transactions: many(transactions),
-}));
-
 export const transactionsRelations = relations(transactions, ({ one }) => ({
   user: one(users, { fields: [transactions.userId], references: [users.id] }),
-  trip: one(trips, { fields: [transactions.tripId], references: [trips.id] }),
   account: one(accounts, {
     fields: [transactions.accountId],
     references: [accounts.id],
@@ -387,7 +345,6 @@ export const budgetsRelations = relations(budgets, ({ one }) => ({
 export type User = typeof users.$inferSelect;
 export type Account = typeof accounts.$inferSelect;
 export type Category = typeof categories.$inferSelect;
-export type Trip = typeof trips.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 export type Budget = typeof budgets.$inferSelect;
 export type Goal = typeof goals.$inferSelect;

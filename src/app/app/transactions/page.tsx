@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth/require";
-import { listAccounts, listCategories, listTransactions, listTrips } from "@/lib/data/queries";
+import { listAccounts, listCategories, listTransactions } from "@/lib/data/queries";
 import { deleteTransactionAction } from "@/lib/actions/transactions";
 import { formatMoney, toCents } from "@/lib/money";
 import { formatDateAu } from "@/lib/dates";
@@ -16,7 +16,6 @@ export default async function TransactionsPage({
   searchParams: Promise<{
     account?: string;
     category?: string;
-    trip?: string;
     from?: string;
     to?: string;
     page?: string;
@@ -28,11 +27,10 @@ export default async function TransactionsPage({
 
   const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
 
-  const [rows, accounts, categories, trips] = await Promise.all([
+  const [rows, accounts, categories] = await Promise.all([
     listTransactions(user.id, {
       accountId: params.account || undefined,
       categoryId: params.category || undefined,
-      tripId: params.trip || undefined,
       from: params.from || undefined,
       to: params.to || undefined,
       limit: PAGE_SIZE + 1,
@@ -40,7 +38,6 @@ export default async function TransactionsPage({
     }),
     listAccounts(user.id),
     listCategories(user.id),
-    listTrips(user.id),
   ]);
 
   const hasMore = rows.length > PAGE_SIZE;
@@ -50,7 +47,6 @@ export default async function TransactionsPage({
     const sp = new URLSearchParams();
     if (params.account) sp.set("account", params.account);
     if (params.category) sp.set("category", params.category);
-    if (params.trip) sp.set("trip", params.trip);
     if (params.from) sp.set("from", params.from);
     if (params.to) sp.set("to", params.to);
     sp.set("page", String(next));
@@ -80,7 +76,7 @@ export default async function TransactionsPage({
       )}
 
       {/* Filters */}
-      <form className="gm-card grid gap-3 sm:grid-cols-2 lg:grid-cols-6" method="get">
+      <form className="gm-card grid gap-3 sm:grid-cols-2 lg:grid-cols-5" method="get">
         <div>
           <label className="gm-label text-xs" htmlFor="account">Account</label>
           <select id="account" name="account" className="gm-input" defaultValue={params.account ?? ""}>
@@ -99,17 +95,6 @@ export default async function TransactionsPage({
             ))}
           </select>
         </div>
-        {trips.length > 0 && (
-          <div>
-            <label className="gm-label text-xs" htmlFor="trip">Trip</label>
-            <select id="trip" name="trip" className="gm-input" defaultValue={params.trip ?? ""}>
-              <option value="">All trips</option>
-              {trips.map((t) => (
-                <option key={t.id} value={t.id}>{t.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
         <div>
           <label className="gm-label text-xs" htmlFor="from">From</label>
           <input id="from" name="from" type="date" className="gm-input" defaultValue={params.from ?? ""} />
@@ -156,11 +141,6 @@ export default async function TransactionsPage({
                         {row.transaction.isBusiness && (
                           <span className="ml-2 rounded bg-ink-200 px-1.5 py-0.5 text-[10px] font-bold uppercase dark:bg-ink-800">
                             Business
-                          </span>
-                        )}
-                        {row.tripName && (
-                          <span className="ml-2 rounded bg-brand-500/15 px-1.5 py-0.5 text-[10px] font-bold uppercase text-brand-700 dark:text-brand-300">
-                            {row.tripName}
                           </span>
                         )}
                         {row.transaction.merchant && (

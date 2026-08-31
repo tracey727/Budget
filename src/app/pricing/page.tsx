@@ -14,12 +14,10 @@ export const metadata: Metadata = {
 };
 
 const COMPARISON: Array<{ label: string; starter: string; personal: string; professional: string }> = [
-  { label: "Trip budgets", starter: "1 at a time", personal: "Unlimited", professional: "Unlimited" },
   { label: "Accounts", starter: "2", personal: "Unlimited", professional: "Unlimited" },
   { label: "Transactions a year", starter: "500", personal: "Unlimited", professional: "Unlimited" },
   { label: "Monthly budgets", starter: "5", personal: "Unlimited", professional: "Unlimited" },
   { label: "Savings goals", starter: "1", personal: "Unlimited", professional: "Unlimited" },
-  { label: "Daily spend remaining", starter: "—", personal: "✓", professional: "✓" },
   { label: "CSV bank import", starter: "—", personal: "✓", professional: "✓" },
   { label: "Full reports", starter: "—", personal: "✓", professional: "✓" },
   { label: "Recurring bills", starter: "—", personal: "✓", professional: "✓" },

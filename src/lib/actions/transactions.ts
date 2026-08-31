@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
 import { transactions } from "@/lib/db/schema";
 import { requireUser } from "@/lib/auth/require";
 import { centsToDecimalString, gstFromInclusive, parseAmountInput } from "@/lib/money";
-import { countTransactions, ownsAccount, ownsTrip } from "@/lib/data/queries";
+import { countTransactions, ownsAccount } from "@/lib/data/queries";
 
 export type FormState = { error?: string; ok?: boolean } | undefined;
 
@@ -17,7 +17,6 @@ const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Choose a valid date.");
 const transactionSchema = z.object({
   accountId: z.string().uuid("Choose an account."),
   categoryId: z.string().uuid().optional().nullable(),
-  tripId: z.string().uuid().optional().nullable(),
   amount: z.string().min(1, "Enter an amount."),
   // "in" adds to the account, "out" subtracts.
   direction: z.enum(["in", "out"]),
@@ -31,12 +30,10 @@ const transactionSchema = z.object({
 
 function readForm(formData: FormData) {
   const rawCategory = formData.get("categoryId");
-  const rawTrip = formData.get("tripId");
   return {
     accountId: String(formData.get("accountId") ?? ""),
     categoryId:
       typeof rawCategory === "string" && rawCategory !== "" ? rawCategory : null,
-    tripId: typeof rawTrip === "string" && rawTrip !== "" ? rawTrip : null,
     amount: String(formData.get("amount") ?? ""),
     direction: String(formData.get("direction") ?? "out"),
     description: String(formData.get("description") ?? ""),
@@ -87,10 +84,6 @@ export async function createTransactionAction(
     return { error: "That account does not exist." };
   }
 
-  if (data.tripId && !(await ownsTrip(user.id, data.tripId))) {
-    return { error: "That trip does not exist." };
-  }
-
   const magnitude = parseAmountInput(data.amount);
   if (magnitude === null || magnitude === 0) {
     return { error: "Enter an amount like 42.50." };
@@ -115,7 +108,6 @@ export async function createTransactionAction(
       userId: user.id,
       accountId: data.accountId,
       categoryId: data.categoryId,
-      tripId: data.tripId,
       amount: centsToDecimalString(signed),
       description: data.description,
       merchant: data.merchant || null,
@@ -132,7 +124,6 @@ export async function createTransactionAction(
 
   revalidatePath("/app");
   revalidatePath("/app/transactions");
-  revalidatePath("/app/trips");
   redirect("/app/transactions?added=1");
 }
 

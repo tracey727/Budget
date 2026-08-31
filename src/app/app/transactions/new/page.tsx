@@ -1,17 +1,15 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth/require";
-import { activeTrip, listAccounts, listCategories, listTrips } from "@/lib/data/queries";
+import { listAccounts, listCategories } from "@/lib/data/queries";
 import { TransactionForm } from "./TransactionForm";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewTransactionPage() {
   const user = await requireUser();
-  const [accounts, categories, trips, current] = await Promise.all([
+  const [accounts, categories] = await Promise.all([
     listAccounts(user.id),
     listCategories(user.id),
-    listTrips(user.id),
-    activeTrip(user.id),
   ]);
 
   return (
@@ -38,8 +36,6 @@ export default async function NewTransactionPage() {
           <TransactionForm
             accounts={accounts.map((a) => ({ id: a.id, name: a.name }))}
             categories={categories.map((c) => ({ id: c.id, name: c.name, kind: c.kind }))}
-            trips={trips.map((t) => ({ id: t.id, name: t.name }))}
-            defaultTripId={current?.id}
             businessTools={user.limits.businessTools}
           />
         </div>

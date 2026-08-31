@@ -1,7 +1,7 @@
 # Legal and Billing Release Gate — Gen Money
 
-Gen Money is **the travellers budget** — a budgeting tool for people on the
-road. The legal documents describe that product, not a generic budget app.
+Gen Money is the Genevieve App budget app, for professionals and everyday
+people. The legal documents describe that product.
 
 Do not enable live Stripe charging until every item that applies to launch is
 complete and evidenced.
@@ -84,11 +84,8 @@ kept deliberately in the same shape so both products can be reviewed together.
 - [x] Cancelling reverts to the free Starter plan; records are not deleted
 - [x] App is described as budgeting/record-keeping, expressly not financial
       product advice, credit assistance or tax advice
-- [x] Trip budgets, fuel and daily-spend figures described as decision-support
-      estimates, expressly not guarantees of fuel prices, site availability,
-      fees, road conditions or weather
-- [x] Terms state travel decisions remain the user's, official sources take
-      priority, and the app is not a navigation or safety service
+- [x] Budgets, summaries and projections described as decision-support
+      information derived from the user's own entries, not guarantees
 - [x] Privacy Policy states plainly that no location is collected or stored
 - [x] GST and financial-year summaries described as record-keeping aids, not a
       lodged BAS

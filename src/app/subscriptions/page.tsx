@@ -30,8 +30,6 @@ export default async function SubscriptionPolicyPage() {
           Terms of Use
         </Link>{" "}
         and applies to paid {BUSINESS.appName} subscriptions.
-        {" "}{BUSINESS.appName} is {BUSINESS.appDescriptor} — a budgeting tool
-        for people who travel.
       </p>
 
       <h2>1. Clear recurring price before purchase</h2>
@@ -142,12 +140,6 @@ export default async function SubscriptionPolicyPage() {
         plan. <strong>Your records are not deleted.</strong> Paid features such
         as CSV import, reports and business tools switch off, and Starter plan
         limits apply to new data.
-      </p>
-
-      <p className="gm-muted text-sm">
-        Cancelling needs an internet connection, so if you are heading somewhere
-        without coverage and intend to cancel before a renewal date, do it before
-        you leave rather than relying on getting online along the way.
       </p>
 
       <h2>7. Changing plans</h2>

@@ -10,7 +10,7 @@ export const BUSINESS = {
   /** Product name as advertised. */
   appName: "Gen Money",
   /** What the app is, in one phrase — used in legal copy and metadata. */
-  appDescriptor: "the travellers budget",
+  appDescriptor: "the budget app for professionals and everyday people",
   /** Legal operator: the person or entity that contracts with customers. */
   operator: "Tracey Ann Kennedy",
   /** Registered trading name. */

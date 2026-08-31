@@ -22,10 +22,9 @@ export default async function PrivacyPage() {
     >
       <p>
         This Privacy Policy explains how {legalEntityLine()} handles personal
-        information for {BUSINESS.appName} — {BUSINESS.appDescriptor}. We aim to
-        manage personal information consistently with Australian privacy
-        requirements that apply to us, including the Australian Privacy
-        Principles where applicable.
+        information for {BUSINESS.appName}. We aim to manage personal
+        information consistently with Australian privacy requirements that apply
+        to us, including the Australian Privacy Principles where applicable.
       </p>
 
       <h2>1. Information we collect</h2>
@@ -36,9 +35,8 @@ export default async function PrivacyPage() {
           territory.
         </li>
         <li>
-          <strong>Trip and financial records you enter or import:</strong> trips
-          you create (name, dates, destination label and trip budget), account
-          names and types, opening balances, transactions, categories, budgets,
+          <strong>Financial records you enter or import:</strong> account names
+          and types, opening balances, transactions, categories, budgets,
           savings goals and recurring bills. On the Professional plan this may
           include business/personal tagging and GST amounts.
         </li>
@@ -68,13 +66,7 @@ export default async function PrivacyPage() {
         {BUSINESS.appName} does not connect to your bank, screen-scrape your
         accounts, or initiate payments on your behalf. Transactions arrive only
         because you entered them or uploaded a statement you exported yourself.
-      </p>
-      <p>
-        <strong>We do not track where you are.</strong> Although{" "}
-        {BUSINESS.appName} is built for travelling, it does not use GPS or
-        browser geolocation, does not record your route, and does not store your
-        current or past whereabouts. A trip is only the name, dates and budget
-        you type in yourself.
+        We do not collect your location.
       </p>
 
       <h2>3. Payment information</h2>

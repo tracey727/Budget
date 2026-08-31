@@ -70,7 +70,9 @@ You need three accounts: **Neon**, **Cloudflare**, and **Stripe**. Budget about
    Australian audience.
 3. Copy the **pooled** connection string (the host contains `-pooler`).
 
-Apply the schema:
+Apply the schema. Either paste
+[`setup/database-setup.sql`](setup/database-setup.sql) into Neon's SQL Editor —
+no tooling required — or run the migrations from a terminal:
 
 ```bash
 npm install
@@ -78,9 +80,9 @@ DATABASE_URL="postgresql://user:pass@ep-xxx-pooler.ap-southeast-2.aws.neon.tech/
   npm run db:migrate
 ```
 
-This creates 10 tables: `users`, `sessions`, `accounts`, `categories`,
-`transactions`, `budgets`, `goals`, `recurring_bills`, `subscriptions` and
-`stripe_events`.
+This creates 12 tables: `users`, `sessions`, `password_reset_tokens`,
+`email_verification_tokens`, `accounts`, `categories`, `transactions`,
+`budgets`, `goals`, `recurring_bills`, `subscriptions` and `stripe_events`.
 
 ### 2. Set up the Stripe catalogue
 

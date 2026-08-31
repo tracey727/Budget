@@ -14,14 +14,21 @@ kept deliberately in the same shape so both products can be reviewed together.
 - [x] Operator: Tracey Ann Kennedy trading as Genevieve App
 - [x] ABN: 36 530 564 761
 - [x] Postal address: PO Box 475, Labrador QLD 4215
-- [x] Support email: tracey@genevieveapp.com.au
+- [x] Support email: tracey@genevieveapp.com.au — published in the Terms,
+      Privacy Policy, Subscription Policy and contact page
+- [ ] Confirm that mailbox exists and is monitored before launch; the Privacy
+      Act requires a working route for privacy requests and complaints
 - [x] Governing law stated as Queensland, Australia
 - [x] Identity published in Terms, Privacy, Subscription Policy, Contact, footer
 - [x] **GST: not registered.** Turnover is below the $75,000 ATO registration
       threshold, so no GST is charged on subscriptions. The site states this
       plainly rather than hedging, driven by `BUSINESS.gstRegistered` in
       `src/lib/business.ts` — flip that flag if registration ever changes.
-- [ ] Re-check the GST position if annual turnover approaches $75,000.
+- [ ] Re-check the GST position if annual turnover approaches $75,000. The
+      decision and its reasoning are recorded in `docs/GST.md`.
+- [ ] If in receipt of a Centrelink pension, tell Services Australia once the
+      business earns income and confirm how it will be assessed — separate
+      from GST, and applies regardless of registration.
 - [ ] Decide whether Genevieve App needs its own registered business name, or
       continues to trade under Genevieve App.
 
@@ -41,8 +48,10 @@ kept deliberately in the same shape so both products can be reviewed together.
       after issue, 2-minute resend throttle. A confirmed address is required
       before paid checkout. 22 tests cover it.
 - [ ] Test entitlement persistence across a second device and browser
-- [ ] Set `RESEND_API_KEY` and `EMAIL_FROM` in Cloudflare, and verify the
-      sending domain in Resend, or password reset emails will not send
+- [ ] Set up email delivery — see `docs/EMAIL_SETUP.md`. The API key alone is
+      not enough; the sending domain needs DNS verification or Resend will only
+      deliver to the account owner's own address. Sign-up confirmation and
+      password reset both depend on it.
 
 ## Subscription disclosure
 

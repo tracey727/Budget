@@ -286,14 +286,16 @@ The full pre-launch checklist is in
 [`docs/LEGAL_RELEASE_GATE.md`](docs/LEGAL_RELEASE_GATE.md). The items that
 genuinely block a paid launch:
 
-- [ ] **Set `RESEND_API_KEY` and `EMAIL_FROM`, and verify your sending domain in
-      Resend** — password reset emails cannot send without it. The
-      forgot-password page shows a warning while it is unconfigured.
+- [ ] **Set up email** — see [`docs/EMAIL_SETUP.md`](docs/EMAIL_SETUP.md).
+      An API key alone is not enough: the sending domain must be verified with
+      DNS records, or Resend will only deliver to your own address. Sign-up
+      confirmation and password reset both depend on this.
 - [ ] **Get Australian legal review of the founding promotion** before public
       paid launch.
 - [ ] Decide whether Genevieve App needs its own registered business name, or
       continues to trade under Genevieve App
-- [ ] Re-check the GST position if turnover approaches $75,000
+- [ ] Re-check the GST position if turnover approaches $75,000 (see
+      [`docs/GST.md`](docs/GST.md))
 - [ ] Re-run `npm run stripe:setup` with your **live** key
 - [ ] Point the Stripe webhook at your production domain
 - [ ] Set `NEXT_PUBLIC_APP_URL` to your live origin and redeploy

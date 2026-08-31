@@ -122,6 +122,12 @@ Add the secrets below under **Settings &rarr; Variables and Secrets**, as
   **Domains** or the site has no public URL.
 - Saving build settings does **not** start a build. A build runs when a commit
   is pushed, or when you trigger one from **Deployments**.
+- Adding a variable in the dashboard creates a new *version* but does not
+  always deploy it. Check that the newest version is the one carrying 100% of
+  traffic, or push a commit to build and deploy in one step.
+- `wrangler.jsonc` intentionally has **no `vars` block**. `wrangler deploy`
+  replaces all plain-text variables with whatever that block contains, so a
+  single entry there silently wipes every variable set in the dashboard.
 
 **Through the command line:**
 

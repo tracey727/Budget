@@ -14,9 +14,15 @@
   "placement": {
     "mode": "smart"
   },
-  "vars": {
-    "NEXT_PUBLIC_APP_URL": "https://genevieveapp.com.au"
-  }
+  // NOTE: deliberately no "vars" block.
+  //
+  // `wrangler deploy` treats this file as the source of truth for plain-text
+  // variables and REPLACES whatever is set in the dashboard. Declaring even one
+  // var here silently wipes every other plain-text variable on each deploy —
+  // including DATABASE_URL and RESEND_API_KEY.
+  //
+  // All configuration is therefore set in the dashboard (Settings → Variables
+  // and Secrets), or with `wrangler secret put`, and survives deploys.
 
   // Optional: KV-backed incremental cache. Create the namespace with
   //   wrangler kv namespace create NEXT_INC_CACHE_KV

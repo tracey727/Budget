@@ -43,10 +43,10 @@ export default async function BillingPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-black tracking-tight">Billing</h1>
+      <h1 className="gm-display text-3xl font-semibold">Billing</h1>
 
       {params.checkout === "success" && (
-        <p className="rounded-lg border border-brand-500/40 bg-brand-500/10 px-4 py-3 text-sm font-medium text-brand-700 dark:text-brand-300">
+        <p className="gm-alert-ok font-medium">
           Thanks for subscribing. Your plan is active — it can take a few seconds
           to appear here while Stripe confirms the payment.
         </p>
@@ -55,14 +55,14 @@ export default async function BillingPage({
       {params.error && ERROR_MESSAGES[params.error] && (
         <p
           role="alert"
-          className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300"
+          className="gm-alert-error"
         >
           {ERROR_MESSAGES[params.error]}
         </p>
       )}
 
       {!configured && (
-        <p className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+        <p className="gm-alert-warn">
           Billing is not configured on this deployment. Set{" "}
           <code className="font-mono text-xs">STRIPE_SECRET_KEY</code> to enable
           upgrades.
@@ -76,7 +76,7 @@ export default async function BillingPage({
             <p className="gm-muted text-xs font-semibold uppercase tracking-wide">
               Current plan
             </p>
-            <h2 className="mt-1 text-2xl font-black">{current.name}</h2>
+            <h2 className="gm-display mt-1 text-3xl font-semibold">{current.name}</h2>
             <p className="gm-muted mt-1 text-sm">{current.tagline}</p>
 
             {subscription && user.activePlan !== "starter" && (
@@ -109,7 +109,7 @@ export default async function BillingPage({
             )}
 
             {subscription?.cancelAtPeriodEnd && (
-              <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+              <p className="mt-3 gm-alert-warn text-xs">
                 Your subscription is set to cancel at the end of the current
                 period. You will move to the free Starter plan — your data stays.
               </p>
@@ -143,7 +143,7 @@ export default async function BillingPage({
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <h3 className="font-black">{plan.name}</h3>
+                  <h3 className="gm-display text-lg font-semibold">{plan.name}</h3>
                   {isCurrent && (
                     <span className="rounded-full bg-brand-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">
                       Current

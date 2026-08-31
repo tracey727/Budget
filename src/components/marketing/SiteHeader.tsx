@@ -3,22 +3,33 @@ import { Logo } from "@/components/Logo";
 
 export function SiteHeader({ signedIn }: { signedIn: boolean }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--gm-border)] bg-[var(--gm-bg)]/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5">
+    <header
+      className="sticky top-0 z-40"
+      style={{
+        background: "rgba(20, 3, 6, 0.86)",
+        backdropFilter: "blur(14px)",
+        borderBottom: "1px solid var(--gold-line)",
+      }}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Link href="/" aria-label="Genevieve App home">
-          <Logo />
+          <Logo size="sm" />
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <Link href="/#features" className="gm-muted hover:text-brand-600">
-            Features
-          </Link>
-          <Link href="/pricing" className="gm-muted hover:text-brand-600">
-            Pricing
-          </Link>
-          <Link href="/#security" className="gm-muted hover:text-brand-600">
-            Security
-          </Link>
+        <nav className="hidden items-center gap-7 text-sm md:flex">
+          {[
+            { href: "/#features", label: "Features" },
+            { href: "/pricing", label: "Pricing" },
+            { href: "/#security", label: "Security" },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="gm-muted font-medium tracking-wide transition hover:text-brand-600"
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         <div className="flex items-center gap-2">

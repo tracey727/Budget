@@ -19,7 +19,7 @@ export default async function ReportsPage() {
   if (!user.limits.reports) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-black tracking-tight">Reports</h1>
+        <h1 className="gm-display text-3xl font-semibold">Reports</h1>
         <PaywallCard
           title="Reports are part of Personal Premium"
           body="See 12 months of cash flow, category trends and your net position over time, plus a full CSV export of everything."
@@ -50,7 +50,7 @@ export default async function ReportsPage() {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-black tracking-tight">Reports</h1>
+        <h1 className="gm-display text-3xl font-semibold">Reports</h1>
         <Link href="/api/export/transactions" className="gm-btn-secondary">
           Export CSV
         </Link>
@@ -82,13 +82,19 @@ export default async function ReportsPage() {
                   <div key={point.month} className="flex flex-1 flex-col items-center gap-1.5">
                     <div className="flex h-full w-full items-end justify-center gap-1">
                       <div
-                        className="w-1/2 rounded-t bg-brand-500"
-                        style={{ height: `${(point.incomeCents / maxBar) * 100}%` }}
+                        className="w-1/2 rounded-t"
+                        style={{
+                          height: `${(point.incomeCents / maxBar) * 100}%`,
+                          background: "linear-gradient(180deg,#f0d57e,#c39a28)",
+                        }}
                         title={`In: ${formatMoney(point.incomeCents)}`}
                       />
                       <div
-                        className="w-1/2 rounded-t bg-ink-400 dark:bg-ink-600"
-                        style={{ height: `${(point.spendCents / maxBar) * 100}%` }}
+                        className="w-1/2 rounded-t"
+                        style={{
+                          height: `${(point.spendCents / maxBar) * 100}%`,
+                          background: "linear-gradient(180deg,#8a4356,#5c1c2b)",
+                        }}
                         title={`Out: ${formatMoney(point.spendCents)}`}
                       />
                     </div>
@@ -102,10 +108,10 @@ export default async function ReportsPage() {
 
             <div className="mt-4 flex gap-5 text-xs">
               <span className="flex items-center gap-1.5">
-                <span aria-hidden className="h-2.5 w-2.5 rounded-sm bg-brand-500" /> Money in
+                <span aria-hidden className="h-2.5 w-2.5 rounded-sm" style={{ background: "#d4af37" }} /> Money in
               </span>
               <span className="flex items-center gap-1.5">
-                <span aria-hidden className="h-2.5 w-2.5 rounded-sm bg-ink-400 dark:bg-ink-600" /> Money out
+                <span aria-hidden className="h-2.5 w-2.5 rounded-sm" style={{ background: "#8a4356" }} /> Money out
               </span>
             </div>
           </>
@@ -131,7 +137,7 @@ export default async function ReportsPage() {
                       {formatMoney(row.spentCents)} · {share.toFixed(0)}%
                     </span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-ink-200 dark:bg-ink-800">
+                  <div className="gm-track h-2">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${Math.max(2, share)}%`, backgroundColor: row.colour }}

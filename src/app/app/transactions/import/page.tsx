@@ -12,7 +12,7 @@ export default async function ImportPage() {
   if (!user.limits.csvImport) {
     return (
       <div className="mx-auto max-w-2xl space-y-6">
-        <h1 className="text-2xl font-black tracking-tight">Import transactions</h1>
+        <h1 className="gm-display text-3xl font-semibold">Import transactions</h1>
         <PaywallCard
           title="CSV import is part of Personal Premium"
           body="Import statements from any Australian bank. Genevieve App reads the columns, converts the dates and skips anything already imported."
@@ -29,7 +29,7 @@ export default async function ImportPage() {
         <Link href="/app/transactions" className="gm-muted text-sm hover:text-brand-600">
           ← Back to transactions
         </Link>
-        <h1 className="mt-2 text-2xl font-black tracking-tight">Import transactions</h1>
+        <h1 className="gm-display mt-2 text-3xl font-semibold">Import transactions</h1>
         <p className="gm-muted mt-1 text-sm">
           Export a CSV from your online banking and upload it here.
         </p>

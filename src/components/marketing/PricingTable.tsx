@@ -39,8 +39,8 @@ export function PricingTable({ signedIn }: { signedIn: boolean }) {
                 <span
                   className={`ml-2 rounded-full px-2 py-0.5 text-[11px] ${
                     interval === "year"
-                      ? "bg-white/20 text-white"
-                      : "bg-brand-500/10 text-brand-700 dark:text-brand-300"
+                      ? "bg-wine-deep/35 text-wine-deep"
+                      : "bg-brand-500/15 text-brand-600"
                   }`}
                 >
                   Save
@@ -71,7 +71,7 @@ export function PricingTable({ signedIn }: { signedIn: boolean }) {
                 </span>
               )}
 
-              <h3 className="text-xl font-black">{plan.name}</h3>
+              <h3 className="gm-display text-2xl font-semibold">{plan.name}</h3>
               <p className="gm-muted mt-1 text-sm">{plan.tagline}</p>
 
               <div className="mt-5">

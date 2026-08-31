@@ -27,14 +27,14 @@ export default async function ResetPasswordPage({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-12">
-      <Link href="/" className="mb-8 self-center" aria-label={`${BUSINESS.appName} home`}>
-        <Logo />
+      <Link href="/" className="mb-9 self-center" aria-label={`${BUSINESS.appName} home`}>
+        <Logo size="md" />
       </Link>
 
       <div className="gm-card">
         {valid ? (
           <>
-            <h1 className="text-2xl font-black tracking-tight">Choose a new password</h1>
+            <h1 className="gm-display text-3xl font-semibold">Choose a new password</h1>
             <p className="gm-muted mt-1.5 text-sm">
               Signing in again everywhere else will be required after this.
             </p>
@@ -42,7 +42,7 @@ export default async function ResetPasswordPage({
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-black tracking-tight">This link has expired</h1>
+            <h1 className="gm-display text-3xl font-semibold">This link has expired</h1>
             <p className="gm-muted mt-2 text-sm leading-relaxed">
               Password reset links last 1 hour and can only be used once. Request
               a new one and we will email it straight away.

@@ -16,7 +16,7 @@ export default function ErrorPage({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-4 text-center">
-      <h1 className="text-2xl font-black tracking-tight">Something went wrong</h1>
+      <h1 className="gm-display text-3xl font-semibold">Something went wrong</h1>
       <p className="gm-muted mt-3 text-sm">
         We hit an unexpected error. Your data is safe — try again, and let us
         know if it keeps happening.

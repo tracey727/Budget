@@ -49,7 +49,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-black tracking-tight">
+          <h1 className="gm-display text-3xl font-semibold">
             Good day, {user.fullName.split(" ")[0]}
           </h1>
           <p className="gm-muted mt-1 text-sm">{monthLabel(month)} at a glance</p>
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
                         </span>
                       </div>
                       <div
-                        className="h-2 overflow-hidden rounded-full bg-ink-200 dark:bg-ink-800"
+                        className="gm-track h-2"
                         role="progressbar"
                         aria-valuenow={budget.percent}
                         aria-valuemin={0}
@@ -128,7 +128,7 @@ export default async function DashboardPage() {
                         aria-label={`${budget.categoryName} budget used`}
                       >
                         <div
-                          className={`h-full rounded-full ${over ? "bg-red-500" : "bg-brand-500"}`}
+                          className={`${over ? "gm-fill-over" : "gm-fill-gold"}`}
                           style={{ width: `${Math.min(100, budget.percent)}%` }}
                         />
                       </div>
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
                     <span className="font-medium">{row.name}</span>
                     <span className="gm-muted">{formatMoney(row.spentCents)}</span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-ink-200 dark:bg-ink-800">
+                  <div className="gm-track h-2">
                     <div
                       className="h-full rounded-full"
                       style={{
@@ -244,14 +244,14 @@ export default async function DashboardPage() {
                       </span>
                     </div>
                     <div
-                      className="h-2 overflow-hidden rounded-full bg-ink-200 dark:bg-ink-800"
+                      className="gm-track h-2"
                       role="progressbar"
                       aria-valuenow={percent}
                       aria-valuemin={0}
                       aria-valuemax={100}
                       aria-label={`${goal.name} progress`}
                     >
-                      <div className="h-full rounded-full bg-brand-500" style={{ width: `${percent}%` }} />
+                      <div className="gm-fill-gold" style={{ width: `${percent}%` }} />
                     </div>
                   </li>
                 );

@@ -18,7 +18,7 @@ export default async function GoalsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-black tracking-tight">Goals</h1>
+      <h1 className="gm-display text-3xl font-semibold">Goals</h1>
 
       {atLimit && (
         <UpgradeNotice
@@ -69,14 +69,14 @@ export default async function GoalsPage() {
                   </div>
 
                   <div
-                    className="h-2.5 overflow-hidden rounded-full bg-ink-200 dark:bg-ink-800"
+                    className="gm-track h-2.5"
                     role="progressbar"
                     aria-valuenow={percent}
                     aria-valuemin={0}
                     aria-valuemax={100}
                     aria-label={`${goal.name} progress`}
                   >
-                    <div className="h-full rounded-full bg-brand-500" style={{ width: `${percent}%` }} />
+                    <div className="gm-fill-gold" style={{ width: `${percent}%` }} />
                   </div>
 
                   <div className="mt-2 flex flex-wrap justify-between gap-2 text-sm">

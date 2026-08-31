@@ -26,12 +26,12 @@ export default async function SignupPage({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-12">
-      <Link href="/" className="mb-8 self-center" aria-label="Genevieve App home">
-        <Logo />
+      <Link href="/" className="mb-9 self-center" aria-label="Genevieve App home">
+        <Logo size="md" />
       </Link>
 
       <div className="gm-card">
-        <h1 className="text-2xl font-black tracking-tight">Start free</h1>
+        <h1 className="gm-display text-3xl font-semibold">Start free</h1>
         <p className="gm-muted mt-1.5 text-sm">
           No credit card required. Takes about a minute.
         </p>

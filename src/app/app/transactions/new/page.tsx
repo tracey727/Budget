@@ -18,7 +18,7 @@ export default async function NewTransactionPage() {
         <Link href="/app/transactions" className="gm-muted text-sm hover:text-brand-600">
           ← Back to transactions
         </Link>
-        <h1 className="mt-2 text-2xl font-black tracking-tight">Add a transaction</h1>
+        <h1 className="gm-display mt-2 text-3xl font-semibold">Add a transaction</h1>
       </div>
 
       {accounts.length === 0 ? (

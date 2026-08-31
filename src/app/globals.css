@@ -2,22 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Genevieve App — dark burgundy and gold.
+ *
+ * This is a deliberately single-theme design. The burgundy ground is the
+ * brand, so the palette does not follow the device's light/dark setting;
+ * every colour is painted explicitly instead.
+ */
+
 :root {
-  --gm-bg: #f7f9fb;
-  --gm-surface: #ffffff;
-  --gm-border: #e3e9f0;
-  --gm-text: #1c2230;
-  --gm-muted: #576e90;
+  color-scheme: dark;
+
+  --wine-deep: #1e0509;
+  --wine: #2b0811;
+  --wine-raised: #3a0c17;
+  --wine-high: #4a121f;
+
+  --gold: #d4af37;
+  --gold-bright: #f0d57e;
+  --gold-deep: #a8842a;
+  --gold-line: rgba(212, 175, 55, 0.3);
+  --gold-line-soft: rgba(212, 175, 55, 0.16);
+
+  --cream: #f6efe3;
+  --cream-dim: #cdbfa8;
+  --cream-faint: rgba(246, 239, 227, 0.55);
+
+  --good: #86c47a;
+  --bad: #e88097;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --gm-bg: #12161f;
-    --gm-surface: #1a202c;
-    --gm-border: #2b3546;
-    --gm-text: #eef2f7;
-    --gm-muted: #a7b6ca;
-  }
+* {
+  box-sizing: border-box;
 }
 
 html {
@@ -25,77 +41,256 @@ html {
 }
 
 body {
-  background: var(--gm-bg);
-  color: var(--gm-text);
   min-height: 100dvh;
+  color: var(--cream);
+  font-family: var(--font-body), system-ui, sans-serif;
+  background-color: var(--wine-deep);
+  /* Warmth pooling behind the content, so the ground is not flat black-red. */
+  background-image:
+    radial-gradient(1100px 620px at 50% -12%, rgba(122, 26, 48, 0.5), transparent 70%),
+    radial-gradient(760px 480px at 88% 8%, rgba(90, 20, 38, 0.34), transparent 72%),
+    radial-gradient(680px 520px at 8% 32%, rgba(70, 14, 30, 0.32), transparent 70%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(212, 175, 55, 0.28);
+  color: var(--cream);
 }
 
 @layer components {
+  /* ---------------------------------------------------------------- cards */
+
   .gm-card {
-    @apply rounded-xl border p-5;
-    background: var(--gm-surface);
-    border-color: var(--gm-border);
+    @apply relative rounded-xl p-5;
+    background:
+      linear-gradient(180deg, rgba(90, 28, 43, 0.55), rgba(43, 8, 17, 0.72));
+    border: 1px solid var(--gold-line);
+    box-shadow:
+      inset 0 1px 0 rgba(246, 239, 227, 0.05),
+      0 18px 40px -28px rgba(0, 0, 0, 0.95);
   }
 
+  /* The inner hairline that gives the framed, gilt-edged look. */
+  .gm-card::after {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 1px solid var(--gold-line-soft);
+    border-radius: 0.55rem;
+    pointer-events: none;
+  }
+
+  .gm-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .gm-card-plain::after {
+    display: none;
+  }
+
+  /* --------------------------------------------------------------- inputs */
+
   .gm-input {
-    @apply w-full rounded-lg border px-3 py-2 text-sm outline-none transition;
-    background: var(--gm-surface);
-    border-color: var(--gm-border);
-    color: var(--gm-text);
+    @apply w-full rounded-lg px-3.5 py-2.5 text-sm outline-none transition;
+    background: rgba(20, 3, 6, 0.6);
+    border: 1px solid var(--gold-line);
+    color: var(--cream);
+    font-family: var(--font-body), system-ui, sans-serif;
+  }
+
+  .gm-input::placeholder {
+    color: rgba(205, 191, 168, 0.45);
   }
 
   .gm-input:focus {
-    @apply ring-2 ring-brand-500/40;
-    border-color: theme("colors.brand.500");
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16);
+  }
+
+  .gm-input option {
+    background: var(--wine-raised);
+    color: var(--cream);
   }
 
   .gm-label {
-    @apply mb-1.5 block text-sm font-medium;
-    color: var(--gm-text);
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-[0.14em];
+    color: var(--gold);
+    font-family: var(--font-body), system-ui, sans-serif;
   }
 
+  /* -------------------------------------------------------------- buttons */
+
   .gm-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5
            text-sm font-semibold transition focus:outline-none
-           focus-visible:ring-2 focus-visible:ring-brand-500/50
-           disabled:cursor-not-allowed disabled:opacity-60;
+           focus-visible:ring-2 focus-visible:ring-brand-500/60
+           disabled:cursor-not-allowed disabled:opacity-55;
+    letter-spacing: 0.02em;
   }
 
   .gm-btn-primary {
-    @apply gm-btn bg-brand-600 text-white hover:bg-brand-700;
+    @apply gm-btn;
+    background: linear-gradient(180deg, #e8c766, #c39a28);
+    color: #2b0811;
+    border: 1px solid rgba(240, 213, 126, 0.85);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 250, 230, 0.5),
+      0 10px 26px -14px rgba(212, 175, 55, 0.75);
+    font-weight: 700;
+  }
+
+  .gm-btn-primary:hover:not(:disabled) {
+    background: linear-gradient(180deg, #f2d685, #d4af37);
   }
 
   .gm-btn-secondary {
-    @apply gm-btn border;
-    background: var(--gm-surface);
-    border-color: var(--gm-border);
-    color: var(--gm-text);
+    @apply gm-btn;
+    background: rgba(90, 28, 43, 0.4);
+    border: 1px solid var(--gold-line);
+    color: var(--cream);
   }
 
-  .gm-btn-secondary:hover {
-    border-color: theme("colors.brand.400");
+  .gm-btn-secondary:hover:not(:disabled) {
+    border-color: var(--gold);
+    background: rgba(90, 28, 43, 0.62);
   }
+
+  /* ---------------------------------------------------------------- text */
 
   .gm-muted {
-    color: var(--gm-muted);
+    color: var(--cream-dim);
   }
+
+  .gm-script {
+    font-family: var(--font-script), cursive;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  .gm-display {
+    font-family: var(--font-display), Georgia, serif;
+  }
+
+  /* A hairline gold rule with a diamond at its centre. */
+  .gm-rule {
+    @apply relative flex items-center justify-center;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
+  }
+
+  .gm-rule::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    opacity: 0.85;
+  }
+
+  /* -------------------------------------------------------------- alerts */
+
+  .gm-alert {
+    @apply rounded-lg px-4 py-3 text-sm;
+    border: 1px solid;
+  }
+
+  .gm-alert-error {
+    @apply gm-alert;
+    background: rgba(120, 24, 44, 0.42);
+    border-color: rgba(232, 128, 151, 0.45);
+    color: #f7ccd4;
+  }
+
+  .gm-alert-warn {
+    @apply gm-alert;
+    background: rgba(96, 62, 16, 0.4);
+    border-color: rgba(224, 176, 82, 0.42);
+    color: #f2ddb0;
+  }
+
+  .gm-alert-ok {
+    @apply gm-alert;
+    background: rgba(52, 74, 44, 0.4);
+    border-color: rgba(134, 196, 122, 0.42);
+    color: #d5ecce;
+  }
+
+  .gm-alert-gold {
+    @apply gm-alert;
+    background: rgba(90, 28, 43, 0.5);
+    border-color: var(--gold-line);
+    color: var(--cream);
+  }
+
+  /* A small pill used for plan badges, tags and counts. */
+  .gm-pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em];
+    background: rgba(212, 175, 55, 0.14);
+    border: 1px solid var(--gold-line);
+    color: var(--gold-bright);
+  }
+
+  /* The track behind every progress bar. */
+  .gm-track {
+    @apply overflow-hidden rounded-full;
+    background: rgba(20, 3, 6, 0.75);
+    box-shadow: inset 0 0 0 1px var(--gold-line-soft);
+  }
+
+  .gm-fill-gold {
+    @apply h-full rounded-full;
+    background: linear-gradient(90deg, #a8842a, #f0d57e);
+  }
+
+  .gm-fill-over {
+    @apply h-full rounded-full;
+    background: linear-gradient(90deg, #8f2036, #e88097);
+  }
+
+  /* --------------------------------------------------------------- table */
 
   .gm-table {
     @apply w-full border-collapse text-sm;
   }
 
   .gm-table th {
-    @apply px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide;
-    color: var(--gm-muted);
+    @apply px-3 py-2.5 text-left text-[11px] font-bold uppercase tracking-[0.13em];
+    color: var(--gold);
+    border-bottom: 1px solid var(--gold-line);
   }
 
   .gm-table td {
-    @apply border-t px-3 py-2.5;
-    border-color: var(--gm-border);
+    @apply px-3 py-3;
+    border-top: 1px solid var(--gold-line-soft);
+    color: var(--cream);
+  }
+
+  .gm-table tbody tr:hover td {
+    background: rgba(90, 28, 43, 0.28);
   }
 }
 
-/* Wide content scrolls inside its own container rather than the page body. */
+/* Wide content scrolls inside its own container, never the page body. */
 .gm-scroll-x {
   @apply overflow-x-auto;
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -31,8 +31,8 @@ export default async function VerifyEmailPage({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-12">
-      <Link href="/" className="mb-8 self-center" aria-label={`${BUSINESS.appName} home`}>
-        <Logo />
+      <Link href="/" className="mb-9 self-center" aria-label={`${BUSINESS.appName} home`}>
+        <Logo size="md" />
       </Link>
 
       <div className="gm-card text-center">
@@ -44,7 +44,7 @@ export default async function VerifyEmailPage({
             >
               ✓
             </span>
-            <h1 className="text-2xl font-black tracking-tight">
+            <h1 className="gm-display text-3xl font-semibold">
               {outcome.status === "already-verified"
                 ? "Already confirmed"
                 : "Email confirmed"}
@@ -60,7 +60,7 @@ export default async function VerifyEmailPage({
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-black tracking-tight">
+            <h1 className="gm-display text-3xl font-semibold">
               This link is no longer valid
             </h1>
             <p className="gm-muted mt-2 text-sm leading-relaxed">

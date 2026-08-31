@@ -1,14 +1,15 @@
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
+import { Logo, TrademarkNote } from "@/components/Logo";
 import { BUSINESS, legalEntityLine, taxNote } from "@/lib/business";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-[var(--gm-border)] py-10">
+    <footer className="py-12"
+      style={{ borderTop: "1px solid var(--gold-line)" }}>
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex flex-col gap-8 md:flex-row md:justify-between">
           <div className="max-w-sm">
-            <Logo />
+            <Logo size="sm" />
             <p className="gm-muted mt-3 text-sm">
               Take control of every dollar. Built in Australia, priced in
               Australian dollars, for Australian households and sole traders.
@@ -43,7 +44,11 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="gm-muted mt-8 border-t border-[var(--gm-border)] pt-6 text-xs leading-relaxed">
+        <div className="gm-muted mt-9 pt-7 text-xs leading-relaxed"
+          style={{ borderTop: "1px solid var(--gold-line-soft)" }}>
+          <div className="mb-3">
+            <TrademarkNote />
+          </div>
           <p>
             © {new Date().getFullYear()} {legalEntityLine()}.{" "}
             {BUSINESS.postalAddress}

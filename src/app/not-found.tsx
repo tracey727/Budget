@@ -4,10 +4,10 @@ import { Logo } from "@/components/Logo";
 export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-4 text-center">
-      <Link href="/" className="mb-8" aria-label="Genevieve App home">
-        <Logo />
+      <Link href="/" className="mb-9" aria-label="Genevieve App home">
+        <Logo size="md" />
       </Link>
-      <h1 className="text-5xl font-black tracking-tight">404</h1>
+      <h1 className="gm-display text-6xl font-semibold">404</h1>
       <p className="gm-muted mt-3">
         We could not find that page. It may have moved, or the link may be out of
         date.

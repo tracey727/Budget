@@ -18,13 +18,13 @@ export function ImportForm({
   return (
     <form action={formAction} className="space-y-4">
       {state && "error" in state && (
-        <p role="alert" className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+        <p role="alert" className="gm-alert-error">
           {state.error}
         </p>
       )}
 
       {state && "ok" in state && (
-        <div className="rounded-lg border border-brand-500/40 bg-brand-500/10 px-3 py-3 text-sm">
+        <div className="gm-alert-ok">
           <p className="font-semibold text-brand-700 dark:text-brand-300">
             Imported {state.imported} transaction{state.imported === 1 ? "" : "s"}.
           </p>

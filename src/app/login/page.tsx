@@ -24,16 +24,16 @@ export default async function LoginPage({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-12">
-      <Link href="/" className="mb-8 self-center" aria-label="Genevieve App home">
-        <Logo />
+      <Link href="/" className="mb-9 self-center" aria-label="Genevieve App home">
+        <Logo size="md" />
       </Link>
 
       <div className="gm-card">
-        <h1 className="text-2xl font-black tracking-tight">Welcome back</h1>
+        <h1 className="gm-display text-3xl font-semibold">Welcome back</h1>
         <p className="gm-muted mt-1.5 text-sm">Log in to keep tracking every dollar.</p>
 
         {reset && (
-          <p className="mt-4 rounded-lg border border-brand-500/40 bg-brand-500/10 px-3 py-2 text-sm font-medium text-brand-700 dark:text-brand-300">
+          <p className="mt-4 gm-alert-ok text-sm font-medium">
             Your password has been changed. Log in with your new password.
           </p>
         )}

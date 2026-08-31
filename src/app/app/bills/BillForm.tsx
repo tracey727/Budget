@@ -23,12 +23,12 @@ export function BillForm({
   return (
     <form action={formAction} className="space-y-3.5">
       {state?.error && (
-        <p role="alert" className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+        <p role="alert" className="gm-alert-error">
           {state.error}
         </p>
       )}
       {state?.ok && (
-        <p className="rounded-lg border border-brand-500/40 bg-brand-500/10 px-3 py-2 text-sm font-medium text-brand-700 dark:text-brand-300">
+        <p className="gm-alert-ok text-sm font-medium">
           Bill added.
         </p>
       )}

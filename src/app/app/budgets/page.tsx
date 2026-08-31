@@ -34,7 +34,7 @@ export default async function BudgetsPage({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-black tracking-tight">Budgets</h1>
+        <h1 className="gm-display text-3xl font-semibold">Budgets</h1>
         <div className="flex items-center gap-2">
           <Link href={`/app/budgets?month=${prev}`} className="gm-btn-secondary py-1.5 text-xs">
             ← {monthLabel(prev)}
@@ -63,9 +63,9 @@ export default async function BudgetsPage({
                     {formatMoney(totalSpent)} of {formatMoney(totalLimit)}
                   </span>
                 </div>
-                <div className="h-2.5 overflow-hidden rounded-full bg-ink-200 dark:bg-ink-800">
+                <div className="gm-track h-2.5">
                   <div
-                    className={`h-full rounded-full ${totalSpent > totalLimit ? "bg-red-500" : "bg-brand-500"}`}
+                    className={`${totalSpent > totalLimit ? "gm-fill-over" : "gm-fill-gold"}`}
                     style={{
                       width: `${totalLimit > 0 ? Math.min(100, (totalSpent / totalLimit) * 100) : 0}%`,
                     }}
@@ -104,7 +104,7 @@ export default async function BudgetsPage({
                     </div>
 
                     <div
-                      className="h-2.5 overflow-hidden rounded-full bg-ink-200 dark:bg-ink-800"
+                      className="gm-track h-2.5"
                       role="progressbar"
                       aria-valuenow={budget.percent}
                       aria-valuemin={0}
@@ -112,7 +112,7 @@ export default async function BudgetsPage({
                       aria-label={`${budget.categoryName} budget used`}
                     >
                       <div
-                        className={`h-full rounded-full ${over ? "bg-red-500" : "bg-brand-500"}`}
+                        className={`${over ? "gm-fill-over" : "gm-fill-gold"}`}
                         style={{ width: `${Math.min(100, budget.percent)}%` }}
                       />
                     </div>

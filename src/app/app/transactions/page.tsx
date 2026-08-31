@@ -56,7 +56,7 @@ export default async function TransactionsPage({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-black tracking-tight">Transactions</h1>
+        <h1 className="gm-display text-3xl font-semibold">Transactions</h1>
         <div className="flex gap-2">
           {user.limits.csvImport && (
             <Link href="/app/transactions/import" className="gm-btn-secondary">
@@ -70,7 +70,7 @@ export default async function TransactionsPage({
       </div>
 
       {params.added && (
-        <p className="rounded-lg border border-brand-500/40 bg-brand-500/10 px-3 py-2 text-sm font-medium text-brand-700 dark:text-brand-300">
+        <p className="gm-alert-ok text-sm font-medium">
           Transaction saved.
         </p>
       )}
@@ -139,7 +139,7 @@ export default async function TransactionsPage({
                       <td>
                         <span className="font-medium">{row.transaction.description}</span>
                         {row.transaction.isBusiness && (
-                          <span className="ml-2 rounded bg-ink-200 px-1.5 py-0.5 text-[10px] font-bold uppercase dark:bg-ink-800">
+                          <span className="gm-pill ml-2">
                             Business
                           </span>
                         )}

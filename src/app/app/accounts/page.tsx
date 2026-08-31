@@ -22,7 +22,7 @@ export default async function AccountsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-2xl font-black tracking-tight">Accounts</h1>
+        <h1 className="gm-display text-3xl font-semibold">Accounts</h1>
         <p className="gm-muted text-sm">
           Net position: <span className="font-bold text-[var(--gm-text)]">{formatMoney(total)}</span>
         </p>

@@ -65,7 +65,7 @@ export default async function PricingPage() {
       <main className="flex-1">
         <section className="mx-auto max-w-6xl px-4 py-16">
           <div className="mx-auto mb-12 max-w-2xl text-center">
-            <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
+            <h1 className="gm-display text-4xl font-semibold sm:text-5xl">
               Simple pricing, in Australian dollars
             </h1>
             <p className="gm-muted mt-4 text-lg">
@@ -99,7 +99,7 @@ export default async function PricingPage() {
 
           {/* Full comparison */}
           <div className="mt-20">
-            <h2 className="mb-6 text-center text-2xl font-black tracking-tight">
+            <h2 className="gm-display mb-6 text-center text-3xl font-semibold">
               Compare every plan
             </h2>
             <div className="gm-card gm-scroll-x p-0">
@@ -146,7 +146,7 @@ export default async function PricingPage() {
 
           {/* FAQ */}
           <div className="mx-auto mt-20 max-w-3xl">
-            <h2 className="mb-6 text-center text-2xl font-black tracking-tight">
+            <h2 className="gm-display mb-6 text-center text-3xl font-semibold">
               Questions, answered
             </h2>
             <div className="space-y-3">

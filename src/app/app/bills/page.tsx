@@ -15,7 +15,7 @@ export default async function BillsPage() {
   if (!user.limits.reports) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-black tracking-tight">Bills</h1>
+        <h1 className="gm-display text-3xl font-semibold">Bills</h1>
         <PaywallCard
           title="Recurring bills are part of Personal Premium"
           body="Track weekly, fortnightly, monthly, quarterly and annual bills, and see everything due in the next fortnight before it lands."
@@ -50,7 +50,7 @@ export default async function BillsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-2xl font-black tracking-tight">Bills</h1>
+        <h1 className="gm-display text-3xl font-semibold">Bills</h1>
         <p className="gm-muted text-sm">
           About{" "}
           <span className="font-bold text-[var(--gm-text)]">
@@ -100,7 +100,7 @@ export default async function BillsPage() {
                   </div>
 
                   <div className="flex shrink-0 items-center gap-3">
-                    <span className="font-black">{formatMoney(toCents(row.bill.amount))}</span>
+                    <span className="gm-display text-lg font-semibold">{formatMoney(toCents(row.bill.amount))}</span>
                     <form action={markBillPaidAction}>
                       <input type="hidden" name="id" value={row.bill.id} />
                       <button type="submit" className="gm-btn-secondary py-1.5 text-xs">

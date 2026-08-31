@@ -14,7 +14,7 @@ export function ForgotPasswordForm() {
   if (state?.sent) {
     return (
       <div className="mt-6">
-        <p className="rounded-lg border border-brand-500/40 bg-brand-500/10 px-3 py-3 text-sm">
+        <p className="gm-alert-ok">
           <span className="font-semibold text-brand-700 dark:text-brand-300">
             Check your inbox.
           </span>{" "}
@@ -37,7 +37,7 @@ export function ForgotPasswordForm() {
       {state?.error && (
         <p
           role="alert"
-          className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300"
+          className="gm-alert-error"
         >
           {state.error}
         </p>

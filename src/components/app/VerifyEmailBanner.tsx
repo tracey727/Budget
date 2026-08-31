@@ -23,12 +23,12 @@ export function VerifyEmailBanner({ email }: { email: string }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-950">
+    <div className="gm-alert-warn flex flex-wrap items-center justify-between gap-3">
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+        <p className="text-sm font-semibold">
           Confirm your email address
         </p>
-        <p className="mt-0.5 text-xs text-amber-800 dark:text-amber-300">
+        <p className="mt-0.5 text-xs opacity-85">
           {state?.error
             ? state.error
             : `We sent a link to ${email}. Confirming it lets us reach you about your account, and is required before subscribing to a paid plan.`}
@@ -36,7 +36,7 @@ export function VerifyEmailBanner({ email }: { email: string }) {
       </div>
       <form action={formAction} className="shrink-0">
         <SubmitButton
-          className="gm-btn border border-amber-400 bg-white py-1.5 text-xs text-amber-900 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-900 dark:text-amber-100"
+          className="gm-btn-secondary py-1.5 text-xs"
           pendingLabel="Sending…"
         >
           Resend link

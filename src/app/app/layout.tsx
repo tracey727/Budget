@@ -27,11 +27,7 @@ export default async function AppLayout({
           <div className="flex items-center gap-3">
             <Link
               href="/app/billing"
-              className={`rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-wide ${
-                user.activePlan === "starter"
-                  ? "bg-ink-200 text-ink-700 dark:bg-ink-800 dark:text-ink-200"
-                  : "bg-brand-500/15 text-brand-700 dark:text-brand-300"
-              }`}
+              className="gm-pill"
             >
               {plan.name}
             </Link>

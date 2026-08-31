@@ -12,9 +12,9 @@ export function PricingTable({ signedIn }: { signedIn: boolean }) {
       {/* Monthly / Annual toggle */}
       <div className="mb-10 flex justify-center">
         <div
-          role="radiogroup"
+          className="gm-toggle-bar"
+          role="tablist"
           aria-label="Billing period"
-          className="inline-flex rounded-full border border-[var(--gm-border)] bg-[var(--gm-surface)] p-1"
         >
           {(
             [
@@ -25,26 +25,14 @@ export function PricingTable({ signedIn }: { signedIn: boolean }) {
             <button
               key={option.key}
               type="button"
-              role="radio"
-              aria-checked={interval === option.key}
+              role="tab"
+              aria-selected={interval === option.key}
               onClick={() => setInterval(option.key)}
-              className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
-                interval === option.key
-                  ? "bg-brand-600 text-white"
-                  : "gm-muted hover:text-brand-600"
-              }`}
+              className="gm-toggle"
             >
               {option.label}
               {option.key === "year" && (
-                <span
-                  className={`ml-2 rounded-full px-2 py-0.5 text-[11px] ${
-                    interval === "year"
-                      ? "bg-wine-deep/35 text-wine-deep"
-                      : "bg-brand-500/15 text-brand-600"
-                  }`}
-                >
-                  Save
-                </span>
+                <span className="ml-2 opacity-70">· save</span>
               )}
             </button>
           ))}

@@ -94,13 +94,17 @@ export function SignupForm({ plan }: { plan?: string }) {
       <p className="gm-muted text-center text-xs leading-relaxed">
         By creating an account you agree to our{" "}
         <Link href="/terms" className="underline hover:text-brand-600">
-          Terms
+          Terms of Use
+        </Link>
+        ,{" "}
+        <Link href="/subscriptions" className="underline hover:text-brand-600">
+          Subscription &amp; Refund Policy
         </Link>{" "}
         and{" "}
         <Link href="/privacy" className="underline hover:text-brand-600">
           Privacy Policy
         </Link>
-        .
+        . The Starter plan is free — no payment details are required.
       </p>
     </form>
   );

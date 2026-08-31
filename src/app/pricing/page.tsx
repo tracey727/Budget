@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { PricingTable } from "@/components/marketing/PricingTable";
@@ -86,6 +87,11 @@ export default async function PricingPage() {
             <p className="gm-muted mt-1.5 text-sm">
               Choose <strong>Annual</strong> below to claim founding pricing. Renews at the
               standard annual rate ($99 or $199) after the first year. Cancel any time.
+            </p>
+            <p className="gm-muted mt-2 text-xs">
+              <Link href="/subscriptions" className="underline hover:text-brand-600">
+                Read how founding renewal works
+              </Link>
             </p>
           </div>
 

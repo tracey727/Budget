@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { BUSINESS, legalEntityLine } from "@/lib/business";
 
 export function SiteFooter() {
   return (
@@ -33,8 +34,10 @@ export function SiteFooter() {
             <div>
               <h3 className="mb-2 font-semibold">Legal</h3>
               <ul className="gm-muted space-y-1.5">
-                <li><Link href="/terms" className="hover:text-brand-600">Terms</Link></li>
+                <li><Link href="/terms" className="hover:text-brand-600">Terms of Use</Link></li>
+                <li><Link href="/subscriptions" className="hover:text-brand-600">Subscription &amp; Refunds</Link></li>
                 <li><Link href="/privacy" className="hover:text-brand-600">Privacy</Link></li>
+                <li><Link href="/legal" className="hover:text-brand-600">All legal</Link></li>
               </ul>
             </div>
           </div>
@@ -42,15 +45,24 @@ export function SiteFooter() {
 
         <div className="gm-muted mt-8 border-t border-[var(--gm-border)] pt-6 text-xs leading-relaxed">
           <p>
-            © {new Date().getFullYear()} Gen Money. All prices in AUD and
-            include GST where applicable.
+            © {new Date().getFullYear()} {legalEntityLine()}.{" "}
+            {BUSINESS.postalAddress}
+          </p>
+          <p className="mt-1.5">
+            All prices in AUD and include GST where applicable. Subscriptions
+            renew automatically until cancelled — see the{" "}
+            <Link href="/subscriptions" className="underline hover:text-brand-600">
+              Subscription &amp; Refund Policy
+            </Link>
+            .
           </p>
           <p className="mt-2">
-            Gen Money provides budgeting and record-keeping tools only. It is
-            not financial product advice and does not take your objectives,
-            financial situation or needs into account. Consider obtaining advice
-            from a licensed financial adviser or registered tax agent before
-            making financial decisions.
+            {BUSINESS.appName} provides budgeting and record-keeping tools only.
+            It is not financial product advice and does not take your
+            objectives, financial situation or needs into account. GST and
+            financial-year summaries are record-keeping aids, not a lodged BAS.
+            Consider obtaining advice from a licensed financial adviser or
+            registered tax agent before making financial decisions.
           </p>
         </div>
       </div>

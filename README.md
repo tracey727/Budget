@@ -243,13 +243,51 @@ Sized for thousands of concurrent Australian users:
 
 ---
 
+## Legal and business identity
+
+Business details live in one place — [`src/lib/business.ts`](src/lib/business.ts):
+
+```
+Tracey Ann Kennedy trading as GENEVIEVE App™
+ABN 36 530 564 761
+PO Box 475, Labrador QLD 4215, Australia
+tracey@genevieveapp.com.au
+Governing law: Queensland, Australia
+```
+
+Change it there and the Terms, Privacy Policy, Subscription & Refund Policy,
+Contact page, legal index and footer all follow.
+
+Four published documents, linked from the footer and before any payment:
+
+| Page | Covers |
+|---|---|
+| `/legal` | Index of everything below |
+| `/terms` | What the app is and is not, accounts, ACL rights, QLD governing law |
+| `/subscriptions` | Recurring price, auto-renewal, **founding step-up**, cancellation, refunds |
+| `/privacy` | Data collected, overseas processing, security, OAIC escalation |
+
+The founding promotion renews at the standard rate after year one. Because a
+first-year price that steps up attracts ACCC attention, that disclosure appears
+in five places: the pricing banner, the plan card next to the button, the in-app
+billing card, the Subscription & Refund Policy, and the Terms.
+
 ## Before you launch
 
-- [ ] Replace `support@genmoney.com.au` / `privacy@genmoney.com.au` in
-      `src/app/contact/page.tsx` with real mailboxes
-- [ ] Fill in your business name, ABN and governing state in
-      `src/app/terms/page.tsx` and `src/app/privacy/page.tsx`, and have both
-      reviewed against the Australian Consumer Law and Privacy Act
+The full pre-launch checklist is in
+[`docs/LEGAL_RELEASE_GATE.md`](docs/LEGAL_RELEASE_GATE.md). The items that
+genuinely block a paid launch:
+
+- [ ] **Add password reset / account recovery.** There is currently no way for a
+      subscriber who forgets their password to get back into a paid account.
+- [ ] **Confirm GST registration status.** The site says prices "include GST
+      where applicable", which is accurate either way — but if you are
+      registered, confirm displayed prices are GST-inclusive and Stripe tax
+      settings match.
+- [ ] **Get Australian legal review of the founding promotion** before public
+      paid launch.
+- [ ] Decide whether Gen Money trades under GENEVIEVE App™ or needs its own
+      registered business name
 - [ ] Re-run `npm run stripe:setup` with your **live** key
 - [ ] Point the Stripe webhook at your production domain
 - [ ] Set `NEXT_PUBLIC_APP_URL` to your live origin and redeploy
@@ -266,7 +304,10 @@ src/
     page.tsx                  Landing page
     pricing/                  Pricing table with monthly/annual toggle
     login/  signup/           Authentication
-    terms/  privacy/  contact/
+    legal/                    Legal index
+    terms/                    Terms of Use
+    subscriptions/            Subscription & Refund Policy
+    privacy/  contact/
     app/                      Authenticated application
       page.tsx                Dashboard
       transactions/           List, create, CSV import
@@ -279,6 +320,7 @@ src/
       health                  Deployment health check
   lib/
     plans.ts                  Pricing and entitlements (single source of truth)
+    business.ts               Business identity: ABN, address, contact, jurisdiction
     env.ts                    Lazy, Workers-safe environment access
     money.ts  dates.ts        AUD and Australian date/FY/GST helpers
     csv.ts                    Bank statement parser

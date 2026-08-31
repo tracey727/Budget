@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LegalPage } from "@/components/marketing/LegalPage";
 import { getSessionUser } from "@/lib/auth/session";
+import { BUSINESS, legalEntityLine } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
+  title: "Terms of Use",
   description: "The terms that apply when you use Gen Money.",
 };
 
@@ -13,122 +15,187 @@ export default async function TermsPage() {
   const user = await getSessionUser().catch(() => null);
 
   return (
-    <LegalPage title="Terms of Service" updated="31 August 2026" signedIn={Boolean(user)}>
+    <LegalPage
+      title="Terms of Use"
+      updated={BUSINESS.legalUpdated}
+      signedIn={Boolean(user)}
+    >
       <p>
-        These terms apply to your use of Gen Money. By creating an account you
-        agree to them. If you do not agree, please do not use the service.
+        These Terms apply to the {BUSINESS.appName} web application operated by{" "}
+        {legalEntityLine()}, {BUSINESS.postalAddress} (&ldquo;{BUSINESS.appName}
+        &rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo; or &ldquo;our&rdquo;).
       </p>
 
-      <h2>1. What Gen Money is</h2>
+      <h2>1. What the app does</h2>
       <p>
-        Gen Money is a budgeting and record-keeping tool. It helps you record
-        transactions, set budgets, track bills and monitor savings goals.
+        {BUSINESS.appName} provides budgeting, expense tracking, savings-goal and
+        record-keeping tools. Budgets, category summaries, cash-flow charts,
+        goal projections and GST or financial-year summaries are
+        decision-support information generated from the data you enter.
       </p>
       <p>
-        <strong>Gen Money is not financial product advice.</strong> Nothing in
-        the service takes your objectives, financial situation or needs into
-        account. It is not tax advice, credit assistance, or a recommendation to
-        acquire or dispose of any financial product. Consider seeking advice from
-        a licensed financial adviser or registered tax agent before acting on
-        anything you see here.
+        <strong>
+          {BUSINESS.appName} is not financial product advice, credit assistance
+          or tax advice.
+        </strong>{" "}
+        Nothing in the app takes your objectives, financial situation or needs
+        into account, and no output is a recommendation to acquire or dispose of
+        any financial product. GST and financial-year summaries are
+        record-keeping aids prepared from your own entries — they are not a
+        lodged Business Activity Statement and are not a substitute for a
+        registered tax agent. Your bank, lender, accountant and the Australian
+        Taxation Office remain the authoritative source for your actual
+        position.
       </p>
 
-      <h2>2. Your account</h2>
+      <h2>2. Your responsibilities</h2>
       <ul>
-        <li>You must be at least 18 years old to create an account.</li>
-        <li>You are responsible for keeping your password secure.</li>
-        <li>You are responsible for the accuracy of the data you enter.</li>
-        <li>One account per person. Do not share your login.</li>
-      </ul>
-
-      <h2>3. Plans and payment</h2>
-      <ul>
-        <li>The Starter plan is free and does not require payment details.</li>
+        <li>Use the app lawfully.</li>
         <li>
-          Paid plans are billed in advance in Australian dollars: Personal
-          Premium at $9.99 per month or $99 per year, and Professional at $19.99
-          per month or $199 per year.
+          Keep your password secure and do not share your account with anyone
+          else.
         </li>
         <li>
-          Founding member pricing ($69 for Personal Premium, $139 for
-          Professional) applies to the first year only. After that first year the
-          subscription renews at the standard annual rate unless you cancel.
+          Check the accuracy of what you enter or import. The app can only be as
+          correct as the data you give it.
         </li>
         <li>
-          Subscriptions renew automatically until cancelled. You can cancel at
-          any time; access continues to the end of the period you have paid for.
+          Verify anything important against your actual bank statements before
+          relying on it, particularly before lodging anything with the ATO.
         </li>
-        <li>Payments are processed by Stripe. We do not store your card details.</li>
-        <li>Prices include GST where applicable. We may change prices with at least 30 days&rsquo; notice.</li>
       </ul>
 
-      <h2>4. Refunds and your consumer rights</h2>
+      <h2>3. Your account</h2>
       <p>
-        Nothing in these terms excludes, restricts or modifies any guarantee,
-        right or remedy you have under the Australian Consumer Law that cannot
-        be excluded. If the service is faulty or not as described, you may be
-        entitled to a repair, replacement or refund.
-      </p>
-      <p>
-        Outside of those rights, subscription fees already paid are generally
-        non-refundable, though we will consider reasonable requests — contact us.
+        You must be at least 18 years old to create an account. One account per
+        person. You are responsible for activity that occurs under your login.
+        Tell us promptly if you believe your account has been accessed without
+        your authority.
       </p>
 
-      <h2>5. Acceptable use</h2>
-      <p>You agree not to:</p>
-      <ul>
-        <li>Attempt to gain unauthorised access to the service or other users&apos; data.</li>
-        <li>Use the service to break any law.</li>
-        <li>Resell, scrape or redistribute the service without our written consent.</li>
-        <li>Interfere with the service&apos;s normal operation or place unreasonable load on it.</li>
-      </ul>
-
-      <h2>6. Availability</h2>
+      <h2>4. Third-party services</h2>
       <p>
-        We aim to keep Gen Money available at all times, but we do not guarantee
-        uninterrupted access. We may suspend the service for maintenance,
-        security or technical reasons.
+        The app relies on third-party services including Stripe for payments,
+        Cloudflare for application hosting and Neon for database hosting. Those
+        services operate under their own terms and privacy practices. Their
+        availability is not something we control.
       </p>
 
-      <h2>7. Your data</h2>
+      <h2>5. Subscriptions and payments</h2>
       <p>
-        You own the data you put into Gen Money. You can export it to CSV at any
-        time on a paid plan, and you can delete your account. Our handling of
-        personal information is described in our Privacy Policy.
+        The Starter plan is free and does not require payment details. Paid
+        plans are billed in advance in Australian dollars. Before you pay, the
+        recurring price, the billing period and the fact that the subscription
+        renews automatically until cancelled are displayed to you.
+      </p>
+      <p>
+        Founding member pricing is a launch promotion that applies to the first
+        year only. After the first year the subscription renews at the standard
+        annual rate unless you cancel. This is set out in full in our{" "}
+        <Link href="/subscriptions" className="font-semibold text-brand-600 hover:underline">
+          Subscription &amp; Refund Policy
+        </Link>
+        , which forms part of these Terms.
+      </p>
+      <p>Stripe processes subscription payments. We do not store your card number.</p>
+
+      <h2>6. Australian Consumer Law</h2>
+      <p>
+        Nothing in these Terms excludes, restricts or modifies any consumer
+        guarantee, right or remedy that cannot lawfully be excluded under the
+        Australian Consumer Law or other applicable law. If the service fails to
+        meet a non-excludable consumer guarantee, you may have rights to a
+        remedy including cancellation, refund or compensation depending on the
+        circumstances.
       </p>
 
-      <h2>8. Limitation of liability</h2>
+      <h2>7. Availability and changes</h2>
       <p>
-        To the extent permitted by law, and subject to your rights under the
-        Australian Consumer Law, our total liability arising out of your use of
-        Gen Money is limited to the amount you paid us in the 12 months before
-        the claim. We are not liable for indirect or consequential loss,
-        including lost profits or lost data, arising from decisions you make
-        using the service.
+        We may maintain, improve or change the app. We will not use these Terms
+        to remove non-excludable consumer rights. A material adverse change to a
+        paid subscription will be applied prospectively and, where appropriate,
+        with reasonable notice and an opportunity to cancel before the change
+        takes effect.
+      </p>
+      <p>
+        We aim to keep {BUSINESS.appName} available at all times but do not
+        guarantee uninterrupted access. We may suspend the service for
+        maintenance, security or technical reasons.
       </p>
 
-      <h2>9. Ending your account</h2>
+      <h2>8. Acceptable use</h2>
+      <p>
+        You must not interfere with the app, probe or bypass security controls,
+        use another person&rsquo;s account without authority, automate abusive
+        requests, submit unlawful material, or attempt to obtain data that is
+        not yours. We may restrict access where reasonably necessary to protect
+        users, the service or legal rights.
+      </p>
+
+      <h2>9. Intellectual property</h2>
+      <p>
+        {BUSINESS.appName} names, branding, app design, original software and
+        original content are owned by or licensed to the operator. These Terms
+        give you a personal, revocable right to use the service; they do not
+        transfer ownership of intellectual property.
+      </p>
+      <p>
+        You own the financial records you enter. You grant us only the licence
+        needed to store, process and display that data back to you in order to
+        operate the service.
+      </p>
+
+      <h2>10. Your data</h2>
+      <p>
+        You can export your records to CSV on a paid plan, and you can delete
+        your account at any time. If you cancel a paid subscription your account
+        reverts to the free Starter plan — your records are not deleted. Our
+        handling of personal information is described in the{" "}
+        <Link href="/privacy" className="font-semibold text-brand-600 hover:underline">
+          Privacy Policy
+        </Link>
+        .
+      </p>
+
+      <h2>11. Liability</h2>
+      <p>
+        To the maximum extent permitted by law, {BUSINESS.appName} is not
+        responsible for loss caused solely by inaccurate data you or a third
+        party entered or imported, a financial or tax decision you made using
+        the app&rsquo;s summaries without independent verification, device or
+        network failure, or circumstances outside our reasonable control. This
+        clause does not exclude liability or remedies that cannot lawfully be
+        excluded.
+      </p>
+      <p>
+        Where liability can lawfully be limited, our total liability arising out
+        of your use of {BUSINESS.appName} is limited to the amount you paid us in
+        the 12 months before the claim.
+      </p>
+
+      <h2>12. Ending your account</h2>
       <p>
         You can close your account at any time. We may suspend or close an
-        account that breaches these terms, and will tell you why where we can.
+        account that breaches these Terms, and will tell you why where we
+        reasonably can.
       </p>
 
-      <h2>10. Changes</h2>
+      <h2>13. Governing law</h2>
       <p>
-        We may update these terms. If a change is material we will give notice in
-        the app or by email before it takes effect.
+        These Terms are governed by the laws applying in {BUSINESS.jurisdiction},
+        subject to any mandatory rights or jurisdiction that applies to you.
       </p>
 
-      <h2>11. Governing law</h2>
+      <h2>14. Contact</h2>
       <p>
-        These terms are governed by the laws of Australia and the state in which
-        Gen Money is operated, and you submit to the non-exclusive jurisdiction
-        of the courts of that state.
-      </p>
-
-      <h2>12. Contact</h2>
-      <p>
-        Questions about these terms can be sent through the contact page.
+        Email{" "}
+        <a
+          href={`mailto:${BUSINESS.supportEmail}`}
+          className="font-semibold text-brand-600 hover:underline"
+        >
+          {BUSINESS.supportEmail}
+        </a>{" "}
+        or write to {BUSINESS.postalAddress}.
       </p>
     </LegalPage>
   );

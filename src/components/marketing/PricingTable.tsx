@@ -95,6 +95,13 @@ export function PricingTable({ signedIn }: { signedIn: boolean }) {
                     Founding offer: {plan.founding.label}
                   </p>
                   <p className="gm-muted mt-0.5 text-xs">{plan.founding.note}</p>
+                  <p className="gm-muted mt-1.5 text-xs">
+                    Renews automatically at {price?.label}/year after the first
+                    year unless cancelled.{" "}
+                    <Link href="/subscriptions" className="underline hover:text-brand-600">
+                      Details
+                    </Link>
+                  </p>
                 </div>
               )}
 

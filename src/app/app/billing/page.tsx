@@ -188,12 +188,18 @@ export default async function BillingPage({
                       </Link>
                     )}
                     {plan.founding && (
-                      <Link
-                        href={`/api/billing/checkout?plan=${plan.founding.lookupKey}`}
-                        className="block text-center text-xs font-semibold text-brand-600 hover:underline"
-                      >
-                        Founding offer: {plan.founding.label}
-                      </Link>
+                      <>
+                        <Link
+                          href={`/api/billing/checkout?plan=${plan.founding.lookupKey}`}
+                          className="block text-center text-xs font-semibold text-brand-600 hover:underline"
+                        >
+                          Founding offer: {plan.founding.label}
+                        </Link>
+                        <p className="gm-muted text-center text-[11px] leading-snug">
+                          Then {plan.annual?.label}/year. Renews automatically
+                          until cancelled.
+                        </p>
+                      </>
                     )}
                   </div>
                 )}
@@ -209,7 +215,11 @@ export default async function BillingPage({
         details. You can cancel at any time from the billing portal; your
         subscription runs to the end of the period you have paid for. Founding
         prices apply to the first year only, then renew at the standard annual
-        rate.
+        rate. Full details are in our{" "}
+        <Link href="/subscriptions" className="underline hover:text-brand-600">
+          Subscription &amp; Refund Policy
+        </Link>
+        .
       </p>
     </div>
   );

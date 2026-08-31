@@ -105,6 +105,26 @@ Then in the Stripe dashboard:
 
 ### 3. Deploy to Cloudflare
 
+**Through the dashboard (no terminal needed).** Workers &rarr; Create &rarr;
+Import a repository &rarr; `tracey727/Budget`, then set:
+
+| Setting | Value |
+|---|---|
+| Build command | `npm run cf:build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` |
+| Production branch | `claude/gen-money-deploy-stripe-jchnfu` |
+
+Add the secrets below under **Settings &rarr; Variables and Secrets**, as
+*Secrets* rather than plain text. Two things that catch people out:
+
+- The Worker's `workers.dev` address is **off by default** — enable it under
+  **Domains** or the site has no public URL.
+- Saving build settings does **not** start a build. A build runs when a commit
+  is pushed, or when you trigger one from **Deployments**.
+
+**Through the command line:**
+
 ```bash
 npx wrangler login
 

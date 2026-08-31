@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { BUSINESS, legalEntityLine } from "@/lib/business";
+import { BUSINESS, legalEntityLine, taxNote } from "@/lib/business";
 
 export function SiteFooter() {
   return (
@@ -49,8 +49,8 @@ export function SiteFooter() {
             {BUSINESS.postalAddress}
           </p>
           <p className="mt-1.5">
-            All prices in AUD and include GST where applicable. Subscriptions
-            renew automatically until cancelled — see the{" "}
+            {taxNote()} Subscriptions renew automatically until cancelled — see
+            the{" "}
             <Link href="/subscriptions" className="underline hover:text-brand-600">
               Subscription &amp; Refund Policy
             </Link>

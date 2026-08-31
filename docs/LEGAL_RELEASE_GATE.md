@@ -1,5 +1,8 @@
 # Legal and Billing Release Gate — Gen Money
 
+Gen Money is **the travellers budget** — a budgeting tool for people on the
+road. The legal documents describe that product, not a generic budget app.
+
 Do not enable live Stripe charging until every item that applies to launch is
 complete and evidenced.
 
@@ -8,18 +11,19 @@ kept deliberately in the same shape so both products can be reviewed together.
 
 ## Business identity
 
-- [x] Operator: Tracey Ann Kennedy trading as GENEVIEVE App™
+- [x] Operator: Tracey Ann Kennedy trading as Genevieve App
 - [x] ABN: 36 530 564 761
 - [x] Postal address: PO Box 475, Labrador QLD 4215
 - [x] Support email: tracey@genevieveapp.com.au
 - [x] Governing law stated as Queensland, Australia
 - [x] Identity published in Terms, Privacy, Subscription Policy, Contact, footer
-- [ ] **Confirm whether the business is GST-registered at launch.** The site
-      currently says prices "include GST where applicable", which is accurate
-      either way. If you register for GST, confirm the displayed consumer price
-      is GST-inclusive and that Stripe tax settings match.
-- [ ] Decide whether Gen Money trades under the GENEVIEVE App™ name publicly or
-      needs its own registered business name.
+- [x] **GST: not registered.** Turnover is below the $75,000 ATO registration
+      threshold, so no GST is charged on subscriptions. The site states this
+      plainly rather than hedging, driven by `BUSINESS.gstRegistered` in
+      `src/lib/business.ts` — flip that flag if registration ever changes.
+- [ ] Re-check the GST position if annual turnover approaches $75,000.
+- [ ] Decide whether Gen Money needs its own registered business name, or
+      continues to trade under Genevieve App.
 
 ## Account and entitlement integrity
 
@@ -29,10 +33,12 @@ kept deliberately in the same shape so both products can be reviewed together.
 - [x] Plan limits enforced server-side in actions, not only hidden in the UI
 - [x] Checkout accepts only price lookup keys from our own catalogue
 - [x] Stripe identifiers are not exposed through any public API response
-- [ ] **Add a password reset / account recovery flow before public paid launch.**
-      There is currently no way for a subscriber who forgets their password to
-      regain access to a paid account.
+- [x] **Password reset implemented.** Hashed single-use tokens, 1-hour expiry,
+      earlier tokens invalidated on reissue, all sessions destroyed on reset,
+      no email enumeration, 2-minute resend throttle. 21 tests cover it.
 - [ ] Test entitlement persistence across a second device and browser
+- [ ] Set `RESEND_API_KEY` and `EMAIL_FROM` in Cloudflare, and verify the
+      sending domain in Resend, or password reset emails will not send
 
 ## Subscription disclosure
 
@@ -78,6 +84,12 @@ kept deliberately in the same shape so both products can be reviewed together.
 - [x] Cancelling reverts to the free Starter plan; records are not deleted
 - [x] App is described as budgeting/record-keeping, expressly not financial
       product advice, credit assistance or tax advice
+- [x] Trip budgets, fuel and daily-spend figures described as decision-support
+      estimates, expressly not guarantees of fuel prices, site availability,
+      fees, road conditions or weather
+- [x] Terms state travel decisions remain the user's, official sources take
+      priority, and the app is not a navigation or safety service
+- [x] Privacy Policy states plainly that no location is collected or stored
 - [x] GST and financial-year summaries described as record-keeping aids, not a
       lodged BAS
 - [ ] **Obtain Australian legal review before public paid launch**, especially

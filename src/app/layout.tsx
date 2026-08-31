@@ -10,18 +10,19 @@ export const metadata: Metadata = {
     template: "%s · Gen Money",
   },
   description:
-    "Gen Money is the Australian budgeting app that shows you exactly where every dollar goes. Start free, no credit card required.",
+    "Gen Money is the travellers budget — the Australian app that shows you what your trip is costing while you are still on it. Start free, no credit card required.",
   keywords: [
-    "budgeting app Australia",
-    "personal finance AUD",
+    "travel budget app Australia",
+    "caravan trip budget",
+    "grey nomad budgeting",
+    "fuel and camping costs",
+    "road trip expenses AUD",
     "sole trader expenses",
-    "GST tracking",
-    "money management",
   ],
   openGraph: {
     title: "Gen Money — Take Control of Every Dollar",
     description:
-      "The Australian budgeting app built for real life. Start free, no credit card required.",
+      "The travellers budget. Know what the trip is costing while you are still on it. Start free, no credit card required.",
     type: "website",
     locale: "en_AU",
     siteName: "Gen Money",

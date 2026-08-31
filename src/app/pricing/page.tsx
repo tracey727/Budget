@@ -14,10 +14,12 @@ export const metadata: Metadata = {
 };
 
 const COMPARISON: Array<{ label: string; starter: string; personal: string; professional: string }> = [
+  { label: "Trip budgets", starter: "1 at a time", personal: "Unlimited", professional: "Unlimited" },
   { label: "Accounts", starter: "2", personal: "Unlimited", professional: "Unlimited" },
   { label: "Transactions a year", starter: "500", personal: "Unlimited", professional: "Unlimited" },
   { label: "Monthly budgets", starter: "5", personal: "Unlimited", professional: "Unlimited" },
   { label: "Savings goals", starter: "1", personal: "Unlimited", professional: "Unlimited" },
+  { label: "Daily spend remaining", starter: "—", personal: "✓", professional: "✓" },
   { label: "CSV bank import", starter: "—", personal: "✓", professional: "✓" },
   { label: "Full reports", starter: "—", personal: "✓", professional: "✓" },
   { label: "Recurring bills", starter: "—", personal: "✓", professional: "✓" },
@@ -39,7 +41,7 @@ const FAQ = [
   },
   {
     q: "Are prices in Australian dollars?",
-    a: "Yes. Every price is in AUD and includes GST where applicable. You will not be charged an international transaction fee by Gen Money.",
+    a: "Yes. Every price is in Australian dollars. Gen Money is not registered for GST, so no GST is added — the price you see is the total you pay, with no international transaction fee.",
   },
   {
     q: "Can I change plans later?",
@@ -70,7 +72,7 @@ export default async function PricingPage() {
             </h1>
             <p className="gm-muted mt-4 text-lg">
               Start free. No credit card required. Save with an annual
-              membership.
+              membership. No GST added — the price you see is the price you pay.
             </p>
           </div>
 

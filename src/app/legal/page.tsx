@@ -17,7 +17,7 @@ const DOCUMENTS = [
   {
     href: "/terms",
     title: "Terms of Use",
-    body: "How the app can be used, what it is and is not, third-party services and your Australian consumer rights.",
+    body: "How the app can be used, what its estimates are and are not, why travel decisions stay yours, third-party services and your Australian consumer rights.",
   },
   {
     href: "/subscriptions",
@@ -27,7 +27,7 @@ const DOCUMENTS = [
   {
     href: "/privacy",
     title: "Privacy Policy",
-    body: "What information is collected, why, where it goes, how it is secured and how to contact us.",
+    body: "What information is collected, why, where it goes, how it is secured, and why we never track your location.",
   },
 ];
 

@@ -4,12 +4,14 @@ import { StatTile } from "@/components/app/StatTile";
 import { EmptyState } from "@/components/app/EmptyState";
 import {
   accountBalances,
+  activeTrip,
   budgetProgress,
   listAccounts,
   listGoals,
   listTransactions,
   monthSummary,
   spendByCategory,
+  tripSpend,
   upcomingBills,
 } from "@/lib/data/queries";
 import { formatMoney } from "@/lib/money";
@@ -23,7 +25,7 @@ export default async function DashboardPage() {
   const today = todayIso();
   const month = monthStart(today);
 
-  const [summary, balances, accountList, budgets, spend, goals, bills, recent] =
+  const [summary, balances, accountList, budgets, spend, goals, bills, recent, current] =
     await Promise.all([
       monthSummary(user.id, month),
       accountBalances(user.id),
@@ -33,7 +35,11 @@ export default async function DashboardPage() {
       listGoals(user.id),
       upcomingBills(user.id, 14),
       listTransactions(user.id, { limit: 8 }),
+      activeTrip(user.id),
     ]);
+
+  // Only query trip spend when a trip is actually under way.
+  const currentSpend = current ? await tripSpend(user.id, current.id) : null;
 
   const netWorth = accountList.reduce(
     (total, account) => total + (balances.get(account.id) ?? 0),
@@ -58,6 +64,90 @@ export default async function DashboardPage() {
           Add transaction
         </Link>
       </div>
+
+      {current && currentSpend && (() => {
+        const budgetCents = current.budgetAmount ? toCents(current.budgetAmount) : null;
+        const remaining = budgetCents === null ? null : budgetCents - currentSpend.spentCents;
+        const daysLeft = current.endsOn ? Math.max(0, daysBetween(today, current.endsOn)) : null;
+        const perDay =
+          remaining !== null && daysLeft !== null
+            ? Math.max(0, Math.round(remaining / Math.max(1, daysLeft + 1)))
+            : null;
+        const percent =
+          budgetCents && budgetCents > 0
+            ? Math.min(999, Math.round((currentSpend.spentCents / budgetCents) * 100))
+            : 0;
+
+        return (
+          <section className="gm-card border-brand-500/40 bg-brand-500/5">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-brand-700 dark:text-brand-300">
+                  On the road
+                </p>
+                <h2 className="mt-0.5 text-lg font-black">{current.name}</h2>
+                {current.destination && (
+                  <p className="gm-muted text-xs">{current.destination}</p>
+                )}
+              </div>
+              <Link href="/app/trips" className="text-sm font-semibold text-brand-600 hover:underline">
+                Trip details
+              </Link>
+            </div>
+
+            {budgetCents !== null ? (
+              <>
+                <div
+                  className="h-2.5 overflow-hidden rounded-full bg-ink-200 dark:bg-ink-800"
+                  role="progressbar"
+                  aria-valuenow={percent}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${current.name} trip budget used`}
+                >
+                  <div
+                    className={`h-full rounded-full ${
+                      remaining !== null && remaining < 0 ? "bg-red-500" : "bg-brand-500"
+                    }`}
+                    style={{ width: `${Math.min(100, percent)}%` }}
+                  />
+                </div>
+                <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                  <div>
+                    <p className="gm-muted text-xs">Spent</p>
+                    <p className="font-black">{formatMoney(currentSpend.spentCents)}</p>
+                  </div>
+                  <div>
+                    <p className="gm-muted text-xs">
+                      {remaining !== null && remaining < 0 ? "Over budget" : "Left"}
+                    </p>
+                    <p
+                      className={`font-black ${
+                        remaining !== null && remaining < 0 ? "text-red-600 dark:text-red-400" : ""
+                      }`}
+                    >
+                      {formatMoney(Math.abs(remaining ?? 0))}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="gm-muted text-xs">
+                      {daysLeft !== null ? `A day for ${daysLeft + 1} more day${daysLeft === 0 ? "" : "s"}` : "Fuel so far"}
+                    </p>
+                    <p className="font-black">
+                      {perDay !== null ? formatMoney(perDay) : formatMoney(currentSpend.fuelCents)}
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="gm-muted text-sm">
+                {formatMoney(currentSpend.spentCents)} spent so far · no budget set for
+                this trip.
+              </p>
+            )}
+          </section>
+        );
+      })()}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatTile

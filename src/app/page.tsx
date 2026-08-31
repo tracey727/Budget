@@ -7,12 +7,16 @@ export const dynamic = "force-dynamic";
 
 const FEATURES = [
   {
-    title: "Every account in one place",
-    body: "Transaction, savings, offset, credit and loan accounts side by side, with a live balance and net position updated as you go.",
+    title: "A budget for every trip",
+    body: "Give each journey its own budget and dates. Watch what is left, and what that leaves you per day for the rest of the run.",
   },
   {
-    title: "Budgets that hold up",
-    body: "Set a monthly limit per category and watch the bar fill. Roll unspent amounts forward so a quiet month funds a busy one.",
+    title: "Fuel and park fees, tracked",
+    body: "Diesel, caravan parks, national park permits, tolls and dump points — categories already set up the way travellers actually spend.",
+  },
+  {
+    title: "Home costs keep running",
+    body: "Rates, insurance, storage and the mortgage do not stop when you leave. Track them beside your travel spend, not in a separate spreadsheet.",
   },
   {
     title: "Import your bank statements",
@@ -20,15 +24,11 @@ const FEATURES = [
   },
   {
     title: "Bills before they bite",
-    body: "Track weekly, fortnightly, quarterly and annual bills. See what is due in the next fortnight before it lands.",
-  },
-  {
-    title: "Goals with a real date",
-    body: "Name the goal, set the target and the date, and Gen Money works out what you need to put aside each payday.",
+    body: "Rego, insurance and roadside cover on weekly, quarterly or annual cycles. See what falls due in the next fortnight before it lands.",
   },
   {
     title: "Sole trader ready",
-    body: "Split business from personal, tag deductible spend, and track GST with BAS-ready quarterly summaries across the Australian financial year.",
+    body: "Working as you travel? Split business from personal, tag deductible spend, and track GST across the Australian financial year.",
   },
 ];
 
@@ -44,15 +44,16 @@ export default async function HomePage() {
         <section className="mx-auto max-w-6xl px-4 pb-16 pt-16 sm:pt-24">
           <div className="mx-auto max-w-3xl text-center">
             <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-500/30 bg-brand-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 dark:text-brand-300">
-              Built for Australia · Priced in AUD
+              The travellers budget · Built for Australia
             </p>
             <h1 className="text-balance text-4xl font-black leading-tight tracking-tight sm:text-6xl">
               GEN MONEY — Take Control of{" "}
               <span className="text-brand-600">Every Dollar</span>
             </h1>
             <p className="gm-muted mx-auto mt-5 max-w-2xl text-pretty text-lg">
-              See exactly where your money goes, set budgets that actually hold,
-              and reach your goals sooner. Start free. No credit card required.
+              Know what the trip is costing while you are still on it. Fuel,
+              parks, food and the bills back home — all in one place, in
+              Australian dollars. Start free. No credit card required.
             </p>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -72,9 +73,9 @@ export default async function HomePage() {
           {/* Snapshot tiles */}
           <div className="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3">
             {[
-              { label: "Tracked this month", value: "$4,820", tone: "text-brand-600" },
-              { label: "Left to spend", value: "$1,145", tone: "" },
-              { label: "Saved toward goals", value: "$12,400", tone: "text-brand-600" },
+              { label: "Trip budget", value: "$4,500", tone: "" },
+              { label: "Spent so far", value: "$3,355", tone: "" },
+              { label: "Left · 12 days", value: "$95/day", tone: "text-brand-600" },
             ].map((tile) => (
               <div key={tile.label} className="gm-card text-center">
                 <p className="gm-muted text-xs font-semibold uppercase tracking-wide">
@@ -93,10 +94,11 @@ export default async function HomePage() {
         <section id="features" className="border-y border-[var(--gm-border)] py-16">
           <div className="mx-auto max-w-6xl px-4">
             <h2 className="text-center text-3xl font-black tracking-tight sm:text-4xl">
-              Everything you need to run your money
+              Everything you need to run the money on the road
             </h2>
             <p className="gm-muted mx-auto mt-3 max-w-2xl text-center">
-              No spreadsheets. No guesswork. No overseas currency conversions.
+              No spreadsheets at the campsite. No guesswork at the bowser. No
+              overseas currency conversions.
             </p>
 
             <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -118,6 +120,10 @@ export default async function HomePage() {
             </h2>
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
               {[
+                {
+                  title: "We never track where you are",
+                  body: "No GPS, no route history, no location stored — ever. A trip is just the name, dates and budget you type in yourself.",
+                },
                 {
                   title: "We never hold your bank logins",
                   body: "Gen Money does not screen-scrape or store banking credentials. You stay in control by importing statements yourself.",
@@ -152,7 +158,8 @@ export default async function HomePage() {
                 Take control of every dollar
               </h2>
               <p className="mt-3 text-brand-50">
-                Start free today. Upgrade when you are ready — from $9.99 a month.
+                Start free today. Upgrade when you are ready — from $9.99 a month,
+                in Australian dollars, no GST added.
               </p>
               <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Link

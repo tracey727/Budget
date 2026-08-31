@@ -1,20 +1,25 @@
 # GEN MONEY
 
-**Take Control of Every Dollar** — an Australian budgeting and money-management
-platform, built to run at scale on Cloudflare Workers with a Neon Postgres
-database and Stripe subscriptions.
+**The travellers budget.** Know what the trip is costing while you are still on
+it — fuel, parks, food and the bills back home, all in Australian dollars.
+Built to run at scale on Cloudflare Workers with a Neon Postgres database and
+Stripe subscriptions.
 
 - **Frontend/backend:** Next.js 15 (App Router, React 19, Server Actions)
 - **Hosting:** Cloudflare Workers via `@opennextjs/cloudflare`
 - **Database:** Neon serverless Postgres via Drizzle ORM (HTTP driver)
 - **Payments:** Stripe subscriptions, five AUD price points
-- **Localisation:** AUD currency, DD/MM/YYYY dates, 1 Jul–30 Jun financial year, 10% GST
+- **Email:** Resend (HTTP API, Workers-compatible) for password resets
+- **Localisation:** AUD currency, DD/MM/YYYY dates, 1 Jul–30 Jun financial year
 
 ---
 
 ## What's in the box
 
 ### For everyone (Starter, free)
+- **One live trip budget** with dates, planned kilometres and spend tracking
+- Travel categories ready to go — diesel, caravan parks, park permits, tolls,
+  dump points — alongside the home costs that keep running while you are away
 - Multi-account tracking with live balances and net position
 - Transactions with categories, merchants and notes
 - Monthly budgets with progress bars and over-budget warnings
@@ -22,6 +27,8 @@ database and Stripe subscriptions.
 - Dashboard: money in/out, net, spending breakdown, upcoming bills
 
 ### Personal Premium ($9.99/mo · $99/yr)
+- **Unlimited trips**, each with its own budget, plus how much is left per day
+  for the rest of the journey
 - Unlimited accounts, transactions, budgets and goals
 - **CSV bank statement import** with automatic column detection and duplicate
   suppression — tested against CommBank, NAB, Westpac, ANZ and Bendigo formats
@@ -45,8 +52,10 @@ database and Stripe subscriptions.
 | Personal Premium | $9.99 AUD | $99 AUD | $69 AUD | Main consumer product |
 | Professional | $19.99 AUD | $199 AUD | $139 AUD | Sole traders / professionals |
 
-All prices in AUD. Founding prices are a launch promotion covering the first
-year, then renew at the standard annual rate.
+All prices in AUD. **Not registered for GST** (turnover is below the $75,000
+ATO threshold), so no GST is added — the price shown is the total payable.
+Founding prices are a launch promotion covering the first year, then renew at
+the standard annual rate.
 
 Prices live in exactly one place — [`src/lib/plans.ts`](src/lib/plans.ts). The
 marketing page, the in-app billing page, the entitlement checks and the Stripe
@@ -110,6 +119,8 @@ npx wrangler secret put DATABASE_URL
 npx wrangler secret put SESSION_SECRET        # openssl rand -base64 32
 npx wrangler secret put STRIPE_SECRET_KEY
 npx wrangler secret put STRIPE_WEBHOOK_SECRET # from step 4
+npx wrangler secret put RESEND_API_KEY        # for password reset emails
+npx wrangler secret put EMAIL_FROM            # e.g. "Gen Money <noreply@yourdomain.com.au>"
 
 npm run cf:deploy
 ```
@@ -190,7 +201,7 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 | `npm run build` | Production Next.js build |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
-| `npm test` | CSV parser test suite (23 assertions) |
+| `npm test` | CSV parser (23) and reset-token (21) test suites |
 | `npm run db:generate` | Generate a migration from schema changes |
 | `npm run db:migrate` | Apply migrations to `DATABASE_URL` |
 | `npm run db:studio` | Drizzle Studio |
@@ -248,7 +259,7 @@ Sized for thousands of concurrent Australian users:
 Business details live in one place — [`src/lib/business.ts`](src/lib/business.ts):
 
 ```
-Tracey Ann Kennedy trading as GENEVIEVE App™
+Tracey Ann Kennedy trading as Genevieve App
 ABN 36 530 564 761
 PO Box 475, Labrador QLD 4215, Australia
 tracey@genevieveapp.com.au
@@ -278,16 +289,14 @@ The full pre-launch checklist is in
 [`docs/LEGAL_RELEASE_GATE.md`](docs/LEGAL_RELEASE_GATE.md). The items that
 genuinely block a paid launch:
 
-- [ ] **Add password reset / account recovery.** There is currently no way for a
-      subscriber who forgets their password to get back into a paid account.
-- [ ] **Confirm GST registration status.** The site says prices "include GST
-      where applicable", which is accurate either way — but if you are
-      registered, confirm displayed prices are GST-inclusive and Stripe tax
-      settings match.
+- [ ] **Set `RESEND_API_KEY` and `EMAIL_FROM`, and verify your sending domain in
+      Resend** — password reset emails cannot send without it. The
+      forgot-password page shows a warning while it is unconfigured.
 - [ ] **Get Australian legal review of the founding promotion** before public
       paid launch.
-- [ ] Decide whether Gen Money trades under GENEVIEVE App™ or needs its own
-      registered business name
+- [ ] Decide whether Gen Money needs its own registered business name, or
+      continues to trade under Genevieve App
+- [ ] Re-check the GST position if turnover approaches $75,000
 - [ ] Re-run `npm run stripe:setup` with your **live** key
 - [ ] Point the Stripe webhook at your production domain
 - [ ] Set `NEXT_PUBLIC_APP_URL` to your live origin and redeploy
@@ -304,12 +313,15 @@ src/
     page.tsx                  Landing page
     pricing/                  Pricing table with monthly/annual toggle
     login/  signup/           Authentication
+    forgot-password/          Request a reset link
+    reset-password/           Choose a new password
     legal/                    Legal index
     terms/                    Terms of Use
     subscriptions/            Subscription & Refund Policy
     privacy/  contact/
     app/                      Authenticated application
       page.tsx                Dashboard
+      trips/                  Trip budgets
       transactions/           List, create, CSV import
       accounts/  budgets/  goals/  bills/  reports/  billing/
     api/
@@ -325,7 +337,8 @@ src/
     money.ts  dates.ts        AUD and Australian date/FY/GST helpers
     csv.ts                    Bank statement parser
     labels.ts                 Shared display labels
-    auth/                     PBKDF2 passwords, hashed sessions, route guards
+    auth/                     PBKDF2 passwords, hashed sessions, reset tokens, guards
+    email/                    Resend sender and email templates
     db/                       Drizzle schema and Neon client
     data/                     Queries and sign-up seed data
     actions/                  Server actions (auth, transactions, budgets, …)

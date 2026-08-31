@@ -59,7 +59,8 @@ export async function createCheckoutSession(opts: {
     mode: "subscription",
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    // Australian consumer pricing is GST-inclusive; let Stripe show it that way.
+    // Prices are set in AUD; the business is not GST-registered, so the
+    // amount charged is the amount advertised.
     currency: "aud",
     allow_promotion_codes: true,
     billing_address_collection: "auto",

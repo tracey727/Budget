@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/marketing/LegalPage";
 import { getSessionUser } from "@/lib/auth/session";
-import { BUSINESS } from "@/lib/business";
+import { BUSINESS, taxNote } from "@/lib/business";
 import { PLANS } from "@/lib/plans";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +30,8 @@ export default async function SubscriptionPolicyPage() {
           Terms of Use
         </Link>{" "}
         and applies to paid {BUSINESS.appName} subscriptions.
+        {" "}{BUSINESS.appName} is {BUSINESS.appDescriptor} — a budgeting tool
+        for people who travel.
       </p>
 
       <h2>1. Clear recurring price before purchase</h2>
@@ -142,6 +144,12 @@ export default async function SubscriptionPolicyPage() {
         limits apply to new data.
       </p>
 
+      <p className="gm-muted text-sm">
+        Cancelling needs an internet connection, so if you are heading somewhere
+        without coverage and intend to cancel before a renewal date, do it before
+        you leave rather than relying on getting online along the way.
+      </p>
+
       <h2>7. Changing plans</h2>
       <p>
         You can upgrade, downgrade, or switch between monthly and annual billing
@@ -184,9 +192,13 @@ export default async function SubscriptionPolicyPage() {
 
       <h2>11. Taxes and receipts</h2>
       <p>
-        Any tax or unavoidable charge that must be included in the consumer price
-        is reflected in the total price presented before purchase. Stripe
-        provides payment records and receipts as part of the payment flow.
+        {taxNote()} There are no unavoidable extra charges added at checkout, and
+        the amount you agree to is the amount Stripe charges. Stripe provides
+        payment records and receipts as part of the payment flow.
+      </p>
+      <p className="gm-muted text-xs">
+        If our GST registration status changes in future, prices will be updated
+        and any change will be notified in advance under clause 8.
       </p>
 
       <h2>12. Contact about billing</h2>

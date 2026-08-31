@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Log in",
-  description: "Log in to your Gen Money account.",
+  description: "Log in to your Genevieve App account.",
 };
 
 export default async function LoginPage({
@@ -24,7 +24,7 @@ export default async function LoginPage({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-12">
-      <Link href="/" className="mb-8 self-center" aria-label="Gen Money home">
+      <Link href="/" className="mb-8 self-center" aria-label="Genevieve App home">
         <Logo />
       </Link>
 
@@ -42,7 +42,7 @@ export default async function LoginPage({
       </div>
 
       <p className="gm-muted mt-6 text-center text-sm">
-        New to Gen Money?{" "}
+        New to Genevieve App?{" "}
         <Link href="/signup" className="font-semibold text-brand-600 hover:underline">
           Start free
         </Link>

@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Subscription & Refund Policy",
   description:
-    "Recurring charges, renewal, founding member pricing, cancellation, failed payments and refunds for Gen Money.",
+    "Recurring charges, renewal, founding member pricing, cancellation, failed payments and refunds for Genevieve App.",
 };
 
 export default async function SubscriptionPolicyPage() {

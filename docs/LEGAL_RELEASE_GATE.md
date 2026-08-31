@@ -1,6 +1,6 @@
-# Legal and Billing Release Gate — Gen Money
+# Legal and Billing Release Gate — Genevieve App
 
-Gen Money is the Genevieve App budget app, for professionals and everyday
+Genevieve App is the Genevieve App budget app, for professionals and everyday
 people. The legal documents describe that product.
 
 Do not enable live Stripe charging until every item that applies to launch is
@@ -22,7 +22,7 @@ kept deliberately in the same shape so both products can be reviewed together.
       plainly rather than hedging, driven by `BUSINESS.gstRegistered` in
       `src/lib/business.ts` — flip that flag if registration ever changes.
 - [ ] Re-check the GST position if annual turnover approaches $75,000.
-- [ ] Decide whether Gen Money needs its own registered business name, or
+- [ ] Decide whether Genevieve App needs its own registered business name, or
       continues to trade under Genevieve App.
 
 ## Account and entitlement integrity
@@ -36,6 +36,10 @@ kept deliberately in the same shape so both products can be reviewed together.
 - [x] **Password reset implemented.** Hashed single-use tokens, 1-hour expiry,
       earlier tokens invalidated on reissue, all sessions destroyed on reset,
       no email enumeration, 2-minute resend throttle. 21 tests cover it.
+- [x] **Email verification implemented.** Hashed single-use tokens, 7-day
+      expiry, newest token wins, rejected if the account's address changed
+      after issue, 2-minute resend throttle. A confirmed address is required
+      before paid checkout. 22 tests cover it.
 - [ ] Test entitlement persistence across a second device and browser
 - [ ] Set `RESEND_API_KEY` and `EMAIL_FROM` in Cloudflare, and verify the
       sending domain in Resend, or password reset emails will not send

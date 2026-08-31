@@ -72,3 +72,68 @@ export function passwordResetEmail(opts: { name: string; url: string }) {
     html,
   };
 }
+
+export function verifyEmailTemplate(opts: { name: string; url: string }) {
+  const name = escapeHtml(opts.name.split(" ")[0] ?? "there");
+  const url = escapeHtml(opts.url);
+
+  const text = [
+    `Hi ${opts.name.split(" ")[0] ?? "there"},`,
+    "",
+    `Welcome to ${BUSINESS.appName}.`,
+    "",
+    "Confirm your email address by opening this link. It expires in 7 days:",
+    opts.url,
+    "",
+    "Confirming your address lets us reach you about your account, and is",
+    "required before you subscribe to a paid plan.",
+    "",
+    "If you did not create this account, you can ignore this email.",
+    "",
+    BUSINESS.appName,
+    BUSINESS.supportEmail,
+  ].join("\n");
+
+  const html = `<!doctype html>
+<html lang="en-AU">
+  <body style="margin:0;padding:24px;background:#f7f9fb;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1c2230;">
+    <table role="presentation" style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #e3e9f0;border-radius:12px;">
+      <tr>
+        <td style="padding:28px;">
+          <p style="margin:0 0 18px;font-size:20px;font-weight:800;">${escapeHtml(BUSINESS.appName)}</p>
+          <p style="margin:0 0 14px;font-size:15px;">Hi ${name},</p>
+          <p style="margin:0 0 14px;font-size:15px;line-height:1.6;">
+            Welcome to ${escapeHtml(BUSINESS.appName)}. Confirm your email address
+            so we can reach you about your account.
+          </p>
+          <p style="margin:0 0 22px;">
+            <a href="${url}"
+               style="display:inline-block;background:#059669;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:700;font-size:15px;">
+              Confirm my email
+            </a>
+          </p>
+          <p style="margin:0 0 22px;font-size:13px;line-height:1.6;color:#576e90;">
+            If the button does not work, copy this link into your browser:<br>
+            <span style="word-break:break-all;">${url}</span>
+          </p>
+          <p style="margin:0 0 6px;font-size:13px;line-height:1.6;color:#576e90;">
+            This link expires in 7 days. If you did not create this account, you
+            can ignore this email.
+          </p>
+          <hr style="border:none;border-top:1px solid #e3e9f0;margin:22px 0 14px;">
+          <p style="margin:0;font-size:12px;color:#576e90;">
+            ${escapeHtml(BUSINESS.appName)} ·
+            <a href="mailto:${escapeHtml(BUSINESS.supportEmail)}" style="color:#059669;">${escapeHtml(BUSINESS.supportEmail)}</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+
+  return {
+    subject: `Confirm your email for ${BUSINESS.appName}`,
+    text,
+    html,
+  };
+}

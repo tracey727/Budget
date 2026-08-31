@@ -31,6 +31,15 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // A confirmed address is required before money changes hands: it is the
+  // only way to reach the customer about renewals, receipts and failed
+  // payments, and it keeps throwaway addresses out of the billing system.
+  if (!user.emailVerifiedAt) {
+    return NextResponse.redirect(
+      new URL("/app/billing?error=email-unverified", appUrl()),
+    );
+  }
+
   try {
     const url = await createCheckoutSession({
       user: {

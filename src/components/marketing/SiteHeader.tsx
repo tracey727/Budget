@@ -5,7 +5,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--gm-border)] bg-[var(--gm-bg)]/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5">
-        <Link href="/" aria-label="Gen Money home">
+        <Link href="/" aria-label="Genevieve App home">
           <Logo />
         </Link>
 

@@ -1,5 +1,5 @@
 /**
- * Creates (or updates) the Gen Money product catalogue in Stripe.
+ * Creates (or updates) the Genevieve App product catalogue in Stripe.
  *
  * Every price is created with a stable `lookup_key`, which is what the app
  * uses at checkout — so test and live modes can have different price ids
@@ -25,7 +25,7 @@ async function main() {
 
   const stripe = new Stripe(key, { apiVersion: "2026-08-26.dahlia" });
   const mode = key.startsWith("sk_live") ? "LIVE" : "TEST";
-  console.log(`Setting up the Gen Money catalogue in ${mode} mode…\n`);
+  console.log(`Setting up the Genevieve App catalogue in ${mode} mode…\n`);
 
   // One Stripe product per paid plan.
   const productIds = new Map<string, string>();
@@ -34,23 +34,33 @@ async function main() {
     if (planKey === "starter") continue;
     const plan = PLANS[planKey];
 
+    // Look for an existing product under the current metadata key, then under
+    // the legacy key, so a catalogue created before the rebrand is reused
+    // rather than duplicated.
     const existing = await stripe.products.search({
-      query: `metadata['gen_money_plan']:'${planKey}'`,
+      query: `metadata['genevieve_plan']:'${planKey}'`,
       limit: 1,
     });
+    const legacy = existing.data[0]
+      ? null
+      : await stripe.products.search({
+          query: `metadata['gen_money_plan']:'${planKey}'`,
+          limit: 1,
+        });
 
-    let product = existing.data[0];
+    let product = existing.data[0] ?? legacy?.data[0];
     if (product) {
       console.log(`• Product exists: ${plan.name} (${product.id})`);
       await stripe.products.update(product.id, {
-        name: `Gen Money ${plan.name}`,
+        name: `Genevieve App ${plan.name}`,
         description: plan.tagline,
+        metadata: { genevieve_plan: planKey },
       });
     } else {
       product = await stripe.products.create({
-        name: `Gen Money ${plan.name}`,
+        name: `Genevieve App ${plan.name}`,
         description: plan.tagline,
-        metadata: { gen_money_plan: planKey },
+        metadata: { genevieve_plan: planKey },
       });
       console.log(`✓ Created product: ${plan.name} (${product.id})`);
     }
@@ -87,7 +97,7 @@ async function main() {
       transfer_lookup_key: true,
       nickname: `${PLANS[price.planKey].name} — ${price.label}`,
       metadata: {
-        gen_money_plan: price.planKey,
+        genevieve_plan: price.planKey,
         founding: price.founding ? "true" : "false",
       },
     });

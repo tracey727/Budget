@@ -15,7 +15,7 @@ export default async function ImportPage() {
         <h1 className="text-2xl font-black tracking-tight">Import transactions</h1>
         <PaywallCard
           title="CSV import is part of Personal Premium"
-          body="Import statements from any Australian bank. Gen Money reads the columns, converts the dates and skips anything already imported."
+          body="Import statements from any Australian bank. Genevieve App reads the columns, converts the dates and skips anything already imported."
         />
       </div>
     );
@@ -52,7 +52,7 @@ export default async function ImportPage() {
           </div>
 
           <div className="gm-card">
-            <h2 className="font-bold">What Gen Money accepts</h2>
+            <h2 className="font-bold">What Genevieve App accepts</h2>
             <ul className="gm-muted mt-2.5 space-y-1.5 text-sm">
               <li>• Dates as DD/MM/YYYY (Australian format) or YYYY-MM-DD</li>
               <li>• A single Amount column, or separate Debit and Credit columns</li>

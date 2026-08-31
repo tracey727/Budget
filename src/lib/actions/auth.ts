@@ -8,6 +8,7 @@ import { users } from "@/lib/db/schema";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { createSession, destroySession, purgeExpiredSessions } from "@/lib/auth/session";
 import { seedStarterData } from "@/lib/data/seed";
+import { sendVerificationEmail } from "./verify";
 import { AU_STATES } from "@/lib/dates";
 
 export type AuthState = { error?: string } | undefined;
@@ -64,6 +65,11 @@ export async function signupAction(
   // Give new users a working set of Australian categories and an account so
   // the dashboard is useful on first load rather than empty.
   await seedStarterData(userId);
+
+  // Prove the address, but never let a mail failure block sign-up — the
+  // dashboard shows a banner with a resend button either way.
+  await sendVerificationEmail({ userId, email, fullName }).catch(() => false);
+
   await createSession(userId);
 
   // A plan chosen on the pricing page carries through sign-up into checkout.

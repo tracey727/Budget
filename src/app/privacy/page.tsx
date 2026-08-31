@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How Gen Money collects, uses and protects your personal information.",
+    "How Genevieve App collects, uses and protects your personal information.",
 };
 
 export default async function PrivacyPage() {

@@ -1,4 +1,4 @@
-# GEN MONEY
+# GENEVIEVE App — Budget App
 
 **Take Control of Every Dollar** — the Genevieve App budget app, built for
 professionals and everyday people alike. Runs at scale on Cloudflare Workers
@@ -114,7 +114,7 @@ npx wrangler secret put SESSION_SECRET        # openssl rand -base64 32
 npx wrangler secret put STRIPE_SECRET_KEY
 npx wrangler secret put STRIPE_WEBHOOK_SECRET # from step 4
 npx wrangler secret put RESEND_API_KEY        # for password reset emails
-npx wrangler secret put EMAIL_FROM            # e.g. "Gen Money <noreply@yourdomain.com.au>"
+npx wrangler secret put EMAIL_FROM            # e.g. "Genevieve App <noreply@yourdomain.com.au>"
 
 npm run cf:deploy
 ```
@@ -195,7 +195,7 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 | `npm run build` | Production Next.js build |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
-| `npm test` | CSV parser (23) and reset-token (21) test suites |
+| `npm test` | CSV parser (23), reset-token (21) and verification (22) suites |
 | `npm run db:generate` | Generate a migration from schema changes |
 | `npm run db:migrate` | Apply migrations to `DATABASE_URL` |
 | `npm run db:studio` | Drizzle Studio |
@@ -226,6 +226,9 @@ Sized for thousands of concurrent Australian users:
 
 ### Security
 
+- **Email verification** on sign-up, and a confirmed address is required
+  before any paid checkout — so renewal and receipt emails can actually reach
+  the customer, and throwaway addresses stay out of billing.
 - Passwords hashed with **PBKDF2-SHA256, 600,000 iterations** and a random
   per-user salt, verified in constant time. (Workers has no scrypt/argon2; this
   is the strongest primitive the runtime offers, at the OWASP-recommended
@@ -288,7 +291,7 @@ genuinely block a paid launch:
       forgot-password page shows a warning while it is unconfigured.
 - [ ] **Get Australian legal review of the founding promotion** before public
       paid launch.
-- [ ] Decide whether Gen Money needs its own registered business name, or
+- [ ] Decide whether Genevieve App needs its own registered business name, or
       continues to trade under Genevieve App
 - [ ] Re-check the GST position if turnover approaches $75,000
 - [ ] Re-run `npm run stripe:setup` with your **live** key
@@ -309,6 +312,7 @@ src/
     login/  signup/           Authentication
     forgot-password/          Request a reset link
     reset-password/           Choose a new password
+    verify-email/             Confirm an email address
     legal/                    Legal index
     terms/                    Terms of Use
     subscriptions/            Subscription & Refund Policy
@@ -330,7 +334,8 @@ src/
     money.ts  dates.ts        AUD and Australian date/FY/GST helpers
     csv.ts                    Bank statement parser
     labels.ts                 Shared display labels
-    auth/                     PBKDF2 passwords, hashed sessions, reset tokens, guards
+    auth/                     PBKDF2 passwords, hashed sessions, reset and
+                              verification tokens, route guards
     email/                    Resend sender and email templates
     db/                       Drizzle schema and Neon client
     data/                     Queries and sign-up seed data
@@ -345,7 +350,7 @@ tests/                        CSV parser tests
 
 ## Disclaimer
 
-Gen Money is a budgeting and record-keeping tool. It does not provide financial
+Genevieve App is a budgeting and record-keeping tool. It does not provide financial
 product advice and does not take any user's objectives, financial situation or
 needs into account. GST and financial-year summaries are record-keeping aids,
 not a lodged BAS or tax advice.

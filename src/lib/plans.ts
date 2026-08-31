@@ -1,5 +1,5 @@
 /**
- * The Gen Money commercial model.
+ * The Genevieve App commercial model.
  *
  * Prices are in AUD and are the single source of truth for the marketing
  * pricing table, the Stripe product bootstrap script, and entitlement checks.

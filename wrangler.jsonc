@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "gen-money",
+  "name": "genevieve-app",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-25",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -15,7 +15,7 @@
     "mode": "smart"
   },
   "vars": {
-    "NEXT_PUBLIC_APP_URL": "https://genmoney.com.au"
+    "NEXT_PUBLIC_APP_URL": "https://genevieveapp.com.au"
   }
 
   // Optional: KV-backed incremental cache. Create the namespace with

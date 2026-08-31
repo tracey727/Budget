@@ -17,7 +17,7 @@ export function stripe(): Stripe {
       stripe: new Stripe(key, {
         apiVersion: "2026-08-26.dahlia",
         httpClient: Stripe.createFetchHttpClient(),
-        appInfo: { name: "Gen Money", url: "https://genmoney.com.au" },
+        appInfo: { name: "Genevieve App", url: "https://genevieveapp.com.au" },
         maxNetworkRetries: 2,
       }),
     };

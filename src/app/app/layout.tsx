@@ -4,6 +4,7 @@ import { AppNav } from "@/components/app/AppNav";
 import { requireUser } from "@/lib/auth/require";
 import { logoutAction } from "@/lib/actions/auth";
 import { PLANS } from "@/lib/plans";
+import { VerifyEmailBanner } from "@/components/app/VerifyEmailBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export default async function AppLayout({
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-[var(--gm-border)]">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/app" aria-label="Gen Money dashboard">
+          <Link href="/app" aria-label="Genevieve App dashboard">
             <Logo />
           </Link>
 
@@ -48,7 +49,14 @@ export default async function AppLayout({
         <AppNav />
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+        {!user.emailVerifiedAt && (
+          <div className="mb-6">
+            <VerifyEmailBanner email={user.email} />
+          </div>
+        )}
+        {children}
+      </main>
     </div>
   );
 }

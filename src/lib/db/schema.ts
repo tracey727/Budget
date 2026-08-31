@@ -76,6 +76,29 @@ export const passwordResetTokens = pgTable(
   (t) => [index("password_reset_user_idx").on(t.userId)],
 );
 
+/**
+ * Single-use email verification tokens.
+ *
+ * Same handling as password resets: only the hash is stored, the row is
+ * consumed on use, and it expires. The window is longer because a person may
+ * not check email straight away.
+ */
+export const emailVerificationTokens = pgTable(
+  "email_verification_tokens",
+  {
+    id: text("id").primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** The address being proved, so changing email invalidates the token. */
+    email: text("email").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("email_verification_user_idx").on(t.userId)],
+);
+
 /* -------------------------------------------------------------------------- */
 /*                                  Accounts                                  */
 /* -------------------------------------------------------------------------- */

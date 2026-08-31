@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with the Gen Money team.",
+  description: "Get in touch with the Genevieve App team.",
 };
 
 export default async function ContactPage() {

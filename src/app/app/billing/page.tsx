@@ -17,6 +17,8 @@ const ERROR_MESSAGES: Record<string, string> = {
     "We could not start checkout. Please try again, or contact support if it keeps happening.",
   "portal-failed": "We could not open the billing portal. Please try again.",
   "no-subscription": "You do not have a paid subscription to manage yet.",
+  "email-unverified":
+    "Please confirm your email address before subscribing. We have sent you a link — use the banner above to resend it if you need to.",
   "unknown-plan": "That plan is not available.",
 };
 
@@ -211,7 +213,7 @@ export default async function BillingPage({
       </div>
 
       <p className="gm-muted text-xs leading-relaxed">
-        {taxNote()} Payments are processed by Stripe — Gen Money never sees your card
+        {taxNote()} Payments are processed by Stripe — Genevieve App never sees your card
         details. You can cancel at any time from the billing portal; your
         subscription runs to the end of the period you have paid for. Founding
         prices apply to the first year only, then renew at the standard annual

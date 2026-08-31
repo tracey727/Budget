@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Gen Money pricing in AUD. Starter is free. Personal Premium $9.99/month or $99/year. Professional $19.99/month or $199/year. Founding member pricing available at launch.",
+    "Genevieve App pricing in AUD. Starter is free. Personal Premium $9.99/month or $99/year. Professional $19.99/month or $199/year. Founding member pricing available at launch.",
 };
 
 const COMPARISON: Array<{ label: string; starter: string; personal: string; professional: string }> = [
@@ -39,7 +39,7 @@ const FAQ = [
   },
   {
     q: "Are prices in Australian dollars?",
-    a: "Yes. Every price is in Australian dollars. Gen Money is not registered for GST, so no GST is added — the price you see is the total you pay, with no international transaction fee.",
+    a: "Yes. Every price is in Australian dollars. Genevieve App is not registered for GST, so no GST is added — the price you see is the total you pay, with no international transaction fee.",
   },
   {
     q: "Can I change plans later?",
@@ -50,8 +50,8 @@ const FAQ = [
     a: "Nothing is deleted. Your account reverts to the Starter plan, your records stay in place, and you can export everything to CSV before or after cancelling.",
   },
   {
-    q: "Is Gen Money financial advice?",
-    a: "No. Gen Money is a budgeting and record-keeping tool. It does not provide financial product advice or take your personal circumstances into account.",
+    q: "Is Genevieve App financial advice?",
+    a: "No. Genevieve App is a budgeting and record-keeping tool. It does not provide financial product advice or take your personal circumstances into account.",
   },
 ];
 

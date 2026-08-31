@@ -4,7 +4,7 @@ import { Logo } from "@/components/Logo";
 export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-4 text-center">
-      <Link href="/" className="mb-8" aria-label="Gen Money home">
+      <Link href="/" className="mb-8" aria-label="Genevieve App home">
         <Logo />
       </Link>
       <h1 className="text-5xl font-black tracking-tight">404</h1>

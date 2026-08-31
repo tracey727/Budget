@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
-  description: "The terms that apply when you use Gen Money.",
+  description: "The terms that apply when you use Genevieve App.",
 };
 
 export default async function TermsPage() {

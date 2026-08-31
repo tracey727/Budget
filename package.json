@@ -1,8 +1,8 @@
 {
-  "name": "gen-money",
+  "name": "genevieve-app",
   "version": "1.0.0",
   "private": true,
-  "description": "Gen Money \u2014 Take Control of Every Dollar. Australian personal & professional budgeting platform.",
+  "description": "Genevieve App \u2014 Budget App. Take Control of Every Dollar. Australian budgeting for professionals and everyday people.",
   "engines": {
     "node": ">=20"
   },
@@ -21,7 +21,7 @@
     "cf:preview": "opennextjs-cloudflare preview",
     "cf:deploy": "opennextjs-cloudflare deploy",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "test": "tsx tests/csv.test.ts && tsx tests/reset.test.ts"
+    "test": "tsx tests/csv.test.ts && tsx tests/reset.test.ts && tsx tests/verify.test.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

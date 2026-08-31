@@ -40,7 +40,7 @@ export async function priceIdForLookupKey(lookupKey: string): Promise<string> {
   if (!price) {
     throw new Error(
       `No active Stripe price with lookup_key "${lookupKey}". ` +
-        `Run \`npm run stripe:setup\` to create the Gen Money catalogue.`,
+        `Run \`npm run stripe:setup\` to create the Genevieve App catalogue.`,
     );
   }
   return price.id;
@@ -164,7 +164,7 @@ export async function syncSubscription(
     .where(eq(users.id, userId));
 }
 
-/** Matches a Stripe subscription back to a Gen Money user. */
+/** Matches a Stripe subscription back to a Genevieve App user. */
 async function resolveUserId(
   subscription: Stripe.Subscription,
 ): Promise<string | null> {

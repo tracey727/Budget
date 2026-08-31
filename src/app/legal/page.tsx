@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Legal",
   description:
-    "Gen Money legal information: Terms of Use, Subscription & Refund Policy and Privacy Policy.",
+    "Genevieve App legal information: Terms of Use, Subscription & Refund Policy and Privacy Policy.",
 };
 
 const DOCUMENTS = [

@@ -68,3 +68,5 @@ check("messy skipped", messyOut.skipped, 2);
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);
+
+export {};

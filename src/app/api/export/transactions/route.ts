@@ -56,7 +56,7 @@ export async function GET() {
 
   // A BOM makes Excel open the file as UTF-8 rather than mangling accents.
   const body = `﻿${lines.join("\r\n")}\r\n`;
-  const filename = `gen-money-transactions-${new Date().toISOString().slice(0, 10)}.csv`;
+  const filename = `genevieve-transactions-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return new NextResponse(body, {
     headers: {

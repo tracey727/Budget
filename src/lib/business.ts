@@ -7,10 +7,18 @@
  */
 
 export const BUSINESS = {
-  /** Product name as advertised. */
-  appName: "Gen Money",
+  /**
+   * The name the product is advertised and contracted under. Everything —
+   * page titles, the logo, legal documents and account emails — reads from
+   * here, so a rebrand is a one-line change.
+   */
+  appName: "Genevieve App",
+  /** The product line within the business. */
+  productName: "Budget App",
   /** What the app is, in one phrase — used in legal copy and metadata. */
   appDescriptor: "the budget app for professionals and everyday people",
+  /** Advertising line used on the landing page and in metadata. */
+  tagline: "Take Control of Every Dollar",
   /** Legal operator: the person or entity that contracts with customers. */
   operator: "Tracey Ann Kennedy",
   /** Registered trading name. */

@@ -16,7 +16,7 @@ const FEATURES = [
   },
   {
     title: "Import your bank statements",
-    body: "Drop in a CSV from any Australian bank. Gen Money maps the columns, skips duplicates and files everything by category.",
+    body: "Drop in a CSV from any Australian bank. Genevieve App maps the columns, skips duplicates and files everything by category.",
   },
   {
     title: "Bills before they bite",
@@ -24,7 +24,7 @@ const FEATURES = [
   },
   {
     title: "Goals with a real date",
-    body: "Name the goal, set the target and the date, and Gen Money works out what you need to put aside each payday.",
+    body: "Name the goal, set the target and the date, and Genevieve App works out what you need to put aside each payday.",
   },
   {
     title: "Sole trader ready",
@@ -47,7 +47,7 @@ export default async function HomePage() {
               Built for Australia · Priced in AUD
             </p>
             <h1 className="text-balance text-4xl font-black leading-tight tracking-tight sm:text-6xl">
-              GEN MONEY — Take Control of{" "}
+              GENEVIEVE App — Take Control of{" "}
               <span className="text-brand-600">Every Dollar</span>
             </h1>
             <p className="gm-muted mx-auto mt-5 max-w-2xl text-pretty text-lg">
@@ -120,7 +120,7 @@ export default async function HomePage() {
               {[
                 {
                   title: "We never hold your bank logins",
-                  body: "Gen Money does not screen-scrape or store banking credentials. You stay in control by importing statements yourself.",
+                  body: "Genevieve App does not screen-scrape or store banking credentials. You stay in control by importing statements yourself.",
                 },
                 {
                   title: "Encrypted in transit and at rest",
@@ -128,7 +128,7 @@ export default async function HomePage() {
                 },
                 {
                   title: "Payments handled by Stripe",
-                  body: "Card details go straight to Stripe, a PCI DSS Level 1 provider. Gen Money never sees or stores your card number.",
+                  body: "Card details go straight to Stripe, a PCI DSS Level 1 provider. Genevieve App never sees or stores your card number.",
                 },
                 {
                   title: "Export or delete any time",

@@ -71,7 +71,6 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   }
 
   // Strip the hash so it can never reach a client component.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash, ...safe } = row.user;
   return safe;
 }

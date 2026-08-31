@@ -3,14 +3,14 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://genmoney.com.au",
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://genevieveapp.com.au",
   ),
   title: {
-    default: "Gen Money — Take Control of Every Dollar",
-    template: "%s · Gen Money",
+    default: "Genevieve App — Budget App | Take Control of Every Dollar",
+    template: "%s · Genevieve App",
   },
   description:
-    "Gen Money is the Australian budgeting app that shows you exactly where every dollar goes. Start free, no credit card required.",
+    "Genevieve App is the Australian budgeting app that shows you exactly where every dollar goes. Start free, no credit card required.",
   keywords: [
     "budgeting app Australia",
     "personal finance AUD",
@@ -19,12 +19,12 @@ export const metadata: Metadata = {
     "money management",
   ],
   openGraph: {
-    title: "Gen Money — Take Control of Every Dollar",
+    title: "Genevieve App — Budget App",
     description:
       "The Australian budgeting app built for real life. Start free, no credit card required.",
     type: "website",
     locale: "en_AU",
-    siteName: "Gen Money",
+    siteName: "Genevieve App",
   },
   robots: { index: true, follow: true },
 };

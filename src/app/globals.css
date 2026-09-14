@@ -233,6 +233,54 @@ body {
     color: var(--gold-bright);
   }
 
+  /* Clearing status. Pending money is money still in motion, so it reads as
+     unfinished — outlined rather than filled — while settled money is quiet. */
+  .gm-pill-pending {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em];
+    background: rgba(96, 62, 16, 0.42);
+    border: 1px solid rgba(224, 176, 82, 0.5);
+    color: #f2ddb0;
+  }
+
+  .gm-pill-cleared {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em];
+    background: rgba(52, 74, 44, 0.36);
+    border: 1px solid rgba(134, 196, 122, 0.38);
+    color: #d5ecce;
+  }
+
+  .gm-pill-dropped {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em];
+    background: rgba(40, 12, 20, 0.6);
+    border: 1px solid rgba(246, 239, 227, 0.2);
+    color: var(--cream-faint);
+  }
+
+  /* A row whose money has not settled yet. */
+  .gm-row-pending {
+    background: rgba(96, 62, 16, 0.14);
+  }
+
+  /* The small live dot on a connected bank. */
+  .gm-dot {
+    @apply inline-block h-2 w-2 shrink-0 rounded-full;
+  }
+
+  .gm-dot-live {
+    background: var(--good);
+    box-shadow: 0 0 0 3px rgba(134, 196, 122, 0.18);
+  }
+
+  .gm-dot-warn {
+    background: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+  }
+
+  .gm-dot-off {
+    background: var(--bad);
+    box-shadow: 0 0 0 3px rgba(232, 128, 151, 0.16);
+  }
+
   /* The track behind every progress bar. */
   .gm-track {
     @apply overflow-hidden rounded-full;

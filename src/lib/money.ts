@@ -52,3 +52,17 @@ export function parseAmountInput(raw: string): number | null {
   if (!/^-?\d+(\.\d{1,2})?$/.test(cleaned)) return null;
   return toCents(cleaned);
 }
+
+/**
+ * "Safe to spend" — the figure a person actually needs.
+ *
+ * It starts from what the bank says is available (settled money less pending
+ * authorisations) and then sets aside the bills known to be coming, because
+ * money already spoken for is not spendable either.
+ */
+export function safeToSpend(input: {
+  availableCents: number;
+  committedCents: number;
+}): number {
+  return input.availableCents - Math.abs(input.committedCents);
+}

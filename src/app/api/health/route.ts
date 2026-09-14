@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { missingEnv, stripeConfigured } from "@/lib/env";
+import { cronConfigured, missingEnv, stripeConfigured } from "@/lib/env";
+import { activeProviderKey, bankLive } from "@/lib/bank/provider";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,10 @@ export async function GET() {
       status: healthy ? "ok" : "degraded",
       database,
       stripe: stripeConfigured() ? "configured" : "not configured",
+      bank: bankLive()
+        ? `live (${activeProviderKey()})`
+        : "demo bank (no data recipient configured)",
+      scheduledSync: cronConfigured() ? "enabled" : "disabled",
       missingEnv: missing,
       time: new Date().toISOString(),
     },

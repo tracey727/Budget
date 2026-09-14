@@ -40,6 +40,8 @@ export type PlanLimits = {
   budgets: number;
   goals: number;
   csvImport: boolean;
+  /** Live bank connections through a CDR-accredited data recipient. */
+  bankFeed: boolean;
   reports: boolean;
   /** GST / deduction tooling for sole traders. */
   businessTools: boolean;
@@ -60,7 +62,7 @@ export const PLANS: Record<PlanKey, Plan> = {
       "500 transactions a year",
       "5 monthly budgets",
       "1 savings goal",
-      "Spending dashboard",
+      "Cleared, pending and safe-to-spend balances",
       "AUD, Australian financial year",
     ],
     limits: {
@@ -69,6 +71,7 @@ export const PLANS: Record<PlanKey, Plan> = {
       budgets: 5,
       goals: 1,
       csvImport: false,
+      bankFeed: false,
       reports: false,
       businessTools: false,
       dataExport: false,
@@ -106,6 +109,9 @@ export const PLANS: Record<PlanKey, Plan> = {
       "Unlimited accounts",
       "Unlimited transactions",
       "Unlimited budgets and goals",
+      "Connect your bank — transactions arrive on their own",
+      "Pending purchases tracked until your bank clears them",
+      "Automatic categorisation with your own rules",
       "CSV bank statement import with duplicate detection",
       "Full reports: cash flow, category trends, net worth",
       "Recurring bill tracking and due-date alerts",
@@ -117,6 +123,7 @@ export const PLANS: Record<PlanKey, Plan> = {
       budgets: Number.POSITIVE_INFINITY,
       goals: Number.POSITIVE_INFINITY,
       csvImport: true,
+      bankFeed: true,
       reports: true,
       businessTools: false,
       dataExport: true,
@@ -164,6 +171,7 @@ export const PLANS: Record<PlanKey, Plan> = {
       budgets: Number.POSITIVE_INFINITY,
       goals: Number.POSITIVE_INFINITY,
       csvImport: true,
+      bankFeed: true,
       reports: true,
       businessTools: true,
       dataExport: true,

@@ -16,19 +16,28 @@ with a Neon Postgres database and Stripe subscriptions.
 ## What's in the box
 
 ### For everyone (Starter, free)
-- Multi-account tracking with live balances and net position
-- Transactions with categories, merchants and notes
+- Multi-account tracking split into cleared, pending and available money
+- Transactions with categories, merchants, notes and clearing status
 - Monthly budgets with progress bars and over-budget warnings
 - Savings goals with per-month contribution maths
-- Dashboard: money in/out, net, spending breakdown, upcoming bills
+- Dashboard: safe to spend, cleared, pending, net, spending breakdown, bills
+- Automated updates when a payment clears, a hold is released, a budget runs
+  out or a bill falls due
 
 ### Personal Premium ($9.99/mo · $99/yr)
 - Unlimited accounts, transactions, budgets and goals
-- **CSV bank statement import** with automatic column detection and duplicate
-  suppression — tested against CommBank, NAB, Westpac, ANZ and Bendigo formats
-- Recurring bill tracking (weekly → yearly) with due-date warnings
+- **Bank connections** through a CDR-accredited data recipient: transactions
+  arrive as your bank authorises them, and clear as it settles them — see
+  [`docs/BANK_CONNECTIONS.md`](docs/BANK_CONNECTIONS.md)
+- **Automatic categorisation** from your own rules, plus built-in matching for
+  common Australian merchants
+- **CSV bank statement import** with automatic column detection, duplicate
+  suppression and one-click undo — tested against CommBank, NAB, Westpac, ANZ
+  and Bendigo formats
+- Recurring bill tracking (weekly → yearly) with due-date warnings, and
+  mark-as-paid that rolls the due date and writes the payment
 - 12-month cash-flow reporting and category trends
-- Full CSV export
+- Full CSV export, settled money only or everything
 
 ### Professional ($19.99/mo · $199/yr)
 - Everything in Personal Premium
@@ -170,13 +179,32 @@ npx wrangler secret put STRIPE_WEBHOOK_SECRET
 npm run cf:deploy   # redeploy so the Worker picks it up
 ```
 
+### 4b. Connect the bank feed (optional)
+
+Without any of this the app connects a built-in demo bank, so the pending →
+cleared flow works out of the box. For real accounts:
+
+```bash
+npx wrangler secret put BASIQ_API_KEY          # from the Basiq dashboard
+npx wrangler secret put BASIQ_WEBHOOK_SECRET   # the signing secret you set there
+npx wrangler secret put CRON_SECRET            # openssl rand -hex 32
+npm run cf:deploy
+```
+
+Point Basiq's webhook at `https://your-domain.com.au/api/bank/webhook`, and
+point an hourly scheduler at `POST /api/cron/sync` with
+`Authorization: Bearer $CRON_SECRET`. The whole arrangement, including what is
+stored and what consent covers, is written up in
+[`docs/BANK_CONNECTIONS.md`](docs/BANK_CONNECTIONS.md).
+
 ### 5. Verify
 
 ```bash
 curl https://your-domain.com.au/api/health
 ```
 
-Expect `{"status":"ok","database":"ok","stripe":"configured","missingEnv":[]}`.
+Expect `{"status":"ok","database":"ok","stripe":"configured","missingEnv":[]}`,
+plus `bank` and `scheduledSync` reporting how the feed is configured.
 A `503` names exactly which variable is missing or whether the database is
 unreachable — it never echoes secret values.
 
@@ -349,9 +377,15 @@ src/
     privacy/  contact/
     app/                      Authenticated application
       page.tsx                Dashboard
-      transactions/           List, create, CSV import
+      transactions/           List, create, edit, CSV import
+      bank/                   Bank connections, pending items, sync
+      rules/                  Automatic categorisation rules
+      alerts/                 Automated updates
       accounts/  budgets/  goals/  bills/  reports/  billing/
     api/
+      bank/callback           Return from the bank's consent screen
+      bank/webhook            Provider push: settlement, revocation
+      cron/sync               Scheduled refresh, bill checks, email digest
       billing/checkout        Stripe Checkout redirect
       billing/portal          Stripe Customer Portal redirect
       stripe/webhook          Idempotent subscription sync
@@ -364,6 +398,10 @@ src/
     money.ts  dates.ts        AUD and Australian date/FY/GST helpers
     csv.ts                    Bank statement parser
     labels.ts                 Shared display labels
+    alerts.ts                 Automated findings, deduplicated per person
+    bank/                     Open banking: provider interface, Basiq, demo
+                              bank, reconciliation, sync, categorisation rules
+    jobs/                     Scheduled work: bill and budget checks, digest
     auth/                     PBKDF2 passwords, hashed sessions, reset and
                               verification tokens, route guards
     email/                    Resend sender and email templates
@@ -373,7 +411,8 @@ src/
   components/                 UI: marketing and app
 drizzle/                      Generated SQL migrations
 scripts/                      migrate.ts, stripe-setup.ts
-tests/                        CSV parser tests
+tests/                        CSV parser, reset and verification tokens,
+                              reconciliation, rules, balance arithmetic
 ```
 
 ---

@@ -11,7 +11,7 @@ function cell(value: string | null | undefined): string {
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const user = await requireUserApi();
   if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
 
@@ -22,7 +22,15 @@ export async function GET() {
     );
   }
 
-  const rows = await listTransactions(user.id, { limit: 50_000 });
+  // An accountant wants settled money only; a person checking their own
+  // records usually wants everything. Default to settled and let the caller
+  // ask for the rest.
+  const url = new URL(request.url);
+  const include = url.searchParams.get("include");
+  const rows = await listTransactions(user.id, {
+    limit: 50_000,
+    status: include === "all" || include === "pending" ? undefined : "posted",
+  });
 
   const header = [
     "Date",
@@ -31,6 +39,9 @@ export async function GET() {
     "Category",
     "Account",
     "Amount (AUD)",
+    "Status",
+    "Cleared",
+    "Source",
     "GST (AUD)",
     "Business",
     "Notes",
@@ -47,6 +58,25 @@ export async function GET() {
         cell(row.categoryName ?? "Uncategorised"),
         cell(row.accountName),
         cell(row.transaction.amount),
+        cell(
+          row.transaction.status === "posted"
+            ? "Cleared"
+            : row.transaction.status === "pending"
+              ? "Pending"
+              : "Released",
+        ),
+        cell(
+          row.transaction.clearedAt
+            ? formatDateAu(row.transaction.clearedAt.toISOString().slice(0, 10))
+            : "",
+        ),
+        cell(
+          row.transaction.source === "bank"
+            ? "Bank feed"
+            : row.transaction.source === "import"
+              ? "CSV import"
+              : "Entered by hand",
+        ),
         cell(row.transaction.gstAmount),
         row.transaction.isBusiness ? "Yes" : "No",
         cell(row.transaction.notes),

@@ -6,15 +6,19 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/app", label: "Dashboard" },
   { href: "/app/transactions", label: "Transactions" },
+  { href: "/app/bank", label: "Bank" },
   { href: "/app/budgets", label: "Budgets" },
   { href: "/app/accounts", label: "Accounts" },
   { href: "/app/goals", label: "Goals" },
   { href: "/app/bills", label: "Bills" },
+  { href: "/app/rules", label: "Rules" },
   { href: "/app/reports", label: "Reports" },
+  { href: "/app/alerts", label: "Updates" },
   { href: "/app/billing", label: "Billing" },
 ];
 
-export function AppNav() {
+/** `unread` puts a count beside Updates so new findings are not missed. */
+export function AppNav({ unread = 0 }: { unread?: number }) {
   const pathname = usePathname();
 
   return (
@@ -37,6 +41,14 @@ export function AppNav() {
                 }`}
               >
                 {link.label}
+                {link.href === "/app/alerts" && unread > 0 && (
+                  <span
+                    className="ml-1.5 inline-flex min-w-[1.15rem] justify-center rounded-full bg-[var(--gold)] px-1 py-px text-[10px] font-black text-[var(--wine-deep)]"
+                    aria-label={`${unread} unread`}
+                  >
+                    {unread > 9 ? "9+" : unread}
+                  </span>
+                )}
               </Link>
             </li>
           );

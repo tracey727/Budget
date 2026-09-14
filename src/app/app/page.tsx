@@ -9,12 +9,16 @@ import {
   listGoals,
   listTransactions,
   monthSummary,
+  pendingTransactions,
   spendByCategory,
+  totalBalances,
   upcomingBills,
 } from "@/lib/data/queries";
-import { formatMoney } from "@/lib/money";
-import { toCents } from "@/lib/money";
+import { listAlerts } from "@/lib/alerts";
+import { formatMoney, safeToSpend, toCents } from "@/lib/money";
 import { formatDateAu, monthLabel, monthStart, todayIso, daysBetween } from "@/lib/dates";
+import { StatusBadge } from "@/components/app/StatusBadge";
+import { AlertFeed } from "@/components/app/AlertFeed";
 
 export const dynamic = "force-dynamic";
 
@@ -23,27 +27,51 @@ export default async function DashboardPage() {
   const today = todayIso();
   const month = monthStart(today);
 
-  const [summary, balances, accountList, budgets, spend, goals, bills, recent] =
-    await Promise.all([
-      monthSummary(user.id, month),
-      accountBalances(user.id),
-      listAccounts(user.id),
-      budgetProgress(user.id, month),
-      spendByCategory(user.id, month),
-      listGoals(user.id),
-      upcomingBills(user.id, 14),
-      listTransactions(user.id, { limit: 8 }),
-    ]);
+  const [
+    summary,
+    balances,
+    accountList,
+    budgets,
+    spend,
+    goals,
+    bills,
+    recent,
+    pending,
+    alerts,
+  ] = await Promise.all([
+    monthSummary(user.id, month),
+    accountBalances(user.id),
+    listAccounts(user.id),
+    budgetProgress(user.id, month),
+    spendByCategory(user.id, month),
+    listGoals(user.id),
+    upcomingBills(user.id, 14),
+    listTransactions(user.id, { limit: 8 }),
+    pendingTransactions(user.id, 5),
+    listAlerts(user.id, 6),
+  ]);
 
-  const netWorth = accountList.reduce(
-    (total, account) => total + (balances.get(account.id) ?? 0),
+  const totals = totalBalances(
+    balances,
+    accountList.map((account) => account.id),
+  );
+
+  // Bills already due are money that is spoken for, so they come off what is
+  // genuinely safe to spend alongside anything still pending.
+  const committedCents = bills.reduce(
+    (total, row) => total + toCents(row.bill.amount),
     0,
   );
+  const spendable = safeToSpend({
+    availableCents: totals.availableCents,
+    committedCents,
+  });
 
   const budgetedCents = budgets.reduce((t, b) => t + b.limitCents, 0);
   const budgetSpentCents = budgets.reduce((t, b) => t + b.spentCents, 0);
   const topSpend = spend.slice(0, 6);
   const maxSpend = topSpend[0]?.spentCents ?? 0;
+  const anyLinked = accountList.some((account) => account.connectionId);
 
   return (
     <div className="space-y-8">
@@ -59,31 +87,118 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
+      {/* The four figures that answer "where do I actually stand?" — spendable
+          money first, because it is the only one you can act on today. */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatTile
-          label="Money in"
-          value={formatMoney(summary.income)}
-          hint="This month"
-          tone="positive"
+          label="Safe to spend"
+          value={formatMoney(spendable)}
+          hint={
+            committedCents > 0
+              ? `After ${formatMoney(Math.abs(totals.pendingCents))} pending and ${formatMoney(committedCents)} of bills due`
+              : totals.pendingCents !== 0
+                ? `After ${formatMoney(Math.abs(totals.pendingCents))} still pending`
+                : "Nothing pending or due"
+          }
+          tone={spendable >= 0 ? "positive" : "negative"}
         />
         <StatTile
-          label="Money out"
-          value={formatMoney(summary.spend)}
-          hint="This month"
-          tone={summary.spend > 0 ? "negative" : "default"}
+          label="Cleared at the bank"
+          value={formatMoney(totals.clearedCents)}
+          hint={`Across ${accountList.length} account${accountList.length === 1 ? "" : "s"}`}
+        />
+        <StatTile
+          label="Pending"
+          value={
+            totals.pendingCount === 0 ? "None" : formatMoney(totals.pendingCents)
+          }
+          hint={
+            totals.pendingCount === 0
+              ? "Everything has settled"
+              : `${totals.pendingCount} transaction${totals.pendingCount === 1 ? "" : "s"} not settled yet`
+          }
+          tone={totals.pendingCount === 0 ? "default" : "negative"}
         />
         <StatTile
           label="Net this month"
           value={formatMoney(summary.net)}
-          hint={summary.net >= 0 ? "You are ahead" : "Spending exceeds income"}
+          hint={`${formatMoney(summary.income)} in · ${formatMoney(summary.spend)} out`}
           tone={summary.net >= 0 ? "positive" : "negative"}
         />
-        <StatTile
-          label="Net position"
-          value={formatMoney(netWorth)}
-          hint={`Across ${accountList.length} account${accountList.length === 1 ? "" : "s"}`}
-        />
       </div>
+
+      {!anyLinked && (
+        <div className="gm-card flex flex-wrap items-center justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="font-bold">Connect your bank</h2>
+            <p className="gm-muted mt-1 text-sm leading-relaxed">
+              Transactions arrive the moment your card is used, and the balance
+              above corrects itself the moment your bank settles them.
+            </p>
+          </div>
+          <Link href="/app/bank" className="gm-btn-primary shrink-0">
+            Link an account
+          </Link>
+        </div>
+      )}
+
+      {(pending.length > 0 || alerts.length > 0) && (
+        <div className="grid gap-6 lg:grid-cols-2">
+          {pending.length > 0 && (
+            <section className="gm-card">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="font-bold">Waiting to clear</h2>
+                <Link
+                  href="/app/transactions?status=pending"
+                  className="text-sm font-semibold text-[var(--gold-bright)] hover:underline"
+                >
+                  See all
+                </Link>
+              </div>
+              <ul className="space-y-3">
+                {pending.map((row) => (
+                  <li
+                    key={row.transaction.id}
+                    className="flex items-start justify-between gap-3 text-sm"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">
+                        {row.transaction.merchant ?? row.transaction.description}
+                      </p>
+                      <p className="gm-muted text-xs">
+                        {formatDateAu(row.transaction.occurredOn)} ·{" "}
+                        {row.accountName}{" "}
+                        <StatusBadge
+                          status={row.transaction.status}
+                          pendingSince={row.transaction.pendingSince}
+                        />
+                      </p>
+                    </div>
+                    <span className="shrink-0 font-semibold text-[#f2ddb0]">
+                      {formatMoney(toCents(row.transaction.amount))}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {alerts.length > 0 && (
+            <section className="gm-card">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="font-bold">What changed</h2>
+                <Link
+                  href="/app/alerts"
+                  className="text-sm font-semibold text-[var(--gold-bright)] hover:underline"
+                >
+                  All updates
+                </Link>
+              </div>
+              <AlertFeed alerts={alerts.slice(0, 5)} compact />
+            </section>
+          )}
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Budgets */}
@@ -292,10 +407,20 @@ export default async function DashboardPage() {
               <tbody>
                 {recent.map((row) => {
                   const cents = toCents(row.transaction.amount);
+                  const isPending = row.transaction.status === "pending";
                   return (
-                    <tr key={row.transaction.id}>
+                    <tr
+                      key={row.transaction.id}
+                      className={isPending ? "gm-row-pending" : undefined}
+                    >
                       <td className="whitespace-nowrap">{formatDateAu(row.transaction.occurredOn)}</td>
-                      <td className="font-medium">{row.transaction.description}</td>
+                      <td className="font-medium">
+                        {row.transaction.description}{" "}
+                        <StatusBadge
+                          status={row.transaction.status}
+                          pendingSince={row.transaction.pendingSince}
+                        />
+                      </td>
                       <td>{row.categoryName ?? "Uncategorised"}</td>
                       <td className="gm-muted">{row.accountName}</td>
                       <td

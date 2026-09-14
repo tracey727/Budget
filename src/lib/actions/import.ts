@@ -2,16 +2,27 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { transactions } from "@/lib/db/schema";
+import { categories, categoryRules, transactions } from "@/lib/db/schema";
 import { requireUser } from "@/lib/auth/require";
 import { centsToDecimalString } from "@/lib/money";
 import { countTransactions, ownsAccount } from "@/lib/data/queries";
 import { detectMapping, extractRows, parseCsv } from "@/lib/csv";
+import { applyRules, suggestCategoryName, type Rule } from "@/lib/bank/rules";
 
 export type ImportState =
   | { error: string }
-  | { ok: true; imported: number; duplicates: number; skipped: number; errors: string[] }
+  | {
+      ok: true;
+      imported: number;
+      duplicates: number;
+      skipped: number;
+      categorised: number;
+      /** Passed back so the whole import can be undone in one go. */
+      batchId: string;
+      errors: string[];
+    }
   | undefined;
 
 const MAX_BYTES = 2 * 1024 * 1024; // 2 MB — comfortably more than a year of statements.
@@ -86,22 +97,72 @@ export async function importCsvAction(
 
   const batchId = crypto.randomUUID();
 
+  // Imported rows are categorised on the way in, by the person's own rules
+  // first and then by the built-in Australian merchant hints. An import that
+  // lands fully sorted is worth an evening of tidying up.
+  const [rules, categoryByName] = await Promise.all([
+    db()
+      .select({
+        id: categoryRules.id,
+        pattern: categoryRules.pattern,
+        matchType: categoryRules.matchType,
+        categoryId: categoryRules.categoryId,
+        renameTo: categoryRules.renameTo,
+        markBusiness: categoryRules.markBusiness,
+        priority: categoryRules.priority,
+      })
+      .from(categoryRules)
+      .where(
+        and(
+          eq(categoryRules.userId, user.id),
+          eq(categoryRules.archived, false),
+        ),
+      ) as Promise<Rule[]>,
+    db()
+      .select({ id: categories.id, name: categories.name })
+      .from(categories)
+      .where(
+        and(eq(categories.userId, user.id), eq(categories.archived, false)),
+      ),
+  ]);
+
+  const nameToId = new Map(
+    categoryByName.map((row) => [row.name.toLowerCase(), row.id]),
+  );
+
+  let categorised = 0;
+
   const values = await Promise.all(
-    parsed.rows.map(async (row) => ({
-      userId: user.id,
-      accountId,
-      amount: centsToDecimalString(row.amountCents),
-      description: row.description,
-      occurredOn: row.occurredOn,
-      importBatchId: batchId,
-      dedupeHash: await dedupeHash([
-        user.id,
+    parsed.rows.map(async (row) => {
+      const outcome = applyRules(rules, row);
+      const fallback = outcome ? null : suggestCategoryName(row);
+      const categoryId =
+        outcome?.categoryId ??
+        (fallback ? nameToId.get(fallback.toLowerCase()) ?? null : null);
+      if (categoryId) categorised += 1;
+
+      return {
+        userId: user.id,
         accountId,
-        row.occurredOn,
-        String(row.amountCents),
-        row.description.toLowerCase(),
-      ]),
-    })),
+        categoryId,
+        amount: centsToDecimalString(row.amountCents),
+        description: outcome?.description ?? row.description,
+        occurredOn: row.occurredOn,
+        isBusiness: outcome?.markBusiness ?? false,
+        importBatchId: batchId,
+        source: "import" as const,
+        // A statement only ever contains transactions the bank has settled.
+        status: "posted" as const,
+        clearedAt: new Date(),
+        dedupeHash: await dedupeHash([
+          user.id,
+          accountId,
+          row.occurredOn,
+          String(row.amountCents),
+          row.description.toLowerCase(),
+        ]),
+      };
+    }),
   );
 
   // Two statements can overlap, and the same file can be uploaded twice.
@@ -126,6 +187,36 @@ export async function importCsvAction(
     imported,
     duplicates: values.length - imported,
     skipped: parsed.skipped,
+    categorised,
+    batchId,
     errors: parsed.errors,
   };
+}
+
+/**
+ * Undoes an import.
+ *
+ * A statement imported into the wrong account is the single most common
+ * mistake here, and without this the only fix is deleting several hundred rows
+ * by hand. Only rows from the named batch are removed, and only the ones still
+ * untouched — anything since edited or reconciled is left alone rather than
+ * quietly discarding a person's work.
+ */
+export async function undoImportAction(formData: FormData): Promise<void> {
+  const user = await requireUser();
+  const batchId = String(formData.get("batchId") ?? "");
+  if (!z.string().uuid().safeParse(batchId).success) return;
+
+  await db()
+    .delete(transactions)
+    .where(
+      and(
+        eq(transactions.userId, user.id),
+        eq(transactions.importBatchId, batchId),
+        eq(transactions.isReconciled, false),
+      ),
+    );
+
+  revalidatePath("/app");
+  revalidatePath("/app/transactions");
 }

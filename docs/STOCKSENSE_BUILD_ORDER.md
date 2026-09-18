@@ -56,26 +56,44 @@ Every numbered step in this document is executed the same way:
 ## Current position
 
 **Verified against `tracey727/ON-TRACK-Stock-Sense`.** The blueprint pack was out of date: it
-recorded Phase 4.5 as BUILT and 4.6 as PASSED, but neither held — the 4.5 branch carried
-zero commits and `SOURCE_MANIFEST.json` still read `"phase": "4.4"` with 4.5 deferred.
+recorded Phase 4.5 as BUILT and 4.6 as PASSED, but the 4.5 branch carried zero commits and
+`SOURCE_MANIFEST.json` still read `"phase": "4.4"` with 4.5 deferred.
 
-Phase 4.5 has since been built, gated, CI-verified and merged.
+Phase 4 is now complete.
+
+### Phase 4 — GREEN / CLOSED
 
 | | |
 |---|---|
-| Completed | Phase 0, 1, 2, 3, 4.1–4.4 |
-| Phase 4.5 build | ✅ merged — PR #16, head `b158a31`, merge `171717a` |
-| Phase 4.6 local GREEN gate | ✅ PASSED |
-| Phase 4.7 Required CI | ✅ GREEN — exact-head run `35293263570`, merged-main run `35293447383` |
-| Phase 4.5 closure | branch `phase-4-5-green-closure` @ `992af8a` pushed, evidence only, PR not yet opened |
-| **Next** | **Step 4 below — Phase 4.8 `phase-4-green-closure`**, then the Phase 4 ZIP |
-| First development branch after Phase 4 | `phase-5-1-stock-movement-service` |
+| Phase 4 baseline (Phase 3 closed main) | `b5eabcc` |
+| 4.5 build | PR #16, head `b158a31`, CI `35293263570`, merge `171717a`, merged-main CI `35293447383` |
+| 4.6 local GREEN gate | PASSED |
+| 4.7 Required CI | GREEN on `b158a31`, head frozen afterwards |
+| 4.5 closure | PR #17, head `992af8a`, CI `35294813188`, merge `4579b10`, final CI `35295671367` |
+| 4.8 Phase 4 closure | PR #18, head `2ee55c9`, CI `35296046515`, merge `6097a6ef`, final CI `35296349248` |
+| **Phase 4 release ZIP** | artifact `10527632427` — 139,355 bytes — sha256 `bf9d1d1ac94f55bd9aa1a7e4110e94e8d28537371d7fde68edef35cdd733839f` |
+
+All eight Phase 4 GREEN-gate requirements are evidenced in
+`docs/evidence/PHASE_4_FORMAL_GREEN_CLOSURE.md`, each mapped to the subphase satisfying it.
+
+### Current position
+
+| | |
+|---|---|
+| **Now** | **Step 5 below — Phase 5.1 Stock Movement Service** |
+| Branch | `phase-5-1-stock-movement-service` @ `a679580` — built, local gate GREEN, pushed |
+| Next | 5.1 Required CI → merge → 5.1 closure → 5.2 `phase-5-2-core-movement-types` |
+
+Phase 5.1 adds the append-only ledger over the canonical `stock_movements` contract from
+migration 003. Tests move 122 → 155. No migration required. Per-type semantics (5.2), balance
+updates and domain events (5.3), negative stock and batch eligibility (5.4) are deferred by
+design, and `batch_id` stays null until Phase 8.
 
 Required CI produces the full-source ZIP itself, as artifact `stock-sense-full-source` on
 each run, so control-loop step 14 is covered automatically per head.
 
-Note the repository runs a per-subphase closure that the blueprint does not describe, so
-`phase-4-5-green-closure` comes before `phase-4-green-closure`.
+Note the repository runs a per-subphase closure that the blueprint does not describe, so a
+`phase-5-N-green-closure` precedes `phase-5-green-closure`.
 
 ### Branch-name drift
 

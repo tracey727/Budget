@@ -1,0 +1,4 @@
+appointment_ref,client_ref,worker_ref,scheduled_start,scheduled_end,status,service_value,cancellation_at
+APT-001,CL-001,W-001,2026-09-01T09:00:00+10:00,2026-09-01T10:00:00+10:00,cancelled,252.99,2026-08-31T15:00:00+10:00
+APT-002,CL-002,W-001,2026-09-01T10:00:00+10:00,2026-09-01T11:00:00+10:00,completed,252.99,
+APT-003,CL-003,W-002,2026-09-02T13:00:00+10:00,2026-09-02T14:00:00+10:00,no_show,252.99,

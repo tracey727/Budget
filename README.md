@@ -67,6 +67,35 @@ everywhere.
 
 ---
 
+## A second product: ON TRACK Revenue Rescue™
+
+This repository also carries **Revenue Rescue**, a business-operations leakage
+detection and action system for allied-health practices. It lives at `/rescue`,
+shares the account and session tables with the budget app — one sign-in — and
+nothing else: every table it owns is prefixed `rr_` and carries a `tenant_id`.
+
+**Upload operational exports. Find preventable leakage. Show what needs action.
+Track what was recovered.**
+
+- CSV import for appointments, invoices, payments, referrals, waitlists and
+  operational tasks, with a mapping wizard and row-level validation
+- Ten versioned, deterministic detection rules for allied health
+- RED / AMBER / GREEN / HOLD action queue with assignment, due dates and
+  dismissal reasons
+- Confirmed recovery kept strictly apart from estimated value, and immutable
+  once posted
+- Dashboard, four CSV exports and a full audit trail
+- Multi-tenant from the ground up, with five roles and least-privilege defaults
+
+Where the imported data contradicts itself it says HOLD rather than guessing,
+and a held finding can never contribute to a recovery claim. It never charges,
+refunds, credits or writes anything off.
+
+Full build notes, the delivered blueprint and the deliberate deviations from it:
+[`docs/revenue-rescue/README.md`](docs/revenue-rescue/README.md).
+
+---
+
 ## Deploying to production
 
 You need three accounts: **Neon**, **Cloudflare**, and **Stripe**. Budget about
@@ -382,6 +411,12 @@ src/
       rules/                  Automatic categorisation rules
       alerts/                 Automated updates
       accounts/  budgets/  goals/  bills/  reports/  billing/
+    rescue/                   ON TRACK Revenue Rescue™ (separate product)
+      page.tsx                Leakage dashboard
+      imports/                Import Centre, mapping wizard, validation
+      findings/  queue/       Findings table, action queue, finding detail
+      rules/  audit/          Rule catalogue, audit trail
+      users/  settings/       Members and roles, detection thresholds
     api/
       bank/callback           Return from the bank's consent screen
       bank/webhook            Provider push: settlement, revocation
@@ -390,6 +425,7 @@ src/
       billing/portal          Stripe Customer Portal redirect
       stripe/webhook          Idempotent subscription sync
       export/transactions     CSV export
+      rescue/exports/[kind]   Revenue Rescue CSV exports
       health                  Deployment health check
   lib/
     plans.ts                  Pricing and entitlements (single source of truth)
@@ -408,11 +444,17 @@ src/
     db/                       Drizzle schema and Neon client
     data/                     Queries and sign-up seed data
     actions/                  Server actions (auth, transactions, budgets, …)
-  components/                 UI: marketing and app
+    rescue/                   Revenue Rescue domain: tenancy, permissions,
+                              import parsing/mapping/validation, the ten
+                              detection rules, priority, recovery, audit
+  components/                 UI: marketing, app and rescue
 drizzle/                      Generated SQL migrations
 scripts/                      migrate.ts, stripe-setup.ts
+docs/revenue-rescue/          Revenue Rescue blueprint, specs and governance
 tests/                        CSV parser, reset and verification tokens,
-                              reconciliation, rules, balance arithmetic
+                              reconciliation, rules, balance arithmetic,
+                              Revenue Rescue rule fixtures, import validation
+                              and governance invariants
 ```
 
 ---

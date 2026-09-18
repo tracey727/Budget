@@ -638,3 +638,518 @@ export type BankConnection = typeof bankConnections.$inferSelect;
 export type BankSyncRun = typeof bankSyncRuns.$inferSelect;
 export type Alert = typeof alerts.$inferSelect;
 export type CategoryRule = typeof categoryRules.$inferSelect;
+
+/* -------------------------------------------------------------------------- */
+/*                        ON TRACK Revenue Rescue™ (rr_)                       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Revenue Rescue is a second product in this repository: business-operations
+ * leakage detection for allied-health practices. It shares the account and
+ * session tables — a person signs in once — and nothing else. Its own tables
+ * all carry the `rr_` prefix and, without exception, a `tenant_id`.
+ *
+ * Tenancy is the load-bearing idea. A practice's operational data must never be
+ * reachable from another practice's session, so `tenant_id` is on every row of
+ * every customer-domain table and every query filters on it. Membership is what
+ * grants a person a tenant; a tenant ID arriving from a client is never trusted
+ * on its own.
+ */
+
+export const rrTenants = pgTable(
+  "rr_tenants",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    // 'active' | 'suspended' | 'closed'
+    status: text("status").notNull().default("active"),
+    timezone: text("timezone").notNull().default("Australia/Sydney"),
+    // Locked to AUD for the first pilot, but stated rather than assumed.
+    currency: text("currency").notNull().default("AUD"),
+    /** Rule thresholds. Business policy, so it belongs to the tenant. */
+    settingsJson: jsonb("settings_json"),
+    /** Demo tenants carry synthetic data and are labelled everywhere. */
+    isDemo: boolean("is_demo").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("rr_tenants_slug_unique").on(t.slug)],
+);
+
+export const rrMemberships = pgTable(
+  "rr_memberships",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // 'owner' | 'admin' | 'manager' | 'reviewer' | 'auditor'
+    role: text("role").notNull().default("reviewer"),
+    // 'active' | 'disabled'
+    status: text("status").notNull().default("active"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("rr_memberships_tenant_user_unique").on(t.tenantId, t.userId),
+    index("rr_memberships_user_idx").on(t.userId),
+  ],
+);
+
+/* ------------------------------- Import Centre ----------------------------- */
+
+export const rrImportJobs = pgTable(
+  "rr_import_jobs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    sourceType: text("source_type").notNull(),
+    originalFilename: text("original_filename").notNull(),
+    /**
+     * The file's hash, kept so a second upload of the same export can be
+     * warned about. The file itself is not retained.
+     */
+    fileSha256: text("file_sha256").notNull(),
+    // 'mapping' | 'validating' | 'ready' | 'committed' | 'failed'
+    status: text("status").notNull().default("mapping"),
+    headersJson: jsonb("headers_json"),
+    mappingJson: jsonb("mapping_json"),
+    totalRows: integer("total_rows").notNull().default(0),
+    validRows: integer("valid_rows").notNull().default(0),
+    invalidRows: integer("invalid_rows").notNull().default(0),
+    holdRows: integer("hold_rows").notNull().default(0),
+    errorMessage: text("error_message"),
+    createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    committedAt: timestamp("committed_at", { withTimezone: true }),
+  },
+  (t) => [
+    index("rr_import_jobs_tenant_idx").on(t.tenantId, t.createdAt),
+    index("rr_import_jobs_hash_idx").on(t.tenantId, t.fileSha256),
+  ],
+);
+
+export const rrImportMappings = pgTable(
+  "rr_import_mappings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    sourceType: text("source_type").notNull(),
+    name: text("name").notNull(),
+    version: integer("version").notNull().default(1),
+    mappingJson: jsonb("mapping_json").notNull(),
+    createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("rr_import_mappings_tenant_idx").on(t.tenantId, t.sourceType)],
+);
+
+export const rrImportRows = pgTable(
+  "rr_import_rows",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    importJobId: uuid("import_job_id")
+      .notNull()
+      .references(() => rrImportJobs.id, { onDelete: "cascade" }),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    rowNumber: integer("row_number").notNull(),
+    rawJson: jsonb("raw_json").notNull(),
+    normalisedJson: jsonb("normalised_json"),
+    // 'valid' | 'invalid' | 'hold'
+    validationStatus: text("validation_status").notNull().default("valid"),
+    validationErrors: jsonb("validation_errors"),
+  },
+  (t) => [
+    index("rr_import_rows_job_idx").on(t.importJobId, t.rowNumber),
+    index("rr_import_rows_status_idx").on(t.importJobId, t.validationStatus),
+  ],
+);
+
+/* --------------------------- Canonical operations -------------------------- */
+
+export const rrClients = pgTable(
+  "rr_clients",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    externalRef: text("external_ref").notNull(),
+    displayRef: text("display_ref"),
+    /** Deliberately minimal: an identifier, never clinical detail. */
+    minimalIdentityJson: jsonb("minimal_identity_json"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("rr_clients_tenant_ref_unique").on(t.tenantId, t.externalRef)],
+);
+
+export const rrWorkers = pgTable(
+  "rr_workers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    externalRef: text("external_ref").notNull(),
+    displayName: text("display_name"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("rr_workers_tenant_ref_unique").on(t.tenantId, t.externalRef)],
+);
+
+export const rrAppointments = pgTable(
+  "rr_appointments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    externalRef: text("external_ref").notNull(),
+    clientRef: text("client_ref"),
+    workerRef: text("worker_ref"),
+    scheduledStart: timestamp("scheduled_start", { withTimezone: true }).notNull(),
+    scheduledEnd: timestamp("scheduled_end", { withTimezone: true }),
+    status: text("status").notNull(),
+    serviceValue: numeric("service_value", { precision: 14, scale: 2 }),
+    cancellationAt: timestamp("cancellation_at", { withTimezone: true }),
+    sourceImportJobId: uuid("source_import_job_id").references(() => rrImportJobs.id, {
+      onDelete: "set null",
+    }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("rr_appointments_tenant_ref_unique").on(t.tenantId, t.externalRef),
+    index("rr_appointments_tenant_start_idx").on(t.tenantId, t.scheduledStart),
+  ],
+);
+
+export const rrInvoices = pgTable(
+  "rr_invoices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    externalRef: text("external_ref").notNull(),
+    clientRef: text("client_ref"),
+    issueDate: date("issue_date").notNull(),
+    dueDate: date("due_date"),
+    total: numeric("total", { precision: 14, scale: 2 }).notNull(),
+    balance: numeric("balance", { precision: 14, scale: 2 }).notNull(),
+    status: text("status").notNull(),
+    sourceImportJobId: uuid("source_import_job_id").references(() => rrImportJobs.id, {
+      onDelete: "set null",
+    }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("rr_invoices_tenant_ref_unique").on(t.tenantId, t.externalRef),
+    index("rr_invoices_tenant_due_idx").on(t.tenantId, t.dueDate),
+  ],
+);
+
+export const rrPayments = pgTable(
+  "rr_payments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    externalRef: text("external_ref"),
+    paymentDate: date("payment_date").notNull(),
+    amount: numeric("amount", { precision: 14, scale: 2 }).notNull(),
+    invoiceRef: text("invoice_ref"),
+    invoiceId: uuid("invoice_id").references(() => rrInvoices.id, { onDelete: "set null" }),
+    // 'matched' | 'unmatched' | 'hold'
+    matchStatus: text("match_status").notNull().default("unmatched"),
+    dedupeKey: text("dedupe_key").notNull(),
+    sourceImportJobId: uuid("source_import_job_id").references(() => rrImportJobs.id, {
+      onDelete: "set null",
+    }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("rr_payments_tenant_key_unique").on(t.tenantId, t.dedupeKey),
+    index("rr_payments_tenant_date_idx").on(t.tenantId, t.paymentDate),
+  ],
+);
+
+export const rrReferrals = pgTable(
+  "rr_referrals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    externalRef: text("external_ref"),
+    receivedAt: timestamp("received_at", { withTimezone: true }).notNull(),
+    status: text("status").notNull(),
+    progressedAt: timestamp("progressed_at", { withTimezone: true }),
+    dedupeKey: text("dedupe_key").notNull(),
+    sourceImportJobId: uuid("source_import_job_id").references(() => rrImportJobs.id, {
+      onDelete: "set null",
+    }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("rr_referrals_tenant_key_unique").on(t.tenantId, t.dedupeKey)],
+);
+
+export const rrWaitlistEntries = pgTable(
+  "rr_waitlist_entries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    externalRef: text("external_ref"),
+    clientRef: text("client_ref"),
+    status: text("status").notNull(),
+    availability: text("availability"),
+    createdAtSource: timestamp("created_at_source", { withTimezone: true }),
+    dedupeKey: text("dedupe_key").notNull(),
+    sourceImportJobId: uuid("source_import_job_id").references(() => rrImportJobs.id, {
+      onDelete: "set null",
+    }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("rr_waitlist_tenant_key_unique").on(t.tenantId, t.dedupeKey)],
+);
+
+export const rrTasks = pgTable(
+  "rr_operational_tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    externalRef: text("external_ref"),
+    taskType: text("task_type").notNull(),
+    dueAt: timestamp("due_at", { withTimezone: true }),
+    status: text("status").notNull(),
+    relatedValue: numeric("related_value", { precision: 14, scale: 2 }),
+    relatedRef: text("related_ref"),
+    dedupeKey: text("dedupe_key").notNull(),
+    sourceImportJobId: uuid("source_import_job_id").references(() => rrImportJobs.id, {
+      onDelete: "set null",
+    }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("rr_tasks_tenant_key_unique").on(t.tenantId, t.dedupeKey)],
+);
+
+/* -------------------------------- Detection -------------------------------- */
+
+export const rrRuleRuns = pgTable(
+  "rr_rule_runs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    // 'complete' | 'failed'
+    status: text("status").notNull().default("complete"),
+    ruleIdsJson: jsonb("rule_ids_json"),
+    findingsCreated: integer("findings_created").notNull().default(0),
+    findingsUpdated: integer("findings_updated").notNull().default(0),
+    findingsResolved: integer("findings_resolved").notNull().default(0),
+    failuresJson: jsonb("failures_json"),
+    startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+    finishedAt: timestamp("finished_at", { withTimezone: true }),
+    createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+  },
+  (t) => [index("rr_rule_runs_tenant_idx").on(t.tenantId, t.startedAt)],
+);
+
+export const rrFindings = pgTable(
+  "rr_findings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    ruleId: text("rule_id").notNull(),
+    ruleVersion: integer("rule_version").notNull(),
+    /** Provenance: which exact logic produced this, not merely which rule. */
+    ruleLogicHash: text("rule_logic_hash").notNull(),
+    findingKey: text("finding_key").notNull(),
+    title: text("title").notNull(),
+    explanation: text("explanation").notNull(),
+    calculation: text("calculation").notNull(),
+    // 'new' | 'reviewing' | 'actioned' | 'resolved' | 'hold' | 'dismissed'
+    status: text("status").notNull().default("new"),
+    // 'high' | 'medium' | 'low' | 'hold'
+    confidence: text("confidence").notNull(),
+    holdReason: text("hold_reason"),
+    estimatedValue: numeric("estimated_value", { precision: 14, scale: 2 }),
+    /** What the value means, so unlike amounts are never summed together. */
+    valueBasis: text("value_basis").notNull().default("none"),
+    priorityScore: integer("priority_score"),
+    // 'red' | 'amber' | 'green' | 'hold'
+    priorityBand: text("priority_band").notNull().default("green"),
+    priorityRationale: text("priority_rationale"),
+    occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull(),
+    firstDetectedAt: timestamp("first_detected_at", { withTimezone: true }).notNull().defaultNow(),
+    lastDetectedAt: timestamp("last_detected_at", { withTimezone: true }).notNull().defaultNow(),
+    resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+    resolutionReason: text("resolution_reason"),
+  },
+  (t) => [
+    uniqueIndex("rr_findings_tenant_key_unique").on(t.tenantId, t.findingKey),
+    index("rr_findings_tenant_status_idx").on(t.tenantId, t.status),
+    index("rr_findings_tenant_band_idx").on(t.tenantId, t.priorityBand),
+    index("rr_findings_tenant_rule_idx").on(t.tenantId, t.ruleId),
+  ],
+);
+
+export const rrFindingEvidence = pgTable(
+  "rr_finding_evidence",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    findingId: uuid("finding_id")
+      .notNull()
+      .references(() => rrFindings.id, { onDelete: "cascade" }),
+    sourceEntityType: text("source_entity_type").notNull(),
+    sourceEntityId: uuid("source_entity_id"),
+    label: text("label").notNull(),
+    evidenceJson: jsonb("evidence_json").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("rr_finding_evidence_finding_idx").on(t.findingId)],
+);
+
+/* ---------------------------- Action and recovery -------------------------- */
+
+export const rrActions = pgTable(
+  "rr_actions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    findingId: uuid("finding_id")
+      .notNull()
+      .references(() => rrFindings.id, { onDelete: "cascade" }),
+    assignedTo: uuid("assigned_to").references(() => users.id, { onDelete: "set null" }),
+    nextAction: text("next_action"),
+    dueAt: timestamp("due_at", { withTimezone: true }),
+    // 'open' | 'in_progress' | 'blocked' | 'done'
+    status: text("status").notNull().default("open"),
+    createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("rr_actions_tenant_idx").on(t.tenantId, t.status),
+    index("rr_actions_finding_idx").on(t.findingId),
+    index("rr_actions_assignee_idx").on(t.tenantId, t.assignedTo),
+  ],
+);
+
+/**
+ * Confirmed money, recorded by a person.
+ *
+ * A recovery event is immutable once posted. A mistake is corrected by posting
+ * a reversal that points at the original, never by editing history — otherwise
+ * the claim that the dashboard reconciles to source events is worthless.
+ */
+export const rrRecoveryEvents = pgTable(
+  "rr_recovery_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    findingId: uuid("finding_id")
+      .notNull()
+      .references(() => rrFindings.id, { onDelete: "cascade" }),
+    amount: numeric("amount", { precision: 14, scale: 2 }).notNull(),
+    recoveryDate: date("recovery_date").notNull(),
+    evidenceNote: text("evidence_note").notNull(),
+    reversalOfId: uuid("reversal_of_id"),
+    confirmedBy: uuid("confirmed_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("rr_recovery_tenant_date_idx").on(t.tenantId, t.recoveryDate),
+    index("rr_recovery_finding_idx").on(t.findingId),
+  ],
+);
+
+export const rrDismissals = pgTable(
+  "rr_dismissals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    findingId: uuid("finding_id")
+      .notNull()
+      .references(() => rrFindings.id, { onDelete: "cascade" }),
+    reasonCode: text("reason_code").notNull(),
+    reasonNote: text("reason_note").notNull(),
+    dismissedBy: uuid("dismissed_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("rr_dismissals_finding_idx").on(t.findingId)],
+);
+
+export const rrAuditEvents = pgTable(
+  "rr_audit_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => rrTenants.id, { onDelete: "cascade" }),
+    actorUserId: uuid("actor_user_id").references(() => users.id, { onDelete: "set null" }),
+    eventType: text("event_type").notNull(),
+    entityType: text("entity_type").notNull(),
+    entityId: uuid("entity_id"),
+    requestId: text("request_id"),
+    metadataJson: jsonb("metadata_json"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("rr_audit_tenant_idx").on(t.tenantId, t.createdAt),
+    index("rr_audit_entity_idx").on(t.tenantId, t.entityType, t.entityId),
+  ],
+);
+
+export const rrTenantsRelations = relations(rrTenants, ({ many }) => ({
+  memberships: many(rrMemberships),
+  findings: many(rrFindings),
+}));
+
+export const rrMembershipsRelations = relations(rrMemberships, ({ one }) => ({
+  tenant: one(rrTenants, { fields: [rrMemberships.tenantId], references: [rrTenants.id] }),
+  user: one(users, { fields: [rrMemberships.userId], references: [users.id] }),
+}));
+
+export const rrFindingsRelations = relations(rrFindings, ({ one, many }) => ({
+  tenant: one(rrTenants, { fields: [rrFindings.tenantId], references: [rrTenants.id] }),
+  evidence: many(rrFindingEvidence),
+  actions: many(rrActions),
+  recoveries: many(rrRecoveryEvents),
+}));
+
+export type RrTenant = typeof rrTenants.$inferSelect;
+export type RrMembership = typeof rrMemberships.$inferSelect;
+export type RrImportJob = typeof rrImportJobs.$inferSelect;
+export type RrImportRow = typeof rrImportRows.$inferSelect;
+export type RrFinding = typeof rrFindings.$inferSelect;
+export type RrFindingEvidence = typeof rrFindingEvidence.$inferSelect;
+export type RrAction = typeof rrActions.$inferSelect;
+export type RrRecoveryEvent = typeof rrRecoveryEvents.$inferSelect;
+export type RrAuditEvent = typeof rrAuditEvents.$inferSelect;
+export type RrRuleRun = typeof rrRuleRuns.$inferSelect;

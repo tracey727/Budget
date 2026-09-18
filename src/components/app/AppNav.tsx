@@ -15,6 +15,9 @@ const LINKS = [
   { href: "/app/reports", label: "Reports" },
   { href: "/app/alerts", label: "Updates" },
   { href: "/app/billing", label: "Billing" },
+  // The second product in this repository. Separate data, separate workspace,
+  // same sign-in.
+  { href: "/rescue", label: "Revenue Rescue" },
 ];
 
 /** `unread` puts a count beside Updates so new findings are not missed. */

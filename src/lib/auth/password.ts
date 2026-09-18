@@ -3,11 +3,24 @@
  *
  * Cloudflare Workers has no Node `crypto.scrypt` and no native bcrypt/argon2
  * bindings, but it does expose the full SubtleCrypto API. PBKDF2-SHA256 is the
- * strongest primitive available in that environment and is an accepted choice
- * (OWASP recommends >= 600k iterations for PBKDF2-HMAC-SHA256).
+ * strongest primitive available in that environment.
+ *
+ * The iteration count is a deliberate compromise, and below what OWASP
+ * recommends for PBKDF2-HMAC-SHA256 (600k). Every iteration is charged as
+ * Worker CPU time: measured on comparable hardware, 600k costs about 91ms per
+ * hash against roughly 16ms at 100k, and that difference is the difference
+ * between a login that completes and one the runtime kills. This was already
+ * patched straight into production once, in September 2026, without reaching
+ * the repository — so the value now lives here, where a deploy cannot quietly
+ * undo it.
+ *
+ * Raising it later is one line: the stored hash carries the count it was made
+ * with, and `verifyPassword` reads it from there, so old hashes keep verifying
+ * at their own cost while new ones use the new figure. Nobody is locked out by
+ * a change either way.
  */
 
-const ITERATIONS = 600_000;
+const ITERATIONS = 100_000;
 const KEY_LENGTH_BITS = 256;
 const SALT_BYTES = 16;
 const PREFIX = "pbkdf2-sha256";

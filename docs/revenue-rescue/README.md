@@ -104,7 +104,7 @@ RR-AH-004 already counts the balance. Both say so in the finding text.
 
 ```bash
 npm install
-npm test                       # 358 assertions, no database needed
+npm test                       # 374 assertions, no database needed
 DATABASE_URL="postgres://…" npm run db:migrate
 npm run dev                    # then open /rescue
 ```

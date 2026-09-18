@@ -24,7 +24,7 @@ register is kept in `blueprint/BUILD_STATUS.md` unchanged.
 
 ## Evidence
 
-- `npm test` — 358 assertions, no database required.
+- `npm test` — 374 assertions, no database required.
 - `npm run typecheck`, `npm run lint`, `npm run build` — clean.
 - Golden fixtures cover all ten rules: positive, negative, boundary, HOLD and
   idempotency cases.

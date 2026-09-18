@@ -1,0 +1,3 @@
+waitlist_ref,client_ref,status,availability
+WL-001,CL-010,open,"weekday mornings"
+WL-002,CL-011,closed,"any"

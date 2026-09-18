@@ -1,0 +1,3 @@
+payment_ref,payment_date,amount,invoice_ref
+PAY-001,2026-09-05,379.49,INV-1002
+PAY-002,2026-09-11,252.99,

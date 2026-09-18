@@ -1,0 +1,4 @@
+invoice_ref,client_ref,issue_date,due_date,total,balance,status
+INV-1001,CL-002,2026-09-01,2026-09-08,252.99,252.99,overdue
+INV-1002,CL-004,2026-09-03,2026-09-10,379.49,0.00,paid
+INV-1003,CL-004,2026-09-03,2026-09-10,379.49,379.49,open

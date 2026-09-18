@@ -386,6 +386,67 @@ body {
   .gm-table tbody tr:hover td {
     background: rgba(90, 28, 43, 0.28);
   }
+
+  /* ------------------------------------------- Revenue Rescue priority */
+
+  /* The four bands carry the whole triage message, so they are the one place
+     colour is allowed to mean something on its own — and each still carries a
+     word, because colour alone is not an accessible signal. */
+  .rr-band {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em];
+    border: 1px solid transparent;
+  }
+
+  .rr-band-red {
+    background: rgba(120, 22, 40, 0.55);
+    border-color: rgba(232, 128, 151, 0.55);
+    color: #ffd3dc;
+  }
+
+  .rr-band-amber {
+    background: rgba(96, 62, 16, 0.45);
+    border-color: rgba(224, 176, 82, 0.5);
+    color: #f2ddb0;
+  }
+
+  .rr-band-green {
+    background: rgba(52, 74, 44, 0.4);
+    border-color: rgba(134, 196, 122, 0.4);
+    color: #d5ecce;
+  }
+
+  /* HOLD is deliberately colourless: it is not a severity, it is a data
+     problem, and it must not read as "worse red" or "safe green". */
+  .rr-band-hold {
+    background: rgba(246, 239, 227, 0.08);
+    border-color: rgba(246, 239, 227, 0.28);
+    color: var(--cream-dim);
+  }
+
+  /* A finding whose source data contradicts itself. */
+  .rr-row-hold {
+    background: rgba(246, 239, 227, 0.045);
+  }
+
+  .rr-evidence {
+    @apply rounded-lg p-3 text-xs;
+    background: rgba(30, 5, 9, 0.5);
+    border: 1px solid var(--gold-line-soft);
+  }
+
+  /* The demonstration-data marker. It follows the workspace everywhere. */
+  .rr-demo-flag {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em];
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px dashed var(--gold-line);
+    color: var(--gold-bright);
+  }
+
+  /* A single horizontal bar, used for the recovery trend and rule mix. */
+  .rr-bar {
+    @apply h-2 rounded-full;
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+  }
 }
 
 /* Wide content scrolls inside its own container, never the page body. */

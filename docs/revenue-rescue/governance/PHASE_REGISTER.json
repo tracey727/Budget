@@ -1,0 +1,83 @@
+{
+  "product": "ON TRACK Revenue Rescue\u2122",
+  "version": "1.0",
+  "date": "2026-09-18",
+  "current_phase": 10,
+  "next_branch": "phase-10-pilot-commercial-readiness",
+  "phases": [
+    {
+      "phase": 0,
+      "name": "Commercial, product and repository baseline",
+      "branch": "phase-0-commercial-product-baseline",
+      "status": "BUILT"
+    },
+    {
+      "phase": 1,
+      "name": "Security, privacy and tenancy foundation",
+      "branch": "phase-1-security-privacy-tenancy",
+      "status": "BUILT"
+    },
+    {
+      "phase": 2,
+      "name": "Database and canonical data model",
+      "branch": "phase-2-canonical-data-model",
+      "status": "BUILT"
+    },
+    {
+      "phase": 3,
+      "name": "Import Centre, mapping and validation",
+      "branch": "phase-3-import-mapping-validation",
+      "status": "BUILT",
+      "note": "CSV only. XLSX upload is refused with instructions rather than parsed."
+    },
+    {
+      "phase": 4,
+      "name": "Detection engine foundation",
+      "branch": "phase-4-detection-engine-foundation",
+      "status": "BUILT"
+    },
+    {
+      "phase": 5,
+      "name": "Allied-health leakage rule pack",
+      "branch": "phase-5-allied-health-rule-pack",
+      "status": "BUILT"
+    },
+    {
+      "phase": 6,
+      "name": "Action Queue and workflow controls",
+      "branch": "phase-6-action-queue-workflow",
+      "status": "BUILT"
+    },
+    {
+      "phase": 7,
+      "name": "Recovery Tracker and Money Saved Dashboard",
+      "branch": "phase-7-recovery-dashboard",
+      "status": "BUILT"
+    },
+    {
+      "phase": 8,
+      "name": "Responsive app and demo tenant",
+      "branch": "phase-8-responsive-app-demo",
+      "status": "BUILT"
+    },
+    {
+      "phase": 9,
+      "name": "Reports, exports and evidence",
+      "branch": "phase-9-reports-exports-evidence",
+      "status": "BUILT"
+    },
+    {
+      "phase": 10,
+      "name": "Pilot and commercial readiness",
+      "branch": "phase-10-pilot-commercial-readiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "phase": 11,
+      "name": "Production hardening and launch",
+      "branch": "phase-11-production-hardening-launch",
+      "status": "NOT_STARTED"
+    }
+  ],
+  "build_note": "Phases 0-9 were built in a single delivery on branch claude/revenue-rescue-app-build-waxb6i rather than on twelve sequential phase branches. See docs/revenue-rescue/README.md for deviations."
+}

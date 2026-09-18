@@ -7,8 +7,15 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { transactions } from "@/lib/db/schema";
 import { requireUser } from "@/lib/auth/require";
-import { centsToDecimalString, gstFromInclusive, parseAmountInput } from "@/lib/money";
+import {
+  centsToDecimalString,
+  gstFromInclusive,
+  parseAmountInput,
+  toCents,
+} from "@/lib/money";
 import { countTransactions, ownsAccount } from "@/lib/data/queries";
+import { suggestPattern } from "@/lib/bank/rules";
+import { categoryRules } from "@/lib/db/schema";
 
 export type FormState = { error?: string; ok?: boolean } | undefined;
 
@@ -26,6 +33,8 @@ const transactionSchema = z.object({
   notes: z.string().trim().max(1000).optional(),
   isBusiness: z.boolean(),
   hasGst: z.boolean(),
+  /** A transaction can be entered before the bank has settled it. */
+  status: z.enum(["posted", "pending"]).default("posted"),
 });
 
 function readForm(formData: FormData) {
@@ -42,6 +51,7 @@ function readForm(formData: FormData) {
     notes: String(formData.get("notes") ?? ""),
     isBusiness: formData.get("isBusiness") === "on",
     hasGst: formData.get("hasGst") === "on",
+    status: formData.get("status") === "pending" ? "pending" : "posted",
   };
 }
 
@@ -119,6 +129,10 @@ export async function createTransactionAction(
           ? null
           : centsToDecimalString(signed < 0 ? -gstCents : gstCents),
       dedupeHash: hash,
+      status: data.status,
+      source: "manual",
+      pendingSince: data.status === "pending" ? new Date() : null,
+      clearedAt: data.status === "posted" ? new Date() : null,
     })
     .onConflictDoNothing({ target: [transactions.userId, transactions.dedupeHash] });
 
@@ -138,4 +152,102 @@ export async function deleteTransactionAction(formData: FormData): Promise<void>
 
   revalidatePath("/app");
   revalidatePath("/app/transactions");
+}
+
+/**
+ * Editing a transaction.
+ *
+ * A row that came from the bank keeps its amount, date and clearing status —
+ * those belong to the bank and would be overwritten on the next sync anyway.
+ * Everything a person adds themselves, which is the category, the notes and
+ * the business flags, is theirs to change.
+ */
+export async function updateTransactionAction(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const user = await requireUser();
+  const id = String(formData.get("id") ?? "");
+  if (!z.string().uuid().safeParse(id).success) {
+    return { error: "That transaction does not exist." };
+  }
+
+  const existing = await db()
+    .select()
+    .from(transactions)
+    .where(and(eq(transactions.id, id), eq(transactions.userId, user.id)))
+    .limit(1);
+
+  const current = existing[0];
+  if (!current) return { error: "That transaction does not exist." };
+
+  const parsed = transactionSchema.safeParse(readForm(formData));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
+  }
+  const data = parsed.data;
+
+  if (!(await ownsAccount(user.id, data.accountId))) {
+    return { error: "That account does not exist." };
+  }
+
+  const fromBank = current.source === "bank";
+
+  const magnitude = parseAmountInput(data.amount);
+  if (!fromBank && (magnitude === null || magnitude === 0)) {
+    return { error: "Enter an amount like 42.50." };
+  }
+
+  const signed =
+    fromBank || magnitude === null
+      ? toCents(current.amount)
+      : data.direction === "in"
+        ? Math.abs(magnitude)
+        : -Math.abs(magnitude);
+
+  const isBusiness = user.limits.businessTools && data.isBusiness;
+  const gstCents =
+    isBusiness && data.hasGst ? gstFromInclusive(Math.abs(signed)) : null;
+
+  await db()
+    .update(transactions)
+    .set({
+      accountId: fromBank ? current.accountId : data.accountId,
+      categoryId: data.categoryId,
+      amount: centsToDecimalString(signed),
+      description: data.description,
+      merchant: data.merchant || null,
+      occurredOn: fromBank ? current.occurredOn : data.occurredOn,
+      notes: data.notes || null,
+      isBusiness,
+      gstAmount:
+        gstCents === null
+          ? null
+          : centsToDecimalString(signed < 0 ? -gstCents : gstCents),
+      status: fromBank ? current.status : data.status,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(transactions.id, id), eq(transactions.userId, user.id)));
+
+  // Offer to make the categorisation stick, but only where it would help: a
+  // rule is worth having when the same merchant will turn up again.
+  if (formData.get("createRule") === "on" && data.categoryId) {
+    const pattern = suggestPattern(current.merchant ?? current.description);
+    if (pattern) {
+      await db()
+        .insert(categoryRules)
+        .values({
+          userId: user.id,
+          pattern,
+          matchType: "contains",
+          categoryId: data.categoryId,
+          markBusiness: isBusiness,
+          priority: 50,
+        });
+    }
+  }
+
+  revalidatePath("/app");
+  revalidatePath("/app/transactions");
+  redirect("/app/transactions?updated=1");
 }

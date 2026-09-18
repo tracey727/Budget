@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth/require";
 import { logoutAction } from "@/lib/actions/auth";
 import { PLANS } from "@/lib/plans";
 import { VerifyEmailBanner } from "@/components/app/VerifyEmailBanner";
+import { unreadAlertCount } from "@/lib/alerts";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ export default async function AppLayout({
 }) {
   const user = await requireUser();
   const plan = PLANS[user.activePlan];
+  const unread = await unreadAlertCount(user.id);
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -42,7 +44,7 @@ export default async function AppLayout({
           </div>
         </div>
 
-        <AppNav />
+        <AppNav unread={unread} />
       </header>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">

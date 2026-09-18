@@ -2,9 +2,11 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth/require";
 import { listAccounts, listCategories, listTransactions } from "@/lib/data/queries";
 import { deleteTransactionAction } from "@/lib/actions/transactions";
+import { clearTransactionAction } from "@/lib/actions/bank";
 import { formatMoney, toCents } from "@/lib/money";
 import { formatDateAu } from "@/lib/dates";
 import { EmptyState } from "@/components/app/EmptyState";
+import { StatusBadge } from "@/components/app/StatusBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +20,8 @@ export default async function TransactionsPage({
     category?: string;
     from?: string;
     to?: string;
+    status?: string;
+    q?: string;
     page?: string;
     added?: string;
   }>;
@@ -33,6 +37,8 @@ export default async function TransactionsPage({
       categoryId: params.category || undefined,
       from: params.from || undefined,
       to: params.to || undefined,
+      status: params.status || undefined,
+      search: params.q || undefined,
       limit: PAGE_SIZE + 1,
       offset: (page - 1) * PAGE_SIZE,
     }),
@@ -49,15 +55,32 @@ export default async function TransactionsPage({
     if (params.category) sp.set("category", params.category);
     if (params.from) sp.set("from", params.from);
     if (params.to) sp.set("to", params.to);
+    if (params.status) sp.set("status", params.status);
+    if (params.q) sp.set("q", params.q);
     sp.set("page", String(next));
     return `/app/transactions?${sp.toString()}`;
   };
+
+  // Pending money is the part of the list that is still moving, so it gets its
+  // own running total rather than being buried in the rows.
+  const pendingOnPage = visible.filter(
+    (row) => row.transaction.status === "pending",
+  );
+  const pendingTotal = pendingOnPage.reduce(
+    (total, row) => total + toCents(row.transaction.amount),
+    0,
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="gm-display text-3xl font-semibold">Transactions</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          {user.limits.bankFeed && (
+            <Link href="/app/bank" className="gm-btn-secondary">
+              Connect a bank
+            </Link>
+          )}
           {user.limits.csvImport && (
             <Link href="/app/transactions/import" className="gm-btn-secondary">
               Import CSV
@@ -75,8 +98,38 @@ export default async function TransactionsPage({
         </p>
       )}
 
+      {pendingOnPage.length > 0 && (
+        <p className="gm-alert-warn text-sm">
+          <strong>{formatMoney(pendingTotal)}</strong> across{" "}
+          {pendingOnPage.length} transaction
+          {pendingOnPage.length === 1 ? " is" : "s are"} still waiting on your
+          bank. It is already deducted from what is safe to spend, and the amount
+          can change when it settles.
+        </p>
+      )}
+
       {/* Filters */}
-      <form className="gm-card grid gap-3 sm:grid-cols-2 lg:grid-cols-5" method="get">
+      <form className="gm-card grid gap-3 sm:grid-cols-2 lg:grid-cols-6" method="get">
+        <div className="sm:col-span-2 lg:col-span-2">
+          <label className="gm-label text-xs" htmlFor="q">Search</label>
+          <input
+            id="q"
+            name="q"
+            type="search"
+            className="gm-input"
+            placeholder="Merchant, description or note"
+            defaultValue={params.q ?? ""}
+          />
+        </div>
+        <div>
+          <label className="gm-label text-xs" htmlFor="status">Status</label>
+          <select id="status" name="status" className="gm-input" defaultValue={params.status ?? ""}>
+            <option value="">Pending and cleared</option>
+            <option value="pending">Pending only</option>
+            <option value="posted">Cleared only</option>
+            <option value="declined">Released holds</option>
+          </select>
+        </div>
         <div>
           <label className="gm-label text-xs" htmlFor="account">Account</label>
           <select id="account" name="account" className="gm-input" defaultValue={params.account ?? ""}>
@@ -133,11 +186,22 @@ export default async function TransactionsPage({
               <tbody>
                 {visible.map((row) => {
                   const cents = toCents(row.transaction.amount);
+                  const isPending = row.transaction.status === "pending";
+                  const isDeclined = row.transaction.status === "declined";
                   return (
-                    <tr key={row.transaction.id}>
+                    <tr
+                      key={row.transaction.id}
+                      className={isPending ? "gm-row-pending" : undefined}
+                    >
                       <td className="whitespace-nowrap">{formatDateAu(row.transaction.occurredOn)}</td>
                       <td>
-                        <span className="font-medium">{row.transaction.description}</span>
+                        <span className={`font-medium ${isDeclined ? "line-through opacity-70" : ""}`}>
+                          {row.transaction.description}
+                        </span>{" "}
+                        <StatusBadge
+                          status={row.transaction.status}
+                          pendingSince={row.transaction.pendingSince}
+                        />
                         {row.transaction.isBusiness && (
                           <span className="gm-pill ml-2">
                             Business
@@ -158,20 +222,51 @@ export default async function TransactionsPage({
                         </span>
                       </td>
                       <td className="gm-muted">{row.accountName}</td>
-                      <td className={`whitespace-nowrap text-right font-semibold ${cents >= 0 ? "text-brand-600" : ""}`}>
+                      <td
+                        className={`whitespace-nowrap text-right font-semibold ${
+                          isDeclined
+                            ? "gm-muted line-through"
+                            : isPending
+                              ? "text-[#f2ddb0]"
+                              : cents >= 0
+                                ? "text-brand-600"
+                                : ""
+                        }`}
+                      >
                         {formatMoney(cents)}
                       </td>
                       <td className="text-right">
-                        <form action={deleteTransactionAction}>
-                          <input type="hidden" name="id" value={row.transaction.id} />
-                          <button
-                            type="submit"
-                            className="gm-muted text-xs hover:text-red-600"
-                            aria-label={`Delete ${row.transaction.description}`}
+                        <div className="flex items-center justify-end gap-3">
+                          <Link
+                            href={`/app/transactions/${row.transaction.id}`}
+                            className="gm-muted text-xs hover:text-[var(--gold-bright)]"
+                            aria-label={`Edit ${row.transaction.description}`}
                           >
-                            Delete
-                          </button>
-                        </form>
+                            Edit
+                          </Link>
+                          {isPending && (
+                            <form action={clearTransactionAction}>
+                              <input type="hidden" name="id" value={row.transaction.id} />
+                              <button
+                                type="submit"
+                                className="gm-muted text-xs hover:text-[var(--gold-bright)]"
+                                title="Mark this as settled without waiting for the bank"
+                              >
+                                Clear
+                              </button>
+                            </form>
+                          )}
+                          <form action={deleteTransactionAction}>
+                            <input type="hidden" name="id" value={row.transaction.id} />
+                            <button
+                              type="submit"
+                              className="gm-muted text-xs hover:text-[var(--bad)]"
+                              aria-label={`Delete ${row.transaction.description}`}
+                            >
+                              Delete
+                            </button>
+                          </form>
+                        </div>
                       </td>
                     </tr>
                   );

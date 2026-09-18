@@ -2,7 +2,11 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { importCsvAction, type ImportState } from "@/lib/actions/import";
+import {
+  importCsvAction,
+  undoImportAction,
+  type ImportState,
+} from "@/lib/actions/import";
 import { SubmitButton } from "@/components/SubmitButton";
 
 export function ImportForm({
@@ -25,22 +29,35 @@ export function ImportForm({
 
       {state && "ok" in state && (
         <div className="gm-alert-ok">
-          <p className="font-semibold text-brand-700 dark:text-brand-300">
+          <p className="font-semibold">
             Imported {state.imported} transaction{state.imported === 1 ? "" : "s"}.
           </p>
-          <ul className="gm-muted mt-1.5 space-y-0.5 text-xs">
+          <ul className="mt-1.5 space-y-0.5 text-xs opacity-80">
+            {state.categorised > 0 && (
+              <li>{state.categorised} categorised automatically.</li>
+            )}
             {state.duplicates > 0 && <li>{state.duplicates} already imported, skipped.</li>}
             {state.skipped > 0 && <li>{state.skipped} row(s) could not be read.</li>}
             {state.errors.map((error) => (
               <li key={error}>{error}</li>
             ))}
           </ul>
-          <Link
-            href="/app/transactions"
-            className="mt-2 inline-block font-semibold text-brand-600 hover:underline"
-          >
-            View transactions →
-          </Link>
+          <div className="mt-2 flex flex-wrap items-center gap-4">
+            <Link
+              href="/app/transactions"
+              className="font-semibold hover:underline"
+            >
+              View transactions →
+            </Link>
+            {state.imported > 0 && (
+              <form action={undoImportAction}>
+                <input type="hidden" name="batchId" value={state.batchId} />
+                <button type="submit" className="text-xs underline opacity-80 hover:opacity-100">
+                  Undo this import
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       )}
 

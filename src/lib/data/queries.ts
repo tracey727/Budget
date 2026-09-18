@@ -1,7 +1,8 @@
-import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, lte, ne, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   accounts,
+  bankConnections,
   budgets,
   categories,
   goals,
@@ -32,31 +33,98 @@ export async function listCategories(userId: string) {
     .orderBy(asc(categories.sortOrder), asc(categories.name));
 }
 
-/** Current balance per account = opening balance + sum of its transactions. */
-export async function accountBalances(
-  userId: string,
-): Promise<Map<string, number>> {
+/**
+ * What an account is actually worth, split three ways.
+ *
+ * `cleared`   money the bank has settled. This is the figure on a statement.
+ * `pending`   authorisations the bank has made but not settled. Usually
+ *             negative, because most pending items are card purchases.
+ * `available` cleared + pending — what is genuinely safe to spend.
+ *
+ * Declined authorisations, which the bank released without settling, count
+ * towards none of the three but stay visible in the transaction list.
+ */
+export type AccountBalance = {
+  clearedCents: number;
+  pendingCents: number;
+  availableCents: number;
+  pendingCount: number;
+  /** What the bank itself last reported, when the account is linked. */
+  bankLedgerCents: number | null;
+  bankAvailableCents: number | null;
+  balanceUpdatedAt: Date | null;
+  isLinked: boolean;
+};
+
+export type BalanceMap = Map<string, AccountBalance>;
+
+export async function accountBalances(userId: string): Promise<BalanceMap> {
   const rows = await db()
     .select({
       accountId: transactions.accountId,
-      total: sql<string>`coalesce(sum(${transactions.amount}), 0)`,
+      cleared: sql<string>`coalesce(sum(${transactions.amount}) filter (where ${transactions.status} = 'posted'), 0)`,
+      pending: sql<string>`coalesce(sum(${transactions.amount}) filter (where ${transactions.status} = 'pending'), 0)`,
+      pendingCount: sql<string>`count(*) filter (where ${transactions.status} = 'pending')`,
     })
     .from(transactions)
     .where(eq(transactions.userId, userId))
     .groupBy(transactions.accountId);
 
-  const sums = new Map<string, number>();
-  for (const row of rows) sums.set(row.accountId, toCents(row.total));
+  const sums = new Map(
+    rows.map((row) => [
+      row.accountId,
+      {
+        cleared: toCents(row.cleared),
+        pending: toCents(row.pending),
+        pendingCount: Number(row.pendingCount ?? 0),
+      },
+    ]),
+  );
 
   const list = await listAccounts(userId, true);
-  const balances = new Map<string, number>();
+  const balances: BalanceMap = new Map();
+
   for (const account of list) {
-    balances.set(
-      account.id,
-      toCents(account.openingBalance) + (sums.get(account.id) ?? 0),
-    );
+    const sum = sums.get(account.id) ?? { cleared: 0, pending: 0, pendingCount: 0 };
+    const clearedCents = toCents(account.openingBalance) + sum.cleared;
+    balances.set(account.id, {
+      clearedCents,
+      pendingCents: sum.pending,
+      availableCents: clearedCents + sum.pending,
+      pendingCount: sum.pendingCount,
+      bankLedgerCents:
+        account.ledgerBalance === null ? null : toCents(account.ledgerBalance),
+      bankAvailableCents:
+        account.availableBalance === null ? null : toCents(account.availableBalance),
+      balanceUpdatedAt: account.balanceUpdatedAt,
+      isLinked: Boolean(account.connectionId),
+    });
   }
+
   return balances;
+}
+
+/** Totals across every account a person holds. */
+export function totalBalances(balances: BalanceMap, accountIds?: string[]) {
+  const entries: AccountBalance[] = [];
+  if (accountIds) {
+    for (const id of accountIds) {
+      const balance = balances.get(id);
+      if (balance) entries.push(balance);
+    }
+  } else {
+    entries.push(...balances.values());
+  }
+
+  return entries.reduce(
+    (total, balance) => ({
+      clearedCents: total.clearedCents + balance.clearedCents,
+      pendingCents: total.pendingCents + balance.pendingCents,
+      availableCents: total.availableCents + balance.availableCents,
+      pendingCount: total.pendingCount + balance.pendingCount,
+    }),
+    { clearedCents: 0, pendingCents: 0, availableCents: 0, pendingCount: 0 },
+  );
 }
 
 export type TransactionFilter = {
@@ -65,6 +133,10 @@ export type TransactionFilter = {
   accountId?: string;
   categoryId?: string;
   businessOnly?: boolean;
+  /** 'pending' | 'posted' | 'declined'. Declined rows are hidden by default. */
+  status?: string;
+  /** Free text matched against description and merchant. */
+  search?: string;
   limit?: number;
   offset?: number;
 };
@@ -80,6 +152,25 @@ export async function listTransactions(
   if (filter.categoryId) conditions.push(eq(transactions.categoryId, filter.categoryId));
   if (filter.businessOnly) conditions.push(eq(transactions.isBusiness, true));
 
+  if (filter.status) {
+    conditions.push(eq(transactions.status, filter.status));
+  } else {
+    // Released authorisations are history, not money — keep them out of the
+    // default view but reachable with an explicit filter.
+    conditions.push(ne(transactions.status, "declined"));
+  }
+
+  if (filter.search) {
+    const term = `%${filter.search.trim().toLowerCase()}%`;
+    conditions.push(
+      or(
+        sql`lower(${transactions.description}) like ${term}`,
+        sql`lower(coalesce(${transactions.merchant}, '')) like ${term}`,
+        sql`lower(coalesce(${transactions.notes}, '')) like ${term}`,
+      )!,
+    );
+  }
+
   return db()
     .select({
       transaction: transactions,
@@ -91,16 +182,72 @@ export async function listTransactions(
     .innerJoin(accounts, eq(transactions.accountId, accounts.id))
     .leftJoin(categories, eq(transactions.categoryId, categories.id))
     .where(and(...conditions))
-    .orderBy(desc(transactions.occurredOn), desc(transactions.createdAt))
+    // Pending items float to the top: they are the ones still in motion.
+    .orderBy(
+      sql`case when ${transactions.status} = 'pending' then 0 else 1 end`,
+      desc(transactions.occurredOn),
+      desc(transactions.createdAt),
+    )
     .limit(filter.limit ?? 100)
     .offset(filter.offset ?? 0);
 }
 
+/** Everything the bank has authorised but not yet settled. */
+export async function pendingTransactions(userId: string, limit = 25) {
+  return db()
+    .select({
+      transaction: transactions,
+      accountName: accounts.name,
+      categoryName: categories.name,
+    })
+    .from(transactions)
+    .innerJoin(accounts, eq(transactions.accountId, accounts.id))
+    .leftJoin(categories, eq(transactions.categoryId, categories.id))
+    .where(
+      and(eq(transactions.userId, userId), eq(transactions.status, "pending")),
+    )
+    .orderBy(desc(transactions.occurredOn))
+    .limit(limit);
+}
+
+/** Bank links, newest first, with how many accounts each one feeds. */
+export async function listBankConnections(userId: string) {
+  const rows = await db()
+    .select({
+      connection: bankConnections,
+      accountCount: sql<string>`(
+        select count(*) from ${accounts}
+        where ${accounts.connectionId} = ${bankConnections.id}
+          and ${accounts.archived} = false
+      )`,
+    })
+    .from(bankConnections)
+    .where(eq(bankConnections.userId, userId))
+    .orderBy(desc(bankConnections.createdAt));
+
+  return rows.map((row) => ({
+    ...row.connection,
+    accountCount: Number(row.accountCount ?? 0),
+  }));
+}
+
+/**
+ * Transactions in the rolling 12 months, which is what the plan limits
+ * describe. Counting every row ever entered would turn a yearly allowance into
+ * a lifetime one.
+ */
 export async function countTransactions(userId: string): Promise<number> {
+  const since = addDays(todayIso(), -365);
   const rows = await db()
     .select({ count: sql<string>`count(*)` })
     .from(transactions)
-    .where(eq(transactions.userId, userId));
+    .where(
+      and(
+        eq(transactions.userId, userId),
+        gte(transactions.occurredOn, since),
+        ne(transactions.status, "declined"),
+      ),
+    );
   return Number(rows[0]?.count ?? 0);
 }
 
@@ -120,6 +267,7 @@ export async function monthSummary(userId: string, month: string) {
         eq(transactions.userId, userId),
         gte(transactions.occurredOn, start),
         sql`${transactions.occurredOn} < ${end}`,
+        ne(transactions.status, "declined"),
       ),
     );
 
@@ -148,6 +296,7 @@ export async function spendByCategory(userId: string, month: string) {
         gte(transactions.occurredOn, start),
         sql`${transactions.occurredOn} < ${end}`,
         sql`${transactions.amount} < 0`,
+        ne(transactions.status, "declined"),
       ),
     )
     .groupBy(transactions.categoryId, categories.name, categories.colour)
@@ -224,6 +373,9 @@ export async function listRecurringBills(userId: string) {
 export async function upcomingBills(userId: string, days = 14) {
   const today = todayIso();
   const horizon = addDays(today, days);
+  // Bills more than 60 days overdue are stale data, not a reminder — they
+  // would otherwise sit at the top of the dashboard forever.
+  const floor = addDays(today, -60);
   return db()
     .select({ bill: recurringBills, categoryName: categories.name })
     .from(recurringBills)
@@ -232,6 +384,7 @@ export async function upcomingBills(userId: string, days = 14) {
       and(
         eq(recurringBills.userId, userId),
         eq(recurringBills.archived, false),
+        gte(recurringBills.nextDueOn, floor),
         lte(recurringBills.nextDueOn, horizon),
       ),
     )
@@ -247,7 +400,7 @@ export async function cashflowSeries(userId: string, months = 12) {
       spend: sql<string>`coalesce(sum(case when ${transactions.amount} < 0 then -${transactions.amount} else 0 end), 0)`,
     })
     .from(transactions)
-    .where(eq(transactions.userId, userId))
+    .where(and(eq(transactions.userId, userId), ne(transactions.status, "declined")))
     .groupBy(sql`date_trunc('month', ${transactions.occurredOn})`)
     .orderBy(desc(sql`date_trunc('month', ${transactions.occurredOn})`))
     .limit(months);
@@ -277,6 +430,8 @@ export async function gstSummary(userId: string, from: string, to: string) {
         eq(transactions.isBusiness, true),
         gte(transactions.occurredOn, from),
         lte(transactions.occurredOn, to),
+        // BAS is prepared from settled money only.
+        eq(transactions.status, "posted"),
       ),
     );
 

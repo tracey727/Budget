@@ -18,3 +18,22 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 # Without this, reset links are logged to the console instead of sent.
 RESEND_API_KEY="re_xxx"
 EMAIL_FROM="Genevieve App <noreply@genevieveapp.com.au>"
+
+# ---------------------------------------------------------------------------
+# Open banking (optional)
+# ---------------------------------------------------------------------------
+# Without these the app connects a built-in demo bank instead: realistic
+# Australian transactions that arrive pending and settle about a day later, so
+# the whole pending/cleared flow can be seen before signing a CDR agreement.
+#
+# For real accounts, sign up as a Basiq partner (https://basiq.io), which holds
+# the Consumer Data Right accreditation. The key is the base64 value Basiq
+# shows under Developer Dashboard -> Applications.
+BASIQ_API_KEY=""
+# Shared secret for verifying Basiq webhook deliveries (HMAC-SHA256, hex).
+BASIQ_WEBHOOK_SECRET=""
+
+# Shared secret for the scheduled sync endpoint, POST /api/cron/sync.
+# Generate with: openssl rand -hex 32
+# Without it, scheduled syncing is disabled and returns 503.
+CRON_SECRET=""

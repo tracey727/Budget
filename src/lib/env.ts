@@ -14,6 +14,11 @@ export type AppEnv = {
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
   NEXT_PUBLIC_APP_URL: string;
+  /** Open banking (optional — the demo bank is used when absent). */
+  BASIQ_API_KEY: string;
+  BASIQ_WEBHOOK_SECRET: string;
+  /** Shared secret for the scheduled sync endpoint. */
+  CRON_SECRET: string;
 };
 
 const REQUIRED_KEYS = [
@@ -49,6 +54,16 @@ export function appUrl(): string {
 /** True when Stripe is configured; the app degrades gracefully when it isn't. */
 export function stripeConfigured(): boolean {
   return Boolean(read("STRIPE_SECRET_KEY"));
+}
+
+/** True when the scheduled sync endpoint is protected and therefore usable. */
+export function cronConfigured(): boolean {
+  return Boolean(read("CRON_SECRET"));
+}
+
+/** The shared secret the scheduled sync endpoint expects, if one is set. */
+export function cronSecret(): string | undefined {
+  return read("CRON_SECRET");
 }
 
 /** Reports which required variables are absent — used by the health endpoint. */

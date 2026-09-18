@@ -719,6 +719,10 @@ export const rrImportJobs = pgTable(
     status: text("status").notNull().default("mapping"),
     headersJson: jsonb("headers_json"),
     mappingJson: jsonb("mapping_json"),
+    /** Which worksheet was read, when the upload was a workbook. */
+    sourceSheet: text("source_sheet"),
+    /** How many sheets the workbook held, so "1 of 4" can be said out loud. */
+    sourceSheetCount: integer("source_sheet_count"),
     totalRows: integer("total_rows").notNull().default(0),
     validRows: integer("valid_rows").notNull().default(0),
     invalidRows: integer("invalid_rows").notNull().default(0),

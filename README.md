@@ -77,8 +77,9 @@ nothing else: every table it owns is prefixed `rr_` and carries a `tenant_id`.
 **Upload operational exports. Find preventable leakage. Show what needs action.
 Track what was recovered.**
 
-- CSV import for appointments, invoices, payments, referrals, waitlists and
-  operational tasks, with a mapping wizard and row-level validation
+- CSV and Excel (.xlsx) import for appointments, invoices, payments, referrals,
+  waitlists and operational tasks, with a mapping wizard and row-level
+  validation
 - Ten versioned, deterministic detection rules for allied health
 - RED / AMBER / GREEN / HOLD action queue with assignment, due dates and
   dismissal reasons

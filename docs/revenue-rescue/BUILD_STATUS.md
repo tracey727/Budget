@@ -12,7 +12,7 @@ register is kept in `blueprint/BUILD_STATUS.md` unchanged.
 | 0 | Commercial, product and repository baseline | `phase-0-commercial-product-baseline` | BUILT |
 | 1 | Security, privacy and tenancy foundation | `phase-1-security-privacy-tenancy` | BUILT |
 | 2 | Database and canonical data model | `phase-2-canonical-data-model` | BUILT |
-| 3 | Import Centre, mapping and validation | `phase-3-import-mapping-validation` | BUILT (CSV only) |
+| 3 | Import Centre, mapping and validation | `phase-3-import-mapping-validation` | BUILT |
 | 4 | Detection engine foundation | `phase-4-detection-engine-foundation` | BUILT |
 | 5 | Allied-health leakage rule pack | `phase-5-allied-health-rule-pack` | BUILT |
 | 6 | Action Queue and workflow controls | `phase-6-action-queue-workflow` | BUILT |
@@ -24,13 +24,12 @@ register is kept in `blueprint/BUILD_STATUS.md` unchanged.
 
 ## Evidence
 
-- `npm test` — 324 assertions, no database required.
+- `npm test` — 358 assertions, no database required.
 - `npm run typecheck`, `npm run lint`, `npm run build` — clean.
 - Golden fixtures cover all ten rules: positive, negative, boundary, HOLD and
   idempotency cases.
 
 ## Not yet done
 
-- XLSX parsing (`.xlsx` uploads are refused with instructions).
 - Executed cross-tenant denial tests (they need a database in CI).
 - Production deployment, load testing and penetration testing.

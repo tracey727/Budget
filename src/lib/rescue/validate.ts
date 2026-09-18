@@ -47,6 +47,34 @@ const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 const SLASH_DATE = /^(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2}|\d{4})$/;
 const ISO_INSTANT = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?(Z|[+-]\d{2}:?\d{2})?$/;
 const MONEY = /^-?\d+(\.\d{1,2})?$/;
+const EXCEL_ERROR = /^#(REF|N\/A|VALUE|DIV\/0|NAME|NULL|NUM|SPILL|CALC|GETTING_DATA)[!?]?$/i;
+
+/**
+ * Problems a spreadsheet brings with it that a CSV never does.
+ *
+ * Both are HOLD rather than INVALID: the cell is not malformed, it is a
+ * question the workbook itself never answered, and only someone looking at the
+ * original file can say what the value should have been.
+ */
+function spreadsheetIssue(value: string): ParseResult | null {
+  if (value.startsWith("=")) {
+    return {
+      ok: false,
+      severity: "hold",
+      message: `"${value}" is a spreadsheet formula whose result was never saved in the file. Open it in Excel, let it recalculate, and save again — or export as CSV.`,
+    };
+  }
+
+  if (EXCEL_ERROR.test(value)) {
+    return {
+      ok: false,
+      severity: "hold",
+      message: `This cell shows the Excel error ${value}. Fix it in the workbook and upload again.`,
+    };
+  }
+
+  return null;
+}
 
 function realDate(year: number, month: number, day: number): boolean {
   const probe = new Date(Date.UTC(year, month - 1, day));
@@ -61,6 +89,9 @@ function pad(value: number, width = 2): string {
 export function parseDateValue(raw: string, convention: DateConvention): ParseResult {
   const value = raw.trim();
   if (value === "") return { ok: true, value: null };
+
+  const spreadsheet = spreadsheetIssue(value);
+  if (spreadsheet) return spreadsheet;
 
   const iso = ISO_DATE.exec(value);
   if (iso) {
@@ -117,6 +148,9 @@ export function parseInstantValue(
   const value = raw.trim();
   if (value === "") return { ok: true, value: null };
 
+  const spreadsheet = spreadsheetIssue(value);
+  if (spreadsheet) return spreadsheet;
+
   const match = ISO_INSTANT.exec(value);
   if (match) {
     const [, y, m, d, hh, mm, ss, zone] = match;
@@ -166,15 +200,8 @@ export function parseMoneyValue(raw: string): ParseResult {
   const value = raw.trim();
   if (value === "") return { ok: true, value: null };
 
-  // A spreadsheet that exported a formula rather than its result cannot be
-  // trusted to mean anything, so it is held rather than dropped.
-  if (value.startsWith("=")) {
-    return {
-      ok: false,
-      severity: "hold",
-      message: `"${value}" is a spreadsheet formula, not a value. Export the file with values only.`,
-    };
-  }
+  const spreadsheet = spreadsheetIssue(value);
+  if (spreadsheet) return spreadsheet;
 
   let cleaned = value.replace(/[$\s,]/g, "");
   // Accounting style: (123.45) means negative.
@@ -204,7 +231,10 @@ function parseField(field: CanonicalField, raw: string, config: MappingConfig): 
     case "text":
     default: {
       const trimmed = raw.trim();
-      return { ok: true, value: trimmed === "" ? null : trimmed };
+      if (trimmed === "") return { ok: true, value: null };
+      const spreadsheet = spreadsheetIssue(trimmed);
+      if (spreadsheet) return spreadsheet;
+      return { ok: true, value: trimmed };
     }
   }
 }

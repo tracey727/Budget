@@ -32,9 +32,9 @@ governance files and sample CSVs alongside it are the live copies.
 Upload → Map → Validate → Commit → Detect → Prioritise → Action → Confirm
 recovery → Report. Every step is built:
 
-1. **Import Centre** (`/rescue/imports`) — CSV upload for six source types, with
-   a SHA-256 duplicate warning. The file itself is never retained; only the rows
-   and the hash.
+1. **Import Centre** (`/rescue/imports`) — CSV and Excel (.xlsx) upload for six
+   source types, with a SHA-256 duplicate warning. The file itself is never
+   retained; only the rows and the hash.
 2. **Mapping wizard** — canonical field, your column, an example value from your
    own file. The suggestion is pre-filled and never acted on by itself.
 3. **Validation** — VALID / INVALID / HOLD, with a row-level reason for each
@@ -104,7 +104,7 @@ RR-AH-004 already counts the balance. Both say so in the finding text.
 
 ```bash
 npm install
-npm test                       # 324 assertions, no database needed
+npm test                       # 374 assertions, no database needed
 DATABASE_URL="postgres://…" npm run db:migrate
 npm run dev                    # then open /rescue
 ```
@@ -119,7 +119,6 @@ candidate, ready for assignment and a confirmed recovery.
 
 | Blueprint says | Built | Why |
 |---|---|---|
-| CSV **and XLSX** upload | CSV only; `.xlsx` is refused with instructions to save as CSV UTF-8 | XLSX needs a parsing dependency and a formula-cell policy of its own. Refusing clearly beats reading a spreadsheet wrongly. Tracked as the first post-V1 item. |
 | REST endpoints under `/api/...` | Next.js server actions for mutations; CSV exports remain HTTP routes | Same authorisation path, one less public surface. Every action checks tenant *and* capability server-side, so a button rendered by mistake still fails closed. |
 | `rule_definitions` / `rule_versions` tables | Rules are versioned in source; every finding stores `rule_id`, `rule_version` and `rule_logic_hash` | The governance requirement is that history keeps its own provenance, which the per-finding stamp satisfies directly. A finding key includes its rule version, so a version bump raises a new finding instead of rewriting an old one. |
 | Monorepo layout (`apps/`, `packages/`) | One Next.js app, with rule logic isolated in `src/lib/rescue/` and no imports from UI or billing | The package boundary that matters — detection independent of presentation — is kept. A second deployable unit would have been ceremony. |
@@ -132,8 +131,8 @@ candidate, ready for assignment and a confirmed recovery.
 |---|---|
 | 0 Commercial / product baseline | Yes — this pack, in-repo |
 | 1 Security, privacy, tenancy | Yes — tenants, memberships, roles, capability checks, audit |
-| 2 Canonical data model | Yes — 20 tables, migration 0004 |
-| 3 Import, mapping, validation | Yes — CSV (see deviations) |
+| 2 Canonical data model | Yes — 20 tables, migrations 0004 and 0005 |
+| 3 Import, mapping, validation | Yes — CSV and .xlsx |
 | 4 Detection engine | Yes — versioned, idempotent, failure-isolated |
 | 5 Allied-health rule pack | Yes — all ten rules, with golden fixtures |
 | 6 Action queue and workflow | Yes |
@@ -143,9 +142,31 @@ candidate, ready for assignment and a confirmed recovery.
 | 10 Pilot and commercial readiness | Not started — commercial, not code |
 | 11 Production hardening and launch | Not started — needs a real deployment, load and penetration testing |
 
+## Reading spreadsheets
+
+`.xlsx` is read directly, with no dependency: a workbook is a ZIP of XML, and
+`DecompressionStream("deflate-raw")` is already in both Node and Workers. That
+matters here because this code opens files that arrive from outside, and the
+popular spreadsheet library has a long history of parser advisories.
+
+What the reader refuses to guess is the point of it:
+
+- A number only becomes a **date** if the cell's number format says so. Excel
+  stores dates as serial numbers, and `46266` is meaningless without that
+  format. Both the 1900 and Mac 1904 date systems are handled, and quoted text
+  inside a format code (`0.00"my total"`) is not mistaken for a date pattern.
+- A workbook has **no timezone**, so a date and time is handed on without one
+  and resolved against the tenant's declared timezone — the same path a bare
+  CSV timestamp takes.
+- A **formula whose result Excel never cached** is held, not evaluated and not
+  dropped, with a message saying to let the workbook recalculate and save again.
+- An **error cell** (`#REF!`, `#N/A`) is held and named, rather than read as the
+  text "#REF!".
+- Only the **first worksheet** is read, and the import screen says which sheet
+  that was and how many others it passed over.
+
 ## Known gaps
 
-- **XLSX** is refused rather than parsed.
 - **Cross-tenant tests are structural, not executed.** Every query is
   tenant-scoped and every mutation re-reads its target with a `tenant_id`
   predicate, but the security test plan asks for live cross-tenant denial tests,

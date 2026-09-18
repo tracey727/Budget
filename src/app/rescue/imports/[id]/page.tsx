@@ -106,6 +106,21 @@ export default async function ImportDetailPage({
         </p>
       </div>
 
+      {job.sourceSheet && (
+        <p className={(job.sourceSheetCount ?? 1) > 1 ? "gm-alert-warn text-sm" : "gm-alert text-sm"}>
+          {(job.sourceSheetCount ?? 1) > 1 ? (
+            <>
+              This workbook has {job.sourceSheetCount} sheets. Only <strong>{job.sourceSheet}</strong> was
+              read — the first one. Upload the others separately if you need them.
+            </>
+          ) : (
+            <>
+              Read from the worksheet <strong>{job.sourceSheet}</strong>.
+            </>
+          )}
+        </p>
+      )}
+
       {job.status === "committed" ? (
         <p className="gm-alert-ok text-sm">
           This import has been committed. {job.validRows} rows are part of the workspace. Re-uploading the

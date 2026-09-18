@@ -1,6 +1,10 @@
 /**
  * Turning an uploaded file into rows.
  *
+ * CSV and .xlsx both land here and leave in the same shape — a header row and
+ * rows of plain strings — so nothing downstream needs to know which one the
+ * practice exported.
+ *
  * The raw file is never kept. Rows are parsed at upload time, stored as
  * structured JSON against the import job, and the file itself is discarded —
  * which is both the data-minimisation position in the security baseline and
@@ -8,6 +12,7 @@
  */
 
 import { parseCsv } from "@/lib/csv";
+import { isXlsxFailure, readXlsx } from "./xlsx";
 
 /** Generous enough for a year of a busy clinic, small enough to stay safe. */
 export const MAX_FILE_BYTES = 5 * 1024 * 1024;
@@ -17,6 +22,10 @@ export type ParsedFile = {
   headers: string[];
   rows: Record<string, string>[];
   sha256: string;
+  /** Set when the file was a workbook, so the UI can say what was read. */
+  sheetName?: string;
+  /** A warning rather than a refusal: only the first sheet is imported. */
+  extraSheets?: number;
 };
 
 export type ParseFailure = { error: string };
@@ -51,21 +60,39 @@ export async function parseUpload(file: File): Promise<ParsedFile | ParseFailure
     return { error: `That file is ${(file.size / 1024 / 1024).toFixed(1)} MB. The limit is 5 MB.` };
   }
 
-  if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
+  // The old .xls binary format is a different thing entirely, and not worth
+  // supporting when Excel can save the same sheet as .xlsx or CSV.
+  if (name.endsWith(".xls")) {
     return {
       error:
-        "Excel files are not accepted yet. In Excel choose File → Save As → CSV UTF-8, then upload the CSV.",
+        "That is the older .xls format. In Excel choose File → Save As and pick either Excel Workbook (.xlsx) or CSV UTF-8.",
     };
   }
 
-  if (!name.endsWith(".csv") && !name.endsWith(".txt")) {
-    return { error: "Upload a CSV file exported from your practice system." };
+  if (!name.endsWith(".csv") && !name.endsWith(".txt") && !name.endsWith(".xlsx")) {
+    return { error: "Upload a CSV or Excel (.xlsx) file exported from your practice system." };
   }
 
   const bytes = await file.arrayBuffer();
   const sha256 = await sha256Hex(bytes);
-  const text = new TextDecoder("utf-8").decode(bytes);
-  const table = parseCsv(text);
+
+  let table: string[][];
+  let sheetName: string | undefined;
+  let extraSheets: number | undefined;
+
+  if (name.endsWith(".xlsx")) {
+    const workbook = await readXlsx(bytes);
+    if (isXlsxFailure(workbook)) return { error: workbook.error };
+    table = workbook.rows;
+    sheetName = workbook.sheetName;
+    extraSheets = workbook.sheetCount > 1 ? workbook.sheetCount - 1 : undefined;
+  } else {
+    table = parseCsv(new TextDecoder("utf-8").decode(bytes));
+  }
+
+  // A spreadsheet can hold formatted-but-empty rows, so blank rows are dropped
+  // here as well as in the CSV parser.
+  table = table.filter((row) => row.some((cell) => cell.trim() !== ""));
 
   if (table.length === 0) return { error: "That file has no rows in it." };
   if (table.length - 1 > MAX_ROWS) {
@@ -83,5 +110,5 @@ export async function parseUpload(file: File): Promise<ParsedFile | ParseFailure
 
   if (rows.length === 0) return { error: "That file has a header row but no data." };
 
-  return { headers, rows, sha256 };
+  return { headers, rows, sha256, sheetName, extraSheets };
 }

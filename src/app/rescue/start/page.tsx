@@ -35,7 +35,10 @@ export default async function StartPage() {
         <div className="gm-card space-y-3">
           <h3 className="font-semibold">What this does, and does not do</h3>
           <ul className="gm-muted space-y-2 text-sm">
-            <li>Reads CSV exports of appointments, invoices, payments, referrals, waitlists and tasks.</li>
+            <li>
+              Reads CSV and Excel exports of appointments, invoices, payments, referrals, waitlists and
+              tasks.
+            </li>
             <li>Applies ten deterministic rules and explains every finding in plain language.</li>
             <li>Prioritises the work and tracks what was recovered.</li>
           </ul>

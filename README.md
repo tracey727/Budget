@@ -77,8 +77,9 @@ nothing else: every table it owns is prefixed `rr_` and carries a `tenant_id`.
 **Upload operational exports. Find preventable leakage. Show what needs action.
 Track what was recovered.**
 
-- CSV import for appointments, invoices, payments, referrals, waitlists and
-  operational tasks, with a mapping wizard and row-level validation
+- CSV and Excel (.xlsx) import for appointments, invoices, payments, referrals,
+  waitlists and operational tasks, with a mapping wizard and row-level
+  validation
 - Ten versioned, deterministic detection rules for allied health
 - RED / AMBER / GREEN / HOLD action queue with assignment, due dates and
   dismissal reasons
@@ -152,6 +153,7 @@ Import a repository &rarr; `tracey727/Budget`, then set:
 | Deploy command | `npx wrangler deploy` |
 | Root directory | `/` |
 | Production branch | `claude/gen-money-deploy-stripe-jchnfu` |
+| Node version | Read from `.node-version` (22) |
 
 Add the secrets below under **Settings &rarr; Variables and Secrets**, as
 *Secrets* rather than plain text. Two things that catch people out:
@@ -163,6 +165,10 @@ Add the secrets below under **Settings &rarr; Variables and Secrets**, as
 - Adding a variable in the dashboard creates a new *version* but does not
   always deploy it. Check that the newest version is the one carrying 100% of
   traffic, or push a commit to build and deploy in one step.
+- `.node-version` pins the build to Node 22, the version the project is
+  developed and tested against. Without it the build image chooses, and a
+  build that works locally can fail remotely on a version mismatch.
+
 - `wrangler.jsonc` intentionally has **no `vars` block**. `wrangler deploy`
   replaces all plain-text variables with whatever that block contains, so a
   single entry there silently wipes every variable set in the dashboard.

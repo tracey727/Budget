@@ -24,8 +24,8 @@ export default async function ImportsPage() {
       <div>
         <h1 className="gm-display text-3xl font-semibold">Import Centre</h1>
         <p className="gm-muted mt-1 text-sm">
-          Export from your practice system as CSV and upload it here. Nothing is imported until you have seen
-          exactly what was read, what was rejected and why.
+          Export from your practice system as CSV or Excel and upload it here. Nothing is imported until you
+          have seen exactly what was read, what was rejected and why.
         </p>
       </div>
 

@@ -55,25 +55,27 @@ Every numbered step in this document is executed the same way:
 
 ## Current position
 
-**Verified against `tracey727/ON-TRACK-Stock-Sense` on 2026-09-18**, not taken from the
-blueprint pack. The pack is out of date — it records Phase 4.5 as BUILT and Phase 4.6 as
-PASSED. Neither is true in the repository:
+**Verified against `tracey727/ON-TRACK-Stock-Sense`.** The blueprint pack was out of date: it
+recorded Phase 4.5 as BUILT and 4.6 as PASSED, but `main` was at `4879115` (the merge of PR
+#15, *Phase 4.4 — Evidence-Only GREEN Closure*), the 4.5 branch carried zero commits, there
+was no 4.5 PR, no CSV import code and no 4.5 evidence, and `SOURCE_MANIFEST.json` read
+`"phase": "4.4"` with 4.5 listed under `deferred`.
 
-- `main` is at `4879115` — the merge of PR #15, *Phase 4.4 — Evidence-Only GREEN Closure*.
-- Branch `phase-4-5-item-master-csv-import-validation` exists but points at that **same**
-  SHA. It carries zero commits.
-- There is no Phase 4.5 PR. The newest PR in the repository is #15.
-- No CSV import code, no `tests/phase4-5-*`, no `docs/evidence/PHASE_4_5_*`.
-- `SOURCE_MANIFEST.json` reads `"phase": "4.4"` and lists
-  `"4.5 CSV item-master import/validation"` under `deferred`.
+Phase 4.5 has since been built on that branch at `b158a31`.
 
 | | |
 |---|---|
-| Completed | Phase 0, 1, 2, 3, 4.1, 4.2, 4.3, 4.4 — all merged and closed |
-| **Now** | **Step 1 below — Phase 4.5 Item Master CSV Import Validation (build)** |
-| Branch | `phase-4-5-item-master-csv-import-validation` — exists, empty, sits on `main` |
-| Then | 4.6 local gate → 4.7 Required CI → 4.8 `phase-4-green-closure` |
+| Completed | Phase 0, 1, 2, 3, 4.1–4.4 merged and closed |
+| Built, not yet merged | Phase 4.5 — `phase-4-5-item-master-csv-import-validation` @ `b158a31` |
+| **Now** | **Step 2 below — Phase 4.6 local GREEN gate**, then 4.7 Required CI |
+| Then | 4.8 `phase-4-green-closure` → Phase 4 ZIP |
 | First development branch after Phase 4 | `phase-5-1-stock-movement-service` |
+
+Phase 4.6 passes locally on the pinned toolchain (Node 22.16.0, npm 10.9.2, `npm ci` from
+the committed lockfile): typecheck, lint, `format:check`, 122/122 tests, `migration:check`,
+`secret:scan`, `preview:smoke` and both Cloudflare dry-runs. Phase 4.7 needs a pull request
+— `.github/workflows/ci.yml` triggers only on `pull_request` and on `push` to `main`, so
+Required CI cannot run on the branch until a PR is open.
 
 Remaining work: **134 steps**.
 

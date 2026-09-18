@@ -56,28 +56,26 @@ Every numbered step in this document is executed the same way:
 ## Current position
 
 **Verified against `tracey727/ON-TRACK-Stock-Sense`.** The blueprint pack was out of date: it
-recorded Phase 4.5 as BUILT and 4.6 as PASSED, but `main` was at `4879115` (the merge of PR
-#15, *Phase 4.4 — Evidence-Only GREEN Closure*), the 4.5 branch carried zero commits, there
-was no 4.5 PR, no CSV import code and no 4.5 evidence, and `SOURCE_MANIFEST.json` read
-`"phase": "4.4"` with 4.5 listed under `deferred`.
+recorded Phase 4.5 as BUILT and 4.6 as PASSED, but neither held — the 4.5 branch carried
+zero commits and `SOURCE_MANIFEST.json` still read `"phase": "4.4"` with 4.5 deferred.
 
-Phase 4.5 has since been built on that branch at `b158a31`.
+Phase 4.5 has since been built, gated, CI-verified and merged.
 
 | | |
 |---|---|
-| Completed | Phase 0, 1, 2, 3, 4.1–4.4 merged and closed |
-| Built, not yet merged | Phase 4.5 — `phase-4-5-item-master-csv-import-validation` @ `b158a31` |
-| **Now** | **Step 2 below — Phase 4.6 local GREEN gate**, then 4.7 Required CI |
-| Then | 4.8 `phase-4-green-closure` → Phase 4 ZIP |
+| Completed | Phase 0, 1, 2, 3, 4.1–4.4 |
+| Phase 4.5 build | ✅ merged — PR #16, head `b158a31`, merge `171717a` |
+| Phase 4.6 local GREEN gate | ✅ PASSED |
+| Phase 4.7 Required CI | ✅ GREEN — exact-head run `35293263570`, merged-main run `35293447383` |
+| Phase 4.5 closure | branch `phase-4-5-green-closure` @ `992af8a` pushed, evidence only, PR not yet opened |
+| **Next** | **Step 4 below — Phase 4.8 `phase-4-green-closure`**, then the Phase 4 ZIP |
 | First development branch after Phase 4 | `phase-5-1-stock-movement-service` |
 
-Phase 4.6 passes locally on the pinned toolchain (Node 22.16.0, npm 10.9.2, `npm ci` from
-the committed lockfile): typecheck, lint, `format:check`, 122/122 tests, `migration:check`,
-`secret:scan`, `preview:smoke` and both Cloudflare dry-runs. Phase 4.7 needs a pull request
-— `.github/workflows/ci.yml` triggers only on `pull_request` and on `push` to `main`, so
-Required CI cannot run on the branch until a PR is open.
+Required CI produces the full-source ZIP itself, as artifact `stock-sense-full-source` on
+each run, so control-loop step 14 is covered automatically per head.
 
-Remaining work: **134 steps**.
+Note the repository runs a per-subphase closure that the blueprint does not describe, so
+`phase-4-5-green-closure` comes before `phase-4-green-closure`.
 
 ### Branch-name drift
 

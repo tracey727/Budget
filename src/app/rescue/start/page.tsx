@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth/require";
 import { membershipsFor, TIMEZONES } from "@/lib/rescue/tenant";
+import { OnTrackLockup } from "@/components/OnTrackLogo";
+import { COMPANY, companyEntityLine } from "@/lib/business";
 import { StartForm } from "./StartForm";
 
 export const dynamic = "force-dynamic";
@@ -14,11 +16,19 @@ export default async function StartPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="gm-display text-3xl font-semibold">ON TRACK Revenue Rescue™</h1>
-      <p className="gm-muted mt-2 text-sm">
-        Upload your operational exports. See where money and work are falling through the gaps, what needs
-        doing about it, and what you actually got back.
-      </p>
+      <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+        <OnTrackLockup width={168} className="shrink-0" />
+        <div>
+          <h1 className="gm-display text-3xl font-semibold">ON TRACK Revenue Rescue™</h1>
+          <p className="gm-muted mt-1 text-xs uppercase tracking-[0.28em]">
+            {COMPANY.name}
+          </p>
+          <p className="gm-muted mt-2 text-sm">
+            Upload your operational exports. See where money and work are falling through the gaps, what
+            needs doing about it, and what you actually got back.
+          </p>
+        </div>
+      </div>
 
       <div className="gm-rule my-8" />
 
@@ -35,7 +45,10 @@ export default async function StartPage() {
         <div className="gm-card space-y-3">
           <h3 className="font-semibold">What this does, and does not do</h3>
           <ul className="gm-muted space-y-2 text-sm">
-            <li>Reads CSV exports of appointments, invoices, payments, referrals, waitlists and tasks.</li>
+            <li>
+              Reads CSV and Excel exports of appointments, invoices, payments, referrals, waitlists and
+              tasks.
+            </li>
             <li>Applies ten deterministic rules and explains every finding in plain language.</li>
             <li>Prioritises the work and tracks what was recovered.</li>
           </ul>
@@ -51,6 +64,10 @@ export default async function StartPage() {
           </ul>
         </div>
       </div>
+
+      <p className="gm-muted mt-8 text-xs leading-relaxed">
+        Operated by {companyEntityLine()}. {COMPANY.tagline}
+      </p>
     </div>
   );
 }

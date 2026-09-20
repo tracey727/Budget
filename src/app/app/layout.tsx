@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { AppNav } from "@/components/app/AppNav";
+import { LegalFooter } from "@/components/LegalFooter";
 import { requireUser } from "@/lib/auth/require";
 import { logoutAction } from "@/lib/actions/auth";
 import { PLANS } from "@/lib/plans";
@@ -55,6 +56,8 @@ export default async function AppLayout({
         )}
         {children}
       </main>
+
+      <LegalFooter product="budget" />
     </div>
   );
 }

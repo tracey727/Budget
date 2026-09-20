@@ -28,7 +28,7 @@
       "name": "Import Centre, mapping and validation",
       "branch": "phase-3-import-mapping-validation",
       "status": "BUILT",
-      "note": "CSV only. XLSX upload is refused with instructions rather than parsed."
+      "note": "CSV and .xlsx. Workbooks are read from the first sheet, which is named on the import screen."
     },
     {
       "phase": 4,

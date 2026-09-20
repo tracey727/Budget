@@ -6,7 +6,8 @@ import { subscriptions } from "@/lib/db/schema";
 import { PLANS, PLAN_ORDER, formatAud } from "@/lib/plans";
 import { formatDateLong } from "@/lib/dates";
 import { stripeConfigured } from "@/lib/env";
-import { taxNote } from "@/lib/business";
+import { taxNote, BUSINESS, PAYMENTS } from "@/lib/business";
+import { PaymentDetails } from "@/components/PaymentDetails";
 
 export const dynamic = "force-dynamic";
 
@@ -213,16 +214,18 @@ export default async function BillingPage({
       </div>
 
       <p className="gm-muted text-xs leading-relaxed">
-        {taxNote()} Payments are processed by Stripe — Genevieve App never sees your card
-        details. You can cancel at any time from the billing portal; your
-        subscription runs to the end of the period you have paid for. Founding
-        prices apply to the first year only, then renew at the standard annual
-        rate. Full details are in our{" "}
+        {taxNote()} Payments are processed by {PAYMENTS.processor} — {BUSINESS.appName}{" "}
+        never sees your card details. You can cancel at any time from the
+        billing portal; your subscription runs to the end of the period you have
+        paid for. Founding prices apply to the first year only, then renew at
+        the standard annual rate. Full details are in our{" "}
         <Link href="/subscriptions" className="underline hover:text-brand-600">
           Subscription &amp; Refund Policy
         </Link>
         .
       </p>
+
+      <PaymentDetails />
     </div>
   );
 }

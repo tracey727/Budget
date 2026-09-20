@@ -7,6 +7,8 @@ import { getTenantContext } from "@/lib/rescue/tenant";
 import { OPEN_STATUSES } from "@/lib/rescue/runner";
 import { ROLE_LABEL } from "@/lib/rescue/permissions";
 import { RescueNav } from "@/components/rescue/RescueNav";
+import { OnTrackLogo } from "@/components/OnTrackLogo";
+import { LegalFooter } from "@/components/LegalFooter";
 import { DemoFlag } from "@/components/rescue/Band";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 
@@ -16,6 +18,7 @@ export const metadata = {
   title: "ON TRACK Revenue Rescue",
   description:
     "Upload operational exports. Find preventable leakage. Show what needs action. Track what was recovered.",
+  icons: { icon: "/on-track-mark.png", apple: "/on-track-mark.png" },
 };
 
 export default async function RescueLayout({ children }: { children: React.ReactNode }) {
@@ -29,8 +32,8 @@ export default async function RescueLayout({ children }: { children: React.React
       <div className="flex min-h-dvh flex-col">
         <header className="border-b border-[var(--gm-border)]">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
-            <Link href="/rescue" className="gm-display text-lg font-semibold">
-              Revenue Rescue
+            <Link href="/rescue" aria-label="ON TRACK Revenue Rescue home">
+              <OnTrackLogo size="sm" />
             </Link>
             <form action={logoutAction}>
               <button type="submit" className="gm-muted text-sm hover:text-brand-600">
@@ -40,6 +43,8 @@ export default async function RescueLayout({ children }: { children: React.React
           </div>
         </header>
         <main className="flex-1">{children}</main>
+
+        <LegalFooter product="rescue" />
       </div>
     );
   }
@@ -60,9 +65,12 @@ export default async function RescueLayout({ children }: { children: React.React
       <header className="border-b border-[var(--gm-border)]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
-            <Link href="/rescue" className="gm-display text-lg font-semibold">
-              Revenue Rescue
+            <Link href="/rescue" aria-label="ON TRACK Revenue Rescue home">
+              <OnTrackLogo size="sm" />
             </Link>
+            <span className="gm-display hidden text-lg font-semibold sm:inline">
+              Revenue Rescue
+            </span>
             {context.tenant.isDemo && <DemoFlag />}
           </div>
 
@@ -94,12 +102,7 @@ export default async function RescueLayout({ children }: { children: React.React
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
 
-      <footer className="border-t border-[var(--gm-border)] py-4">
-        <p className="gm-muted mx-auto max-w-6xl px-4 text-xs">
-          ON TRACK Revenue Rescue™ finds and prioritises preventable leakage. It never charges, refunds,
-          writes off or posts anything on your behalf — every finding is reviewed by a person.
-        </p>
-      </footer>
+      <LegalFooter product="rescue" />
     </div>
   );
 }

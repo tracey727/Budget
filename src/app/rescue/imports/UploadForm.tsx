@@ -42,19 +42,20 @@ export function UploadForm({
 
         <div>
           <label className="gm-label" htmlFor="file">
-            CSV file
+            CSV or Excel file
           </label>
           <input
             id="file"
             name="file"
             type="file"
-            accept=".csv,text/csv,text/plain"
+            accept=".csv,.xlsx,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             required
             className="gm-input file:mr-3 file:rounded file:border-0 file:bg-[rgba(212,175,55,0.16)] file:px-3 file:py-1 file:text-sm"
           />
           <p className="gm-muted mt-1 text-xs">
-            CSV up to 5 MB and 20,000 rows. From Excel: File → Save As → CSV UTF-8. The file itself is not
-            kept — only the rows, and a hash so a repeat upload can be spotted.
+            CSV or .xlsx, up to 5 MB and 20,000 rows. A workbook is read from its first sheet, and the sheet
+            is named back to you. The file itself is not kept — only the rows, and a hash so a repeat upload
+            can be spotted.
           </p>
         </div>
       </div>

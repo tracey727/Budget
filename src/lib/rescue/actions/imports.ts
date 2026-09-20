@@ -62,6 +62,8 @@ export async function uploadImportAction(_prev: FormState, formData: FormData): 
         timeZone: context.tenant.timezone,
       },
       totalRows: parsed.rows.length,
+      sourceSheet: parsed.sheetName ?? null,
+      sourceSheetCount: parsed.sheetName ? (parsed.extraSheets ?? 0) + 1 : null,
       createdBy: context.viewer.id,
     })
     .returning({ id: rrImportJobs.id });
@@ -97,6 +99,8 @@ export async function uploadImportAction(_prev: FormState, formData: FormData): 
       sourceType,
       rows: parsed.rows.length,
       sha256: parsed.sha256,
+      sheet: parsed.sheetName ?? null,
+      sheetsSkipped: parsed.extraSheets ?? 0,
       duplicateOf: previous[0]?.id ?? null,
     },
   });

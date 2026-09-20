@@ -26,9 +26,22 @@ Decision: UNKNOWN/HOLD rather than forced conclusions.
 Decision: Build Revenue Rescue inside the existing Budget repository, sharing only the account and session tables, with every Revenue Rescue table prefixed `rr_` and carrying `tenant_id`.
 Reason: One sign-in and one deployment pipeline, with no shared customer data between the two products.
 
-## 2026-09-18 — XLSX deferred
+## 2026-09-18 — XLSX deferred — SUPERSEDED
 Decision: V1 accepts CSV only. An `.xlsx` upload is refused with instructions to export as CSV UTF-8.
 Reason: XLSX needs a parsing dependency and its own formula-cell policy. Refusing plainly is safer than reading a spreadsheet wrongly, and the blueprint already requires HOLD rather than a guess. First item in the post-V1 backlog.
+Superseded the same day — see "XLSX supported without a dependency" below.
+
+## 2026-09-18 — XLSX supported without a dependency
+Decision: Read `.xlsx` directly, using the runtime's own `DecompressionStream("deflate-raw")` to open the ZIP, rather than adding a spreadsheet library. Closes the V1 scope item deferred earlier today.
+Reason: This code opens files that arrive from outside a trust boundary, and the widely used spreadsheet library carries a history of parser advisories and a stale npm release. The parts actually needed — shared strings, inline strings, numbers, dates and formulas on one worksheet — are small enough to own and test outright.
+
+## 2026-09-18 — Spreadsheet ambiguity follows the HOLD rule
+Decision: A formula whose result the workbook never cached is HELD, an error cell (`#REF!`, `#N/A`) is HELD and named, and a number becomes a date only when the cell's number format says it is one.
+Reason: The same standard applied to ambiguous dates in CSV. A spreadsheet carries more ways to be unclear, not fewer, and none of them justifies a guess.
+
+## 2026-09-18 — Only the first worksheet
+Decision: A workbook is read from its first sheet. The import screen names that sheet and says how many others were passed over.
+Reason: Importing sheet 1 of 5 in silence is the kind of quiet assumption this product refuses everywhere else. Saying it out loud costs one line.
 
 ## 2026-09-18 — Mutation transport
 Decision: Mutations use Next.js server actions; exports remain HTTP routes.

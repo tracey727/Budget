@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { Logo, TrademarkNote } from "@/components/Logo";
-import { BUSINESS, legalEntityLine, taxNote } from "@/lib/business";
+import { OnTrackLogo } from "@/components/OnTrackLogo";
+import {
+  BUSINESS,
+  COMPANY,
+  PAYMENTS,
+  PRODUCTS,
+  legalEntityLine,
+  taxNote,
+} from "@/lib/business";
 
 export function SiteFooter() {
   return (
@@ -14,6 +22,13 @@ export function SiteFooter() {
               Take control of every dollar. Built in Australia, priced in
               Australian dollars, for Australian households and sole traders.
             </p>
+
+            <div className="mt-6">
+              <p className="gm-muted mb-2 text-[11px] font-semibold uppercase tracking-[0.22em]">
+                A product of
+              </p>
+              <OnTrackLogo size="sm" showTagline />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-8 text-sm sm:grid-cols-3">
@@ -30,6 +45,11 @@ export function SiteFooter() {
               <ul className="gm-muted space-y-1.5">
                 <li><Link href="/contact" className="hover:text-brand-600">Contact</Link></li>
                 <li><Link href="/#security" className="hover:text-brand-600">Security</Link></li>
+                <li>
+                  <Link href={PRODUCTS.rescue.href} className="hover:text-brand-600">
+                    {PRODUCTS.rescue.name}™
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
@@ -54,12 +74,22 @@ export function SiteFooter() {
             {BUSINESS.postalAddress}
           </p>
           <p className="mt-1.5">
-            {taxNote()} Subscriptions renew automatically until cancelled — see
-            the{" "}
+            {taxNote()} Payments are processed by {PAYMENTS.processor} (
+            {PAYMENTS.processorEntity}) on behalf of {BUSINESS.operator}; card
+            details are entered on {PAYMENTS.processor}&rsquo;s hosted checkout
+            and are never stored on our servers. Charges appear on your
+            statement as{" "}
+            <span className="font-mono">{PAYMENTS.statementDescriptor}</span>.
+            Subscriptions renew automatically until cancelled — see the{" "}
             <Link href="/subscriptions" className="underline hover:text-brand-600">
               Subscription &amp; Refund Policy
             </Link>
             .
+          </p>
+          <p className="mt-2">
+            {PRODUCTS.budget.name} and {PRODUCTS.rescue.name}™ are published
+            under the {COMPANY.name} brand and operated by the same Australian
+            business.
           </p>
           <p className="mt-2">
             {BUSINESS.appName} provides budgeting and record-keeping tools only.

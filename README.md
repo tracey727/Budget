@@ -342,20 +342,58 @@ Sized for thousands of concurrent Australian users:
 
 ---
 
+## Brand
+
+The house brand is **ON TRACK by TRACE** — *Safety from Roots to every Journey.*
+Both products are published under it: Genevieve App (budgeting) and ON TRACK
+Revenue Rescue™ (operational leakage).
+
+| Asset | File | Used for |
+|---|---|---|
+| Full lockup | `public/on-track-logo.png` | Revenue Rescue start screen, legal index |
+| Crown mark | `public/on-track-mark.png` | App headers, Revenue Rescue tab icon |
+| Genevieve mark | `public/genevieve-logo.png` | Budget app header, marketing site |
+
+The supplied artwork is used unaltered apart from keying out its white ground
+so it can sit on the burgundy. Because the lockup is drawn in black, gold and
+pink, [`src/components/OnTrackLogo.tsx`](src/components/OnTrackLogo.tsx) always
+presents it on an ivory plate — black type needs a light ground to read
+against. `OnTrackLogo` sets the wordmark in type rather than cropping it from
+the artwork, so navigation bars stay crisp and screen readers get real text.
+
+---
+
 ## Legal and business identity
 
-Business details live in one place — [`src/lib/business.ts`](src/lib/business.ts):
+Business, brand and payment details live in one place —
+[`src/lib/business.ts`](src/lib/business.ts):
 
 ```
+ON TRACK by TRACE (house brand)
 Tracey Ann Kennedy trading as Genevieve App
 ABN 36 530 564 761
 PO Box 475, Labrador QLD 4215, Australia
 tracey@genevieveapp.com.au
 Governing law: Queensland, Australia
+Payments: Stripe (Stripe Payments Australia Pty Ltd), AUD, no GST
+Statement descriptor: ONTRACK BY TRACE
 ```
 
 Change it there and the Terms, Privacy Policy, Subscription & Refund Policy,
-Contact page, legal index and footer all follow.
+Contact page, legal index, billing page and every footer follow.
+
+Two flags in that file change legal wording across the site rather than being
+cosmetic:
+
+- `BUSINESS.gstRegistered` — the tax sentence beside every price.
+- `COMPANY.registeredBusinessName` — while false, the site names the operator
+  and ABN rather than claiming "trading as ON TRACK by TRACE". Set it to true
+  once that business name is registered with ASIC against the ABN.
+
+Who you are dealing with, the ABN, the merchant of record, the processor, the
+statement descriptor, the currency, the accepted cards and the policy links
+appear inside both signed-in products (`LegalFooter`), on the billing page and
+on `/legal` (`PaymentDetails`) — not only on the marketing site.
 
 Four published documents, linked from the footer and before any payment:
 
@@ -385,6 +423,11 @@ genuinely block a paid launch:
       paid launch.
 - [ ] Decide whether Genevieve App needs its own registered business name, or
       continues to trade under Genevieve App
+- [ ] Register **ON TRACK by TRACE** as a business name if it is to be used as
+      a trading name, then set `COMPANY.registeredBusinessName` to true
+- [ ] Confirm the Stripe statement descriptor in the Dashboard matches
+      `PAYMENTS.statementDescriptor`, and that the card brands listed in
+      `PAYMENTS.methods` are the ones actually enabled
 - [ ] Re-check the GST position if turnover approaches $75,000 (see
       [`docs/GST.md`](docs/GST.md))
 - [ ] Re-run `npm run stripe:setup` with your **live** key
@@ -435,7 +478,8 @@ src/
       health                  Deployment health check
   lib/
     plans.ts                  Pricing and entitlements (single source of truth)
-    business.ts               Business identity: ABN, address, contact, jurisdiction
+    business.ts               Business identity: ABN, address, contact,
+                              jurisdiction, house brand, Stripe payment facts
     env.ts                    Lazy, Workers-safe environment access
     money.ts  dates.ts        AUD and Australian date/FY/GST helpers
     csv.ts                    Bank statement parser

@@ -3,7 +3,9 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { getSessionUser } from "@/lib/auth/session";
-import { BUSINESS, legalEntityLine } from "@/lib/business";
+import { BUSINESS, COMPANY, PAYMENTS, PRODUCTS, companyEntityLine, legalEntityLine } from "@/lib/business";
+import { OnTrackLockup } from "@/components/OnTrackLogo";
+import { PaymentDetails } from "@/components/PaymentDetails";
 
 export const dynamic = "force-dynamic";
 
@@ -58,19 +60,69 @@ export default async function LegalIndexPage() {
           ))}
         </div>
 
+        <PaymentDetails className="mt-8" />
+
         <div className="gm-card mt-8">
-          <h2 className="font-bold">Who operates {BUSINESS.appName}</h2>
-          <p className="gm-muted mt-2 text-sm leading-relaxed">
-            {legalEntityLine()}
-            <br />
-            {BUSINESS.postalAddress}
-            <br />
-            <a
-              href={`mailto:${BUSINESS.supportEmail}`}
-              className="text-brand-600 hover:underline"
-            >
-              {BUSINESS.supportEmail}
-            </a>
+          <h2 className="font-bold">Who you are dealing with</h2>
+
+          <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-center">
+            <OnTrackLockup width={148} className="shrink-0 self-start" />
+            <div className="gm-muted text-sm leading-relaxed">
+              <p className="font-semibold text-[var(--cream)]">{COMPANY.name}</p>
+              <p className="italic">{COMPANY.tagline}</p>
+              <p className="mt-2">
+                {PRODUCTS.budget.name} and {PRODUCTS.rescue.name}™ are published
+                under the {COMPANY.name} brand and operated by the same
+                Australian business.
+              </p>
+            </div>
+          </div>
+
+          <dl className="mt-5 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[minmax(0,11rem)_1fr]">
+            <dt className="gm-muted">Operator</dt>
+            <dd className="font-medium">{BUSINESS.operator}</dd>
+
+            <dt className="gm-muted">Trading as</dt>
+            <dd className="font-medium">{BUSINESS.tradingName}</dd>
+
+            <dt className="gm-muted">ABN</dt>
+            <dd className="font-mono font-medium">{BUSINESS.abn}</dd>
+
+            <dt className="gm-muted">GST</dt>
+            <dd className="font-medium">
+              {BUSINESS.gstRegistered
+                ? "Registered for GST"
+                : "Not registered for GST — no GST is charged on subscriptions"}
+            </dd>
+
+            <dt className="gm-muted">Postal address</dt>
+            <dd className="font-medium">{BUSINESS.postalAddress}</dd>
+
+            <dt className="gm-muted">Contact</dt>
+            <dd className="font-medium">
+              <a
+                href={`mailto:${BUSINESS.supportEmail}`}
+                className="text-brand-600 hover:underline"
+              >
+                {BUSINESS.supportEmail}
+              </a>
+            </dd>
+
+            <dt className="gm-muted">Payments taken by</dt>
+            <dd className="font-medium">
+              {PAYMENTS.processor} ({PAYMENTS.processorEntity}) on behalf of{" "}
+              {BUSINESS.operator}
+            </dd>
+
+            <dt className="gm-muted">Governing law</dt>
+            <dd className="font-medium">{BUSINESS.jurisdiction}</dd>
+          </dl>
+
+          <p className="gm-muted mt-5 text-xs leading-relaxed">
+            Your contract for {PRODUCTS.budget.name} is with {legalEntityLine()}.{" "}
+            {PRODUCTS.rescue.name}™ is operated by {companyEntityLine()}. The
+            Australian Consumer Law guarantees that apply to these services
+            cannot be excluded.
           </p>
         </div>
       </main>

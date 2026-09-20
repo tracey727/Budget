@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/marketing/LegalPage";
 import { getSessionUser } from "@/lib/auth/session";
-import { BUSINESS, taxNote } from "@/lib/business";
+import { BUSINESS, PAYMENTS, taxNote } from "@/lib/business";
 import { PLANS } from "@/lib/plans";
 
 export const dynamic = "force-dynamic";
@@ -113,11 +113,66 @@ export default async function SubscriptionPolicyPage() {
 
       <h2>4. How payment works</h2>
       <p>
-        Subscription checkout is hosted by Stripe. {BUSINESS.appName} does not
-        store your full card number in its application database. Stripe may
-        create a customer and subscription record and provide{" "}
-        {BUSINESS.appName} with identifiers, payment status, billing email and
-        subscription information needed to provide your plan.
+        Subscription checkout is hosted by {PAYMENTS.processor}.{" "}
+        {BUSINESS.appName} does not store your full card number in its
+        application database. {PAYMENTS.processor} may create a customer and
+        subscription record and provide {BUSINESS.appName} with identifiers,
+        payment status, billing email and subscription information needed to
+        provide your plan.
+      </p>
+      <div className="gm-scroll-x">
+        <table className="gm-table min-w-[520px]">
+          <tbody>
+            <tr>
+              <th scope="row" className="text-left">Merchant charging you</th>
+              <td>{PAYMENTS.merchantOfRecord}</td>
+            </tr>
+            <tr>
+              <th scope="row" className="text-left">Payment processor</th>
+              <td>
+                {PAYMENTS.processor} ({PAYMENTS.processorEntity}) —{" "}
+                <a
+                  href={PAYMENTS.processorPrivacyUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="font-semibold text-brand-600 hover:underline"
+                >
+                  privacy policy
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" className="text-left">Statement descriptor</th>
+              <td className="font-mono">{PAYMENTS.statementDescriptor}</td>
+            </tr>
+            <tr>
+              <th scope="row" className="text-left">Currency</th>
+              <td>{PAYMENTS.currencyLabel}</td>
+            </tr>
+            <tr>
+              <th scope="row" className="text-left">Payment methods</th>
+              <td>{PAYMENTS.methods.join(", ")}</td>
+            </tr>
+            <tr>
+              <th scope="row" className="text-left">Managing your subscription</th>
+              <td>
+                {PAYMENTS.checkout} and the {PAYMENTS.portal}, from the Billing
+                page in the app
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p className="gm-muted text-xs">
+        If a charge on your statement is not recognised, check the descriptor
+        above before disputing it with your bank — and email{" "}
+        <a
+          href={`mailto:${BUSINESS.billingEmail}`}
+          className="font-semibold text-brand-600 hover:underline"
+        >
+          {BUSINESS.billingEmail}
+        </a>{" "}
+        so we can help identify it.
       </p>
 
       <h2>5. Automatic renewal</h2>

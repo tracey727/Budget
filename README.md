@@ -335,8 +335,11 @@ Sized for thousands of concurrent Australian users:
   URL cannot point checkout at an arbitrary Stripe price.
 - Login reports one message for both unknown-email and wrong-password, and runs
   a hash verification either way to avoid leaking which accounts exist.
+- **Login lockout.** 10 consecutive failed attempts on an account lock it for
+  15 minutes; the counter resets on the next successful sign-in.
 - Security headers (`X-Content-Type-Options`, `X-Frame-Options`,
-  `Referrer-Policy`, `Permissions-Policy`) are set on every response.
+  `Strict-Transport-Security`, `Referrer-Policy`, `Permissions-Policy`) are
+  set on every response.
 - The app never asks for or stores bank credentials, and never sees card
   numbers — Stripe handles those.
 

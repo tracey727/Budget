@@ -81,6 +81,10 @@ const loginSchema = z.object({
   password: z.string().min(1, "Enter your password."),
 });
 
+/** After this many consecutive failures, the account is locked for a while. */
+const LOCKOUT_THRESHOLD = 10;
+const LOCKOUT_MS = 15 * 60 * 1000;
+
 export async function loginAction(
   _prev: AuthState,
   formData: FormData,
@@ -97,12 +101,24 @@ export async function loginAction(
   const { email, password } = parsed.data;
 
   const rows = await db()
-    .select({ id: users.id, passwordHash: users.passwordHash })
+    .select({
+      id: users.id,
+      passwordHash: users.passwordHash,
+      failedLoginAttempts: users.failedLoginAttempts,
+      lockedUntil: users.lockedUntil,
+    })
     .from(users)
     .where(eq(users.email, email))
     .limit(1);
 
   const row = rows[0];
+
+  if (row?.lockedUntil && row.lockedUntil.getTime() > Date.now()) {
+    return {
+      error:
+        "Too many failed attempts. This account is temporarily locked — try again later or reset your password.",
+    };
+  }
 
   // Always run a verification so a missing account and a wrong password take
   // a similar amount of time, and report the same message either way.
@@ -111,7 +127,25 @@ export async function loginAction(
     : await verifyPassword(password, "pbkdf2-sha256$600000$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
 
   if (!row || !ok) {
+    if (row) {
+      const attempts = row.failedLoginAttempts + 1;
+      await db()
+        .update(users)
+        .set({
+          failedLoginAttempts: attempts,
+          lockedUntil:
+            attempts >= LOCKOUT_THRESHOLD ? new Date(Date.now() + LOCKOUT_MS) : null,
+        })
+        .where(eq(users.id, row.id));
+    }
     return { error: "Email or password is incorrect." };
+  }
+
+  if (row.failedLoginAttempts > 0 || row.lockedUntil) {
+    await db()
+      .update(users)
+      .set({ failedLoginAttempts: 0, lockedUntil: null })
+      .where(eq(users.id, row.id));
   }
 
   await purgeExpiredSessions().catch(() => undefined);

@@ -331,8 +331,13 @@ export const basiqProvider: BankProvider = {
     let basiqUserId = created?.id ?? null;
 
     if (!basiqUserId) {
+      // Basiq's filter language treats this as a string literal delimited by
+      // single quotes; escaping them by doubling (the standard OData-style
+      // escape) keeps an address like o'brien@example.com from breaking out
+      // of the literal and altering which user gets matched.
+      const escaped = email.replace(/'/g, "''");
       const existing = await collect<{ id: string; email?: string }>(
-        `/users?filter=user.email.eq('${encodeURIComponent(email)}')`,
+        `/users?filter=${encodeURIComponent(`user.email.eq('${escaped}')`)}`,
         1,
       ).catch(() => []);
       basiqUserId = existing[0]?.id ?? null;

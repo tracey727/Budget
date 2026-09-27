@@ -47,6 +47,19 @@ kept deliberately in the same shape so both products can be reviewed together.
       expiry, newest token wins, rejected if the account's address changed
       after issue, 2-minute resend throttle. A confirmed address is required
       before paid checkout. 22 tests cover it.
+- [x] **Login brute-force lockout implemented.** An account locks for 15
+      minutes after 10 consecutive failed attempts; the counter resets on a
+      successful login. See `src/lib/actions/auth.ts`.
+- [x] **HSTS enabled** (`Strict-Transport-Security`, `next.config.ts`) so a
+      browser refuses to fall back to plain HTTP once it has visited once.
+- [ ] Consider a Content-Security-Policy once the exact script/style sources
+      in production are enumerated and tested — skipped here because a wrong
+      CSP silently breaks pages rather than failing loudly, and it needs a
+      real browser pass, not just `next build`.
+- [ ] Consider Cloudflare-level rate limiting (WAF → Rate limiting rules) on
+      `/login`, `/signup`, `/forgot-password`, `/api/bank/*` and
+      `/api/stripe/webhook` as a second layer in front of the in-app
+      throttles — configured in the Cloudflare dashboard, not in code.
 - [ ] Test entitlement persistence across a second device and browser
 - [ ] Set up email delivery — see `docs/EMAIL_SETUP.md`. The API key alone is
       not enough; the sending domain needs DNS verification or Resend will only

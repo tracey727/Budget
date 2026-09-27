@@ -33,6 +33,10 @@ export const users = pgTable(
     planRenewsAt: timestamp("plan_renews_at", { withTimezone: true }),
     stripeCustomerId: text("stripe_customer_id"),
     emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
+    // Brute-force protection: consecutive failed logins since the last
+    // success, and how long a lock the most recent run of failures earned.
+    failedLoginAttempts: integer("failed_login_attempts").notNull().default(0),
+    lockedUntil: timestamp("locked_until", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

@@ -23,7 +23,7 @@ export default async function AppLayout({
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-[var(--gm-border)]">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/app" aria-label="Genevieve App dashboard">
+          <Link href="/app" aria-label="Budget Rescue dashboard">
             <Logo />
           </Link>
 

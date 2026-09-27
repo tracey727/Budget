@@ -12,7 +12,7 @@ Regenerate it after adding a migration:
 
 ```bash
 {
-  echo "-- Genevieve App — Budget App"
+  echo "-- ON TRACK Budget Rescue"
   echo "-- Complete database setup."
   echo "--"
   echo "-- Paste this whole file into the Neon SQL Editor and press Run."

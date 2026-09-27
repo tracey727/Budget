@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Genevieve App pricing in AUD. Starter is free. Personal Premium $9.99/month or $99/year. Professional $19.99/month or $199/year. Founding member pricing available at launch.",
+    "Budget Rescue pricing in AUD. Starter is free. Personal Premium $9.99/month or $99/year. Professional $19.99/month or $199/year. Founding member pricing available at launch.",
 };
 
 export default async function PricingPage() {

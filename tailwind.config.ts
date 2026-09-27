@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Genevieve App — dark burgundy and gold.
+ * Budget Rescue — dark burgundy and gold.
  *
  * `brand` is the gold scale and `ink` the burgundy scale, so the existing
  * utility classes across the app resolve to the house palette without every

@@ -1,6 +1,6 @@
 # Email setup
 
-Genevieve App sends two account emails: **confirm your email address** at
+Budget Rescue sends two account emails: **confirm your email address** at
 sign-up, and **reset your password**. Both go through
 [Resend](https://resend.com), whose HTTP API works inside Cloudflare Workers
 (SMTP does not).
@@ -72,7 +72,7 @@ Locally, in `.dev.vars`:
 
 ```
 RESEND_API_KEY="re_your_key_here"
-EMAIL_FROM="Genevieve App <noreply@genevieveapp.com.au>"
+EMAIL_FROM="Budget Rescue <noreply@genevieveapp.com.au>"
 ```
 
 In production:

@@ -12,7 +12,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
       }}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" aria-label="Genevieve App home">
+        <Link href="/" aria-label="Budget Rescue home">
           <Logo size="sm" />
         </Link>
 

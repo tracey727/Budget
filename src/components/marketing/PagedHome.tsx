@@ -33,7 +33,7 @@ const FEATURES = [
   },
   {
     title: "Import your bank statements",
-    body: "Drop in a CSV from any Australian bank. Genevieve maps the columns, skips duplicates and files everything by category.",
+    body: "Drop in a CSV from any Australian bank, or connect it directly. Budget Rescue maps the columns, skips duplicates and files everything by category.",
   },
   {
     title: "Bills before they bite",
@@ -41,7 +41,7 @@ const FEATURES = [
   },
   {
     title: "Goals with a real date",
-    body: "Name the goal, set the target and the date, and Genevieve works out what to put aside each payday.",
+    body: "Name the goal, set the target and the date, and Budget Rescue works out what to put aside each payday.",
   },
   {
     title: "Sole trader ready",
@@ -52,7 +52,7 @@ const FEATURES = [
 const ASSURANCES = [
   {
     title: "We never hold your bank logins",
-    body: "No screen-scraping and no stored banking credentials. You stay in control by importing statements yourself.",
+    body: "No screen-scraping, ever. Import a statement yourself, or connect a bank through an accredited Consumer Data Right provider — either way, your bank login never reaches us.",
   },
   {
     title: "Encrypted in transit and at rest",
@@ -60,7 +60,7 @@ const ASSURANCES = [
   },
   {
     title: "Payments handled by Stripe",
-    body: "Card details go straight to Stripe, a PCI DSS Level 1 provider. Genevieve never sees your card number.",
+    body: "Card details go straight to Stripe, a PCI DSS Level 1 provider. Budget Rescue never sees your card number.",
   },
   {
     title: "Export or delete any time",
@@ -130,7 +130,7 @@ export function PagedHome({ signedIn }: { signedIn: boolean }) {
           <Logo size="lg" showWordmark={false} />
 
           <h1 className="gm-script mt-6 text-5xl leading-[1.05] sm:text-6xl">
-            Genevieve
+            Budget Rescue
             <span
               className="ml-1.5 align-super font-sans text-[0.22em] tracking-widest"
               aria-label="trade mark pending"
@@ -138,13 +138,6 @@ export function PagedHome({ signedIn }: { signedIn: boolean }) {
               TM
             </span>
           </h1>
-
-          <p
-            className="gm-display mt-2 text-xs font-semibold uppercase tracking-[0.42em]"
-            style={{ color: "var(--cream-dim)" }}
-          >
-            Budget App
-          </p>
 
           <h2 className="gm-display mt-7 text-balance text-3xl font-semibold leading-tight sm:text-[2.5rem]">
             Take Control of{" "}

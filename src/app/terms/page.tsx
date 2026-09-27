@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/marketing/LegalPage";
 import { getSessionUser } from "@/lib/auth/session";
-import { BUSINESS, legalEntityLine, taxNote } from "@/lib/business";
+import { BUSINESS, companyEntityLine, taxNote } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
-  description: "The terms that apply when you use Genevieve App.",
+  description: "The terms that apply when you use ON TRACK Budget Rescue.",
 };
 
 export default async function TermsPage() {
@@ -22,7 +22,7 @@ export default async function TermsPage() {
     >
       <p>
         These Terms apply to the {BUSINESS.appName} web application operated by{" "}
-        {legalEntityLine()}, {BUSINESS.postalAddress} (&ldquo;{BUSINESS.appName}
+        {companyEntityLine()}, {BUSINESS.postalAddress} (&ldquo;{BUSINESS.appName}
         &rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo; or &ldquo;our&rdquo;).
       </p>
 

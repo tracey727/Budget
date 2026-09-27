@@ -1,5 +1,5 @@
 /**
- * Creates (or updates) the Genevieve App product catalogue in Stripe.
+ * Creates (or updates) the Budget Rescue product catalogue in Stripe.
  *
  * Every price is created with a stable `lookup_key`, which is what the app
  * uses at checkout — so test and live modes can have different price ids
@@ -25,42 +25,45 @@ async function main() {
 
   const stripe = new Stripe(key, { apiVersion: "2026-08-26.dahlia" });
   const mode = key.startsWith("sk_live") ? "LIVE" : "TEST";
-  console.log(`Setting up the Genevieve App catalogue in ${mode} mode…\n`);
+  console.log(`Setting up the Budget Rescue catalogue in ${mode} mode…\n`);
 
   // One Stripe product per paid plan.
   const productIds = new Map<string, string>();
+
+  // Rebrand history, oldest last: gen_money -> Genevieve App -> Budget Rescue.
+  // Each rebrand adds one more key to this list rather than replacing the
+  // last one, so a catalogue created under any earlier name is found and
+  // updated in place instead of duplicated.
+  const METADATA_KEYS = ["budget_rescue_plan", "genevieve_plan", "gen_money_plan"];
 
   for (const planKey of PLAN_ORDER) {
     if (planKey === "starter") continue;
     const plan = PLANS[planKey];
 
-    // Look for an existing product under the current metadata key, then under
-    // the legacy key, so a catalogue created before the rebrand is reused
-    // rather than duplicated.
-    const existing = await stripe.products.search({
-      query: `metadata['genevieve_plan']:'${planKey}'`,
-      limit: 1,
-    });
-    const legacy = existing.data[0]
-      ? null
-      : await stripe.products.search({
-          query: `metadata['gen_money_plan']:'${planKey}'`,
-          limit: 1,
-        });
+    let product: Stripe.Product | undefined;
+    for (const metadataKey of METADATA_KEYS) {
+      const found = await stripe.products.search({
+        query: `metadata['${metadataKey}']:'${planKey}'`,
+        limit: 1,
+      });
+      if (found.data[0]) {
+        product = found.data[0];
+        break;
+      }
+    }
 
-    let product = existing.data[0] ?? legacy?.data[0];
     if (product) {
       console.log(`• Product exists: ${plan.name} (${product.id})`);
       await stripe.products.update(product.id, {
-        name: `Genevieve App ${plan.name}`,
+        name: `Budget Rescue ${plan.name}`,
         description: plan.tagline,
-        metadata: { genevieve_plan: planKey },
+        metadata: { budget_rescue_plan: planKey },
       });
     } else {
       product = await stripe.products.create({
-        name: `Genevieve App ${plan.name}`,
+        name: `Budget Rescue ${plan.name}`,
         description: plan.tagline,
-        metadata: { genevieve_plan: planKey },
+        metadata: { budget_rescue_plan: planKey },
       });
       console.log(`✓ Created product: ${plan.name} (${product.id})`);
     }
@@ -97,7 +100,7 @@ async function main() {
       transfer_lookup_key: true,
       nickname: `${PLANS[price.planKey].name} — ${price.label}`,
       metadata: {
-        genevieve_plan: price.planKey,
+        budget_rescue_plan: price.planKey,
         founding: price.founding ? "true" : "false",
       },
     });

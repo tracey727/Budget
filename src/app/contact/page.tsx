@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/marketing/LegalPage";
 import { getSessionUser } from "@/lib/auth/session";
-import { BUSINESS, legalEntityLine } from "@/lib/business";
+import { BUSINESS, companyEntityLine } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with the Genevieve App team.",
+  description: "Get in touch with the Budget Rescue team.",
 };
 
 export default async function ContactPage() {
@@ -44,7 +44,7 @@ export default async function ContactPage() {
 
       <h2>Post</h2>
       <p>
-        {legalEntityLine()}
+        {companyEntityLine()}
         <br />
         {BUSINESS.postalAddress}
       </p>

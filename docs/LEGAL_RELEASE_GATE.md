@@ -1,17 +1,23 @@
-# Legal and Billing Release Gate — Genevieve App
+# Legal and Billing Release Gate — ON TRACK Budget Rescue
 
-Genevieve App is the Genevieve App budget app, for professionals and everyday
-people. The legal documents describe that product.
+ON TRACK Budget Rescue is the budgeting app for professionals and everyday
+people, a branch of the same "Rescue" concept as ON TRACK Revenue Rescue. The
+legal documents describe that product.
 
 Do not enable live Stripe charging until every item that applies to launch is
 complete and evidenced.
 
-Adapted from the release gate used for GENEVIEVE — The Budget Travels, and
-kept deliberately in the same shape so both products can be reviewed together.
+Kept deliberately in the same shape as the release gate for ON TRACK Revenue
+Rescue, so both products — and future branches of the same concept — can be
+reviewed together.
 
 ## Business identity
 
-- [x] Operator: Tracey Ann Kennedy trading as Genevieve App
+- [x] Operator: Tracey Ann Kennedy, ABN 36 530 564 761 — trading as ON TRACK
+      by TRACE once that business name is ASIC-registered (see
+      `COMPANY.registeredBusinessName` in `src/lib/business.ts`); both Budget
+      Rescue and Revenue Rescue are branches of this one house brand, not
+      separately registered products
 - [x] ABN: 36 530 564 761
 - [x] Postal address: PO Box 475, Labrador QLD 4215
 - [x] Support email: tracey@genevieveapp.com.au — published in the Terms,
@@ -29,8 +35,8 @@ kept deliberately in the same shape so both products can be reviewed together.
 - [ ] If in receipt of a Centrelink pension, tell Services Australia once the
       business earns income and confirm how it will be assessed — separate
       from GST, and applies regardless of registration.
-- [ ] Decide whether Genevieve App needs its own registered business name, or
-      continues to trade under Genevieve App.
+- [ ] Register **ON TRACK by TRACE** as a business name with ASIC against the
+      ABN, then set `COMPANY.registeredBusinessName` to true.
 
 ## Account and entitlement integrity
 

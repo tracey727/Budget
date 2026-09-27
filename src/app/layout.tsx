@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Great_Vibes, Cormorant_Garamond, Lato } from "next/font/google";
 import "./globals.css";
 
-/** The cursive used only for the Genevieve wordmark. */
+/** The cursive used only for the wordmark. */
 const script = Great_Vibes({
   weight: "400",
   subsets: ["latin"],
@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_APP_URL ?? "https://genevieveapp.com.au",
   ),
   title: {
-    default: "Genevieve App — Budget App | Take Control of Every Dollar",
-    template: "%s · Genevieve App",
+    default: "ON TRACK Budget Rescue | Take Control of Every Dollar",
+    template: "%s · Budget Rescue",
   },
   description:
-    "Genevieve App is the Australian budgeting app that shows you exactly where every dollar goes. Start free, no credit card required.",
+    "Budget Rescue is the Australian budgeting app that shows you exactly where every dollar goes. Start free, no credit card required.",
   keywords: [
     "budgeting app Australia",
     "personal finance AUD",
@@ -44,16 +44,16 @@ export const metadata: Metadata = {
     "money management",
   ],
   openGraph: {
-    title: "Genevieve App — Budget App",
+    title: "ON TRACK Budget Rescue",
     description:
       "Take control of every dollar. The Australian budgeting app built for real life. Start free, no credit card required.",
     type: "website",
     locale: "en_AU",
-    siteName: "Genevieve App",
+    siteName: "Budget Rescue",
   },
   icons: {
-    icon: "/genevieve-logo.png",
-    apple: "/genevieve-logo.png",
+    icon: "/budget-rescue-logo.png",
+    apple: "/budget-rescue-logo.png",
   },
   robots: { index: true, follow: true },
 };

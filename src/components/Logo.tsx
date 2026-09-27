@@ -1,12 +1,13 @@
 import Image from "next/image";
 
 /**
- * The Genevieve App mark.
+ * The Budget Rescue mark.
  *
- * The logo artwork is used exactly as supplied — only its white background was
- * made transparent so it can sit on the burgundy. It is presented on an ivory
- * medallion because the artwork is black and gold, and black needs a light
- * ground to read against.
+ * public/budget-rescue-logo.png is still the old Genevieve cursive artwork —
+ * a placeholder until new Budget Rescue artwork is supplied. Once it lands,
+ * drop it in at that same path with the white ground keyed out so it can sit
+ * on the burgundy; the ivory medallion behind it assumes dark artwork, which
+ * needs a light ground to read against.
  */
 export function Logo({
   size = "md",
@@ -40,7 +41,7 @@ export function Logo({
         }}
       >
         <Image
-          src="/genevieve-logo.png"
+          src="/budget-rescue-logo.png"
           alt=""
           width={art}
           height={art}
@@ -52,19 +53,13 @@ export function Logo({
       {showWordmark && (
         <span className="flex flex-col leading-none">
           <span className={`gm-script ${word} leading-[1.05]`}>
-            Genevieve
+            Budget Rescue
             <span
               className="ml-1 align-super font-sans text-[0.3em] tracking-wider"
               aria-label="trade mark pending"
             >
               TM
             </span>
-          </span>
-          <span
-            className="gm-display mt-1 text-[0.62em] font-semibold uppercase tracking-[0.32em]"
-            style={{ color: "var(--cream-dim)" }}
-          >
-            Budget App
           </span>
         </span>
       )}
@@ -76,7 +71,7 @@ export function Logo({
 export function TrademarkNote({ className = "" }: { className?: string }) {
   return (
     <span className={`gm-muted text-[11px] tracking-wide ${className}`}>
-      Genevieve App™ — trade mark pending
+      Budget Rescue™ — trade mark pending
     </span>
   );
 }

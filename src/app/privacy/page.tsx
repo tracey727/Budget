@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/LegalPage";
 import { getSessionUser } from "@/lib/auth/session";
-import { BUSINESS, legalEntityLine } from "@/lib/business";
+import { BUSINESS, companyEntityLine } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How Genevieve App collects, uses and protects your personal information.",
+    "How ON TRACK Budget Rescue collects, uses and protects your personal information.",
 };
 
 export default async function PrivacyPage() {
@@ -21,7 +21,7 @@ export default async function PrivacyPage() {
       signedIn={Boolean(user)}
     >
       <p>
-        This Privacy Policy explains how {legalEntityLine()} handles personal
+        This Privacy Policy explains how {companyEntityLine()} handles personal
         information for {BUSINESS.appName}. We aim to manage personal
         information consistently with Australian privacy requirements that apply
         to us, including the Australian Privacy Principles where applicable.
@@ -62,11 +62,17 @@ export default async function PrivacyPage() {
 
       <h2>2. What we do not collect</h2>
       <p>
-        We do not ask for or store your internet banking credentials.{" "}
-        {BUSINESS.appName} does not connect to your bank, screen-scrape your
-        accounts, or initiate payments on your behalf. Transactions arrive only
-        because you entered them or uploaded a statement you exported yourself.
-        We do not collect your location.
+        We do not ask for or store your internet banking credentials, and we
+        never screen-scrape your bank. If you turn on bank connections (a
+        Personal Premium feature), you authorise your bank through a hosted
+        consent screen run by our accredited Consumer Data Right data
+        recipient — your bank login never reaches {BUSINESS.appName} or is
+        typed into any screen we control. The connection is read-only:{" "}
+        {BUSINESS.appName} cannot move money, make a payment or initiate a
+        transfer on your behalf, and you can disconnect it at any time from
+        within the app. Outside of that optional feature, transactions arrive
+        only because you entered them or uploaded a statement you exported
+        yourself. We do not collect your location.
       </p>
 
       <h2>3. Payment information</h2>
@@ -97,6 +103,13 @@ export default async function PrivacyPage() {
         <li><strong>Cloudflare</strong> — application hosting and network security.</li>
         <li><strong>Neon</strong> — the encrypted Postgres database that stores your records.</li>
         <li><strong>Resend</strong> — delivery of account emails such as password resets.</li>
+        <li>
+          <strong>Our accredited Consumer Data Right data recipient</strong> —
+          only if you turn on bank connections, to retrieve your account and
+          transaction data under your consent. It never receives your
+          personal information from us; the relationship runs the other way,
+          through consent you give directly to it via your bank.
+        </li>
       </ul>
       <p>
         We may also disclose information where required by law or reasonably

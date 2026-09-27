@@ -1,6 +1,6 @@
 # GST position
 
-**Genevieve App is not registered for GST.** Turnover is well below the
+**Budget Rescue is not registered for GST.** Turnover is well below the
 $75,000 ATO registration threshold, so no GST is charged on subscriptions and
 the advertised price is the total the customer pays.
 

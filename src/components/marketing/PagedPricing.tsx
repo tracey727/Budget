@@ -48,7 +48,7 @@ const FAQ = [
   },
   {
     q: "Are prices in Australian dollars?",
-    a: "Yes. Every price is in Australian dollars. Genevieve App is not registered for GST, so no GST is added — the price you see is the total you pay, with no international transaction fee.",
+    a: "Yes. Every price is in Australian dollars. Budget Rescue is not registered for GST, so no GST is added — the price you see is the total you pay, with no international transaction fee.",
   },
   {
     q: "Can I change plans later?",
@@ -60,7 +60,7 @@ const FAQ = [
   },
   {
     q: "Is this financial advice?",
-    a: "No. Genevieve App is a budgeting and record-keeping tool. It does not provide financial product advice or take your personal circumstances into account.",
+    a: "No. Budget Rescue is a budgeting and record-keeping tool. It does not provide financial product advice or take your personal circumstances into account.",
   },
 ];
 

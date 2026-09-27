@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Start free",
-  description: "Create your free Genevieve App account. No credit card required.",
+  description: "Create your free Budget Rescue account. No credit card required.",
 };
 
 export default async function SignupPage({
@@ -26,7 +26,7 @@ export default async function SignupPage({
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-12">
-      <Link href="/" className="mb-9 self-center" aria-label="Genevieve App home">
+      <Link href="/" className="mb-9 self-center" aria-label="Budget Rescue home">
         <Logo size="md" />
       </Link>
 

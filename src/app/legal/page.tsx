@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { getSessionUser } from "@/lib/auth/session";
-import { BUSINESS, COMPANY, PAYMENTS, PRODUCTS, companyEntityLine, legalEntityLine } from "@/lib/business";
+import { BUSINESS, COMPANY, PAYMENTS, PRODUCTS, companyEntityLine } from "@/lib/business";
 import { OnTrackLockup } from "@/components/OnTrackLogo";
 import { PaymentDetails } from "@/components/PaymentDetails";
 
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Legal",
   description:
-    "Genevieve App legal information: Terms of Use, Subscription & Refund Policy and Privacy Policy.",
+    "ON TRACK Budget Rescue legal information: Terms of Use, Subscription & Refund Policy and Privacy Policy.",
 };
 
 const DOCUMENTS = [
@@ -83,7 +83,11 @@ export default async function LegalIndexPage() {
             <dd className="font-medium">{BUSINESS.operator}</dd>
 
             <dt className="gm-muted">Trading as</dt>
-            <dd className="font-medium">{BUSINESS.tradingName}</dd>
+            <dd className="font-medium">
+              {COMPANY.registeredBusinessName
+                ? COMPANY.name
+                : `Not yet registered — operating as ${BUSINESS.operator}`}
+            </dd>
 
             <dt className="gm-muted">ABN</dt>
             <dd className="font-mono font-medium">{BUSINESS.abn}</dd>
@@ -119,10 +123,10 @@ export default async function LegalIndexPage() {
           </dl>
 
           <p className="gm-muted mt-5 text-xs leading-relaxed">
-            Your contract for {PRODUCTS.budget.name} is with {legalEntityLine()}.{" "}
-            {PRODUCTS.rescue.name}™ is operated by {companyEntityLine()}. The
-            Australian Consumer Law guarantees that apply to these services
-            cannot be excluded.
+            Your contract for {PRODUCTS.budget.name} and for{" "}
+            {PRODUCTS.rescue.name}™ is with {companyEntityLine()} — one
+            operator, one ABN, behind both products. The Australian Consumer
+            Law guarantees that apply to these services cannot be excluded.
           </p>
         </div>
       </main>

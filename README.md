@@ -1,8 +1,9 @@
-# GENEVIEVE App — Budget App
+# ON TRACK Budget Rescue
 
-**Take Control of Every Dollar** — the Genevieve App budget app, built for
-professionals and everyday people alike. Runs at scale on Cloudflare Workers
-with a Neon Postgres database and Stripe subscriptions.
+**Take Control of Every Dollar** — the ON TRACK Budget Rescue budget app,
+built for professionals and everyday people alike. A branch of the same
+"Rescue" concept as ON TRACK Revenue Rescue. Runs at scale on Cloudflare
+Workers with a Neon Postgres database and Stripe subscriptions.
 
 - **Frontend/backend:** Next.js 15 (App Router, React 19, Server Actions)
 - **Hosting:** Cloudflare Workers via `@opennextjs/cloudflare`
@@ -186,7 +187,7 @@ npx wrangler secret put SESSION_SECRET        # openssl rand -base64 32
 npx wrangler secret put STRIPE_SECRET_KEY
 npx wrangler secret put STRIPE_WEBHOOK_SECRET # from step 4
 npx wrangler secret put RESEND_API_KEY        # for password reset emails
-npx wrangler secret put EMAIL_FROM            # e.g. "Genevieve App <noreply@yourdomain.com.au>"
+npx wrangler secret put EMAIL_FROM            # e.g. "Budget Rescue <noreply@yourdomain.com.au>"
 
 npm run cf:deploy
 ```
@@ -348,14 +349,15 @@ Sized for thousands of concurrent Australian users:
 ## Brand
 
 The house brand is **ON TRACK by TRACE** — *Safety from Roots to every Journey.*
-Both products are published under it: Genevieve App (budgeting) and ON TRACK
-Revenue Rescue™ (operational leakage).
+Both products are branches of it: ON TRACK Budget Rescue (budgeting) and ON
+TRACK Revenue Rescue™ (operational leakage) — more branches of the same
+"Rescue" concept are planned.
 
 | Asset | File | Used for |
 |---|---|---|
 | Full lockup | `public/on-track-logo.png` | Revenue Rescue start screen, legal index |
 | Crown mark | `public/on-track-mark.png` | App headers, Revenue Rescue tab icon |
-| Genevieve mark | `public/genevieve-logo.png` | Budget app header, marketing site |
+| Budget Rescue mark | `public/budget-rescue-logo.png` | Budget app header, marketing site — still placeholder artwork, see `src/components/Logo.tsx` |
 
 The supplied artwork is used unaltered apart from keying out its white ground
 so it can sit on the burgundy. Because the lockup is drawn in black, gold and
@@ -373,7 +375,8 @@ Business, brand and payment details live in one place —
 
 ```
 ON TRACK by TRACE (house brand)
-Tracey Ann Kennedy trading as Genevieve App
+Tracey Ann Kennedy (trading as ON TRACK by TRACE once that business name is
+ASIC-registered; operator + ABN only until then — see companyEntityLine())
 ABN 36 530 564 761
 PO Box 475, Labrador QLD 4215, Australia
 tracey@genevieveapp.com.au
@@ -424,10 +427,10 @@ genuinely block a paid launch:
       confirmation and password reset both depend on this.
 - [ ] **Get Australian legal review of the founding promotion** before public
       paid launch.
-- [ ] Decide whether Genevieve App needs its own registered business name, or
-      continues to trade under Genevieve App
-- [ ] Register **ON TRACK by TRACE** as a business name if it is to be used as
-      a trading name, then set `COMPANY.registeredBusinessName` to true
+- [ ] Register **ON TRACK by TRACE** as a business name with ASIC against the
+      ABN, then set `COMPANY.registeredBusinessName` to true — Budget Rescue
+      and Revenue Rescue are both branches of the one house brand now, with no
+      separate trading name of their own
 - [ ] Confirm the Stripe statement descriptor in the Dashboard matches
       `PAYMENTS.statementDescriptor`, and that the card brands listed in
       `PAYMENTS.methods` are the ones actually enabled
@@ -514,7 +517,7 @@ tests/                        CSV parser, reset and verification tokens,
 
 ## Disclaimer
 
-Genevieve App is a budgeting and record-keeping tool. It does not provide financial
+Budget Rescue is a budgeting and record-keeping tool. It does not provide financial
 product advice and does not take any user's objectives, financial situation or
 needs into account. GST and financial-year summaries are record-keeping aids,
 not a lodged BAS or tax advice.

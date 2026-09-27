@@ -13,17 +13,15 @@ export const BUSINESS = {
    * page titles, the logo, legal documents and account emails — reads from
    * here, so a rebrand is a one-line change.
    */
-  appName: "Genevieve App",
+  appName: "ON TRACK Budget Rescue",
   /** The product line within the business. */
-  productName: "Budget App",
+  productName: "Budget Rescue",
   /** What the app is, in one phrase — used in legal copy and metadata. */
-  appDescriptor: "the budget app for professionals and everyday people",
+  appDescriptor: "the budget rescue app for professionals and everyday people",
   /** Advertising line used on the landing page and in metadata. */
   tagline: "Take Control of Every Dollar",
   /** Legal operator: the person or entity that contracts with customers. */
   operator: "Tracey Ann Kennedy",
-  /** Registered trading name. */
-  tradingName: "Genevieve App",
   abn: "36 530 564 761",
   postalAddress: "PO Box 475, Labrador QLD 4215, Australia",
   supportEmail: "tracey@genevieveapp.com.au",
@@ -76,7 +74,7 @@ export const COMPANY = {
 export const PRODUCTS = {
   budget: {
     name: BUSINESS.appName,
-    descriptor: "Budget App",
+    descriptor: "Personal budgeting and bank reconciliation",
     href: "/app",
   },
   rescue: {
@@ -127,11 +125,15 @@ export const PAYMENTS = {
 } as const;
 
 /**
- * "Tracey Ann Kennedy trading as Genevieve App, ABN 36 530 564 761"
+ * "Tracey Ann Kennedy trading as ON TRACK by TRACE, ABN 36 530 564 761"
  *
- * Pass a trading name to attribute a different product to the same operator.
+ * Both products under the house brand are attributed to the same operator
+ * and ABN — there is no separate trading name per product any more, since
+ * Budget Rescue and Revenue Rescue are branches of one house brand rather
+ * than independently branded products. Use `companyEntityLine()` rather
+ * than calling this directly.
  */
-export function legalEntityLine(tradingName: string = BUSINESS.tradingName): string {
+export function legalEntityLine(tradingName: string): string {
   return `${BUSINESS.operator} trading as ${tradingName}, ABN ${BUSINESS.abn}`;
 }
 

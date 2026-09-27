@@ -1,4 +1,4 @@
--- Genevieve App — Budget App
+-- ON TRACK Budget Rescue
 -- Complete database setup.
 --
 -- Paste this whole file into the Neon SQL Editor and press Run.

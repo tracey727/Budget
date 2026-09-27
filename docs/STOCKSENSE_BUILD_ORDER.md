@@ -10,7 +10,7 @@ Source: `STOCKSENSE_MASTER_CHRONOLOGICAL_BLUEPRINT.md` (Phase 0–20 master blue
 This file flattens that blueprint into a single strictly ordered execution list so the
 build can be worked top to bottom without re-reading the phase structure each time.
 
-> **Scope note.** This document lives in the Genevieve Budget repository for reference
+> **Scope note.** This document lives in the Budget Rescue repository for reference
 > only. StockSense is a separate product and must be built in `ON-TRACK-Stock-Sense`.
 > No StockSense code belongs in this repository.
 

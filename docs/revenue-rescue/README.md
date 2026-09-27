@@ -1,7 +1,7 @@
 # ON TRACK Revenue Rescue™ — build notes
 
 Revenue Rescue is the second product in this repository. It shares the account
-and session tables with the Genevieve budget app — one sign-in — and nothing
+and session tables with the Budget Rescue app — one sign-in — and nothing
 else. Everything it stores lives in `rr_`-prefixed tables, every one of which
 carries a `tenant_id`.
 

@@ -18,7 +18,7 @@ export function emailConfigured(): boolean {
 
 function fromAddress(): string {
   // Must be a domain verified in Resend.
-  return process.env.EMAIL_FROM ?? "Genevieve App <noreply@genevieveapp.com.au>";
+  return process.env.EMAIL_FROM ?? "Budget Rescue <noreply@genevieveapp.com.au>";
 }
 
 export type SendResult = { ok: true } | { ok: false; error: string };

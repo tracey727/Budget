@@ -6,7 +6,7 @@ import {
   COMPANY,
   PAYMENTS,
   PRODUCTS,
-  legalEntityLine,
+  companyEntityLine,
   taxNote,
 } from "@/lib/business";
 
@@ -70,7 +70,7 @@ export function SiteFooter() {
             <TrademarkNote />
           </div>
           <p>
-            © {new Date().getFullYear()} {legalEntityLine()}.{" "}
+            © {new Date().getFullYear()} {companyEntityLine()}.{" "}
             {BUSINESS.postalAddress}
           </p>
           <p className="mt-1.5">

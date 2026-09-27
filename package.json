@@ -1,8 +1,8 @@
 {
-  "name": "genevieve-app",
+  "name": "budget-rescue",
   "version": "1.0.0",
   "private": true,
-  "description": "Genevieve App \u2014 Budget App. Take Control of Every Dollar. Australian budgeting for professionals and everyday people.",
+  "description": "ON TRACK Budget Rescue. Take Control of Every Dollar. Australian budgeting for professionals and everyday people.",
   "engines": {
     "node": ">=20"
   },

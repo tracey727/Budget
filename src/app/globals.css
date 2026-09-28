@@ -164,12 +164,6 @@ body {
     color: var(--cream-dim);
   }
 
-  .gm-script {
-    font-family: var(--font-script), cursive;
-    color: var(--gold);
-    font-weight: 400;
-  }
-
   .gm-display {
     font-family: var(--font-display), Georgia, serif;
   }

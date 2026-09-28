@@ -357,7 +357,8 @@ TRACK Revenue Rescue™ (operational leakage) — more branches of the same
 |---|---|---|
 | Full lockup | `public/on-track-logo.png` | Revenue Rescue start screen, legal index |
 | Crown mark | `public/on-track-mark.png` | App headers, Revenue Rescue tab icon |
-| Budget Rescue mark | `public/budget-rescue-logo.png` | Budget app header, marketing site — still placeholder artwork, see `src/components/Logo.tsx` |
+| Budget Rescue mark | `public/budget-rescue-logo.png` | Tree-and-roots emblem, maroon and gold — Budget app header, marketing site |
+| Budget Rescue full lockup | `public/budget-rescue-lockup.png` | Mark plus wordmark and tagline, self-contained — not yet used on a page; available for a hero placement, social share image or external marketing |
 
 The supplied artwork is used unaltered apart from keying out its white ground
 so it can sit on the burgundy. Because the lockup is drawn in black, gold and

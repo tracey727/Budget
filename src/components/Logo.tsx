@@ -3,11 +3,11 @@ import Image from "next/image";
 /**
  * The Budget Rescue mark.
  *
- * public/budget-rescue-logo.png is still the old Genevieve cursive artwork —
- * a placeholder until new Budget Rescue artwork is supplied. Once it lands,
- * drop it in at that same path with the white ground keyed out so it can sit
- * on the burgundy; the ivory medallion behind it assumes dark artwork, which
- * needs a light ground to read against.
+ * public/budget-rescue-logo.png is a tree-and-roots emblem in the maroon and
+ * gold house palette, echoing the ON TRACK by TRACE "roots of every journey"
+ * motif for this branch of the Rescue concept. It carries no text of its own
+ * — the wordmark beside it is set in type, same as OnTrackLogo, so it stays
+ * crisp at nav sizes and screen readers get real text.
  */
 export function Logo({
   size = "md",
@@ -21,9 +21,9 @@ export function Logo({
   const medallion = { sm: 38, md: 52, lg: 132 }[size];
   const art = { sm: 26, md: 36, lg: 92 }[size];
   const word = {
-    sm: "text-xl",
-    md: "text-[1.75rem]",
-    lg: "text-5xl sm:text-6xl",
+    sm: "text-sm",
+    md: "text-base",
+    lg: "text-2xl sm:text-3xl",
   }[size];
 
   return (
@@ -52,10 +52,18 @@ export function Logo({
 
       {showWordmark && (
         <span className="flex flex-col leading-none">
-          <span className={`gm-script ${word} leading-[1.05]`}>
-            Budget Rescue
+          <span
+            className={`gm-display ${word} font-bold uppercase tracking-[0.12em]`}
+            style={{ color: "var(--gold-bright)" }}
+          >
+            Budget
+          </span>
+          <span
+            className={`gm-display ${word} mt-0.5 font-bold uppercase tracking-[0.12em]`}
+          >
+            Rescue
             <span
-              className="ml-1 align-super font-sans text-[0.3em] tracking-wider"
+              className="ml-1 align-super font-sans text-[0.4em] tracking-wider"
               aria-label="trade mark pending"
             >
               TM

@@ -129,10 +129,13 @@ export function PagedHome({ signedIn }: { signedIn: boolean }) {
         >
           <Logo size="lg" showWordmark={false} />
 
-          <h1 className="gm-script mt-6 text-5xl leading-[1.05] sm:text-6xl">
+          <h1
+            className="gm-display mt-6 text-4xl font-bold uppercase leading-[1.15] tracking-[0.08em] sm:text-5xl"
+            style={{ color: "var(--gold-bright)" }}
+          >
             Budget Rescue
             <span
-              className="ml-1.5 align-super font-sans text-[0.22em] tracking-widest"
+              className="ml-1.5 align-super font-sans text-[0.28em] tracking-widest"
               aria-label="trade mark pending"
             >
               TM

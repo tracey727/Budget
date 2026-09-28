@@ -1,14 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Great_Vibes, Cormorant_Garamond, Lato } from "next/font/google";
+import { Cormorant_Garamond, Lato } from "next/font/google";
 import "./globals.css";
-
-/** The cursive used only for the wordmark. */
-const script = Great_Vibes({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-script",
-});
 
 /** Headings and figures — a refined serif to carry the premium feel. */
 const display = Cormorant_Garamond({
@@ -70,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-AU"
-      className={`${script.variable} ${display.variable} ${body.variable}`}
+      className={`${display.variable} ${body.variable}`}
     >
       <body className="antialiased">{children}</body>
     </html>

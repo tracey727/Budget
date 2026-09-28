@@ -111,7 +111,7 @@ export function OnTrackLockup({
         src={COMPANY.logo}
         alt={`${COMPANY.name} — ${COMPANY.tagline}`}
         width={width}
-        height={Math.round((width * 720) / 688)}
+        height={width}
         priority
         style={{ width, height: "auto" }}
       />

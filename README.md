@@ -1,3 +1,16 @@
+# LEGACY COMBINED / REFERENCE REPOSITORY
+
+> **Not a current production source.** This repository preserves the historical combined GENEVIEVE budget application plus the first embedded ON TRACK Revenue Rescue build.
+>
+> - Current personal-only Budget Calculator: https://github.com/tracey727/budget-calculator-personal
+> - Current protected Revenue Rescue product: maintained in its own dedicated repository. Do not copy changes from this historical embedded version back into it without an explicit instruction.
+> - Unique bank-integration/general-budget work in this repository is retained for reference and must not be deleted merely because the products were later split.
+> - Active platform standard is GitHub + Cloudflare + Neon.
+>
+> The repository originally had no `main` branch. Cleanup establishes `main` from this strongest merged branch while preserving all branch and PR history. Repository default-branch settings may still need to be changed manually because the connected GitHub tool does not have repository-administration permission.
+
+---
+
 # GENEVIEVE App — Budget App
 
 **Take Control of Every Dollar** — the Genevieve App budget app, built for
